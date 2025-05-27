@@ -1,3 +1,4 @@
+
 import { ChatApiRequest, ChatApiResponse } from '@/types';
 
 const API_ENDPOINT = 'https://hook.eu2.make.com/9y1khgwrs59qnjmwykkuy47m22toffpq';
@@ -16,6 +17,7 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
     });
 
     console.log('API Response status:', response.status);
+    console.log('API Response headers:', response.headers);
 
     if (response.status === 401) {
       console.error('Authentication failed - 401 Unauthorized');
@@ -29,16 +31,48 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    const data = await response.json();
-    console.log('API Response data:', data);
+    // Get the response as text first to see what we're receiving
+    const responseText = await response.text();
+    console.log('Raw response text:', responseText);
+
+    let data;
+    try {
+      // Try to parse as JSON
+      data = JSON.parse(responseText);
+      console.log('Parsed JSON data:', data);
+    } catch (parseError) {
+      console.log('Response is not JSON, treating as plain text');
+      // If it's not JSON, treat the response as plain text
+      return {
+        text: responseText
+      };
+    }
     
-    // Validate response format
-    if (!data || typeof data.text !== 'string') {
-      console.error('Invalid response format:', data);
-      throw new Error('Invalid response format from API');
+    // Handle different possible response formats from Make.com
+    if (typeof data === 'string') {
+      return { text: data };
+    }
+    
+    if (data && typeof data.text === 'string') {
+      return { text: data.text };
+    }
+    
+    if (data && typeof data.message === 'string') {
+      return { text: data.message };
+    }
+    
+    if (data && typeof data.response === 'string') {
+      return { text: data.response };
     }
 
-    return data;
+    // If we can't find text in expected fields, log the structure
+    console.error('Unexpected response format:', data);
+    console.error('Available keys:', Object.keys(data || {}));
+    
+    return {
+      text: "I received a response but couldn't parse it properly. The webhook is working, but the response format might need adjustment."
+    };
+
   } catch (error) {
     console.error('Chat API error:', error);
     
