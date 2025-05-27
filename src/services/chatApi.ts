@@ -1,7 +1,6 @@
-
 import { ChatApiRequest, ChatApiResponse } from '@/types';
 
-const API_ENDPOINT = 'https://n8n.zaidicreatorlab.com/webhook/33346bfe-1a4c-4051-b596-a658609a6080';
+const API_ENDPOINT = 'https://n8n.zaidicreatorlab.com/webhook-test/1b731287-150e-454a-8921-0eadbc67e8e6';
 
 export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiResponse> => {
   try {
