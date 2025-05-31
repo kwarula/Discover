@@ -1,7 +1,7 @@
 
 import { ChatApiRequest, ChatApiResponse } from '@/types';
 
-const API_ENDPOINT = 'https://hook.eu2.make.com/9y1khgwrs59qnjmwykkuy47m22toffpq';
+const API_ENDPOINT = 'https://hook.eu2.make.com/n9x3a02yviyvywggvavxkm5civdab1lj';
 
 export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiResponse> => {
   try {
@@ -53,10 +53,13 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
       return { text: data };
     }
     
+    // If the response is already in the expected format with text and possibly richContent
     if (data && typeof data.text === 'string') {
-      return { text: data.text };
+      // Return the entire response object, which may include richContent
+      return data;
     }
     
+    // Fallback to other possible response formats
     if (data && typeof data.message === 'string') {
       return { text: data.message };
     }

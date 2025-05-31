@@ -1,6 +1,8 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { ChatMessage, UserProfile } from '@/types';
+import { translate, getCurrentLanguage } from '@/services/translationService';
+import { authService } from '@/services/authService';
 
 interface AppContextType {
   messages: ChatMessage[];
@@ -15,6 +17,11 @@ interface AppContextType {
   setIsLoginModalOpen: (open: boolean) => void;
   isLoading: boolean;
   setIsLoading: (loading: boolean) => void;
+  isEmailVerificationModalOpen: boolean;
+  setIsEmailVerificationModalOpen: (open: boolean) => void;
+  pendingVerificationEmail: string;
+  setPendingVerificationEmail: (email: string) => void;
+  logout: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -33,6 +40,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isEmailVerificationModalOpen, setIsEmailVerificationModalOpen] = useState(false);
+  const [pendingVerificationEmail, setPendingVerificationEmail] = useState('');
   const [userId] = useState(() => 
     localStorage.getItem('diani-user-id') || 
     'user-' + Math.random().toString(36).substr(2, 9)
@@ -41,9 +50,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Initialize with welcome message
   useEffect(() => {
     if (messages.length === 0) {
+      const lang = getCurrentLanguage();
       const welcomeMessage: ChatMessage = {
         id: 'welcome',
-        text: "Hello! I'm your Diani Concierge AI. How can I help you discover the magic of Diani today? Try asking: 'Where can I find the best sunsets?'",
+        text: translate('welcome', lang),
         isUser: false,
         timestamp: new Date(),
       };
@@ -56,16 +66,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('diani-user-id', userId);
   }, [userId]);
 
-  // Load profile from localStorage
+  // Load profile from Supabase auth service
   useEffect(() => {
-    const savedProfile = localStorage.getItem('diani-user-profile');
-    if (savedProfile) {
-      try {
-        setUserProfileState(JSON.parse(savedProfile));
-      } catch (error) {
-        console.error('Error loading user profile:', error);
+    const loadCurrentUser = async () => {
+      const currentUser = await authService.getCurrentUser();
+      if (currentUser) {
+        setUserProfileState({
+          username: currentUser.username,
+          travelStyle: currentUser.travelStyle,
+          interests: currentUser.interests,
+          preferredLanguage: currentUser.preferredLanguage
+        });
       }
-    }
+    };
+
+    loadCurrentUser();
+
+    // Listen to auth state changes
+    const { data: { subscription } } = authService.onAuthStateChange(async (user) => {
+      if (user) {
+        const currentUser = await authService.getCurrentUser();
+        if (currentUser) {
+          setUserProfileState({
+            username: currentUser.username,
+            travelStyle: currentUser.travelStyle,
+            interests: currentUser.interests,
+            preferredLanguage: currentUser.preferredLanguage
+          });
+        }
+      } else {
+        setUserProfileState(null);
+      }
+    });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, []);
 
   const addMessage = (message: ChatMessage) => {
@@ -79,6 +115,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     } else {
       localStorage.removeItem('diani-user-profile');
     }
+  };
+
+  const logout = () => {
+    authService.logout();
+    setUserProfileState(null);
+    setMessages([]);
+    // Reinitialize with welcome message
+    const lang = getCurrentLanguage();
+    const welcomeMessage: ChatMessage = {
+      id: 'welcome',
+      text: translate('welcome', lang),
+      isUser: false,
+      timestamp: new Date(),
+    };
+    setMessages([welcomeMessage]);
   };
 
   const isLoggedIn = userProfile !== null;
@@ -96,6 +147,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setIsLoginModalOpen,
     isLoading,
     setIsLoading,
+    isEmailVerificationModalOpen,
+    setIsEmailVerificationModalOpen,
+    pendingVerificationEmail,
+    setPendingVerificationEmail,
+    logout,
   };
 
   return (

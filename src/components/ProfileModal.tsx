@@ -11,7 +11,7 @@ import { toast } from '@/hooks/use-toast';
 import { LogOut } from 'lucide-react';
 
 export const ProfileModal: React.FC = () => {
-  const { isProfileModalOpen, setIsProfileModalOpen, userProfile, setUserProfile } = useAppContext();
+  const { isProfileModalOpen, setIsProfileModalOpen, userProfile, setUserProfile, logout } = useAppContext();
   const [formData, setFormData] = useState<UserProfile>({
     username: '',
     travelStyle: 'adventure',
@@ -45,7 +45,7 @@ export const ProfileModal: React.FC = () => {
   };
 
   const handleSignOut = () => {
-    setUserProfile(null);
+    logout();
     setIsProfileModalOpen(false);
     toast({
       title: "Signed out",

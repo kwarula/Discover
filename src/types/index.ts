@@ -4,6 +4,10 @@ export interface ChatMessage {
   text: string;
   isUser: boolean;
   timestamp: Date;
+  richContent?: {
+    type: 'hotel' | 'restaurant' | 'activity' | 'hotels' | 'restaurants' | 'activities' | 'map' | 'transport' | 'transports';
+    data: any;
+  };
 }
 
 export interface UserProfile {
@@ -15,6 +19,10 @@ export interface UserProfile {
 
 export interface ChatApiResponse {
   text: string;
+  richContent?: {
+    type: 'hotel' | 'restaurant' | 'activity' | 'hotels' | 'restaurants' | 'activities' | 'map' | 'transport' | 'transports';
+    data: any;
+  };
 }
 
 export interface ChatApiRequest {
