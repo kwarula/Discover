@@ -30,9 +30,9 @@ const LandingPage: React.FC = () => {
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-4 py-12 sm:py-20">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Column - Content */}
-            <div className="text-center lg:text-left space-y-8">
+          <div className="flex flex-col items-center text-center space-y-12">
+            {/* Hero Content */}
+            <div className="space-y-8 max-w-3xl">
               <div className="space-y-4">
                 <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-diani-sand-900 leading-tight">
                   Discover Diani in{' '}
@@ -41,26 +41,22 @@ const LandingPage: React.FC = () => {
                   <span className="text-diani-teal-700">Find</span>.{' '}
                   <span className="text-coral-sunset-700">Book</span>.
                 </h1>
-                <p className="text-lg sm:text-xl text-diani-sand-700 max-w-2xl mx-auto lg:mx-0">
+                <p className="text-lg sm:text-xl text-diani-sand-700">
                   Your AI-powered guide to everything in Diani — hotels, food, rides, and more. 
                   Free, fast, and always available.
                 </p>
               </div>
               
-              <div className="flex justify-center lg:justify-start">
-                <Button
-                  onClick={handleStartExploring}
-                  size="lg"
-                  className="bg-diani-teal-500 hover:bg-diani-teal-700 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
-                >
-                  <MessageCircle className="mr-2 h-5 w-5" />
-                  Start Exploring
-                </Button>
-              </div>
-            </div>
+              <Button
+                onClick={handleStartExploring}
+                size="lg"
+                className="bg-diani-teal-500 hover:bg-diani-teal-700 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              >
+                <MessageCircle className="mr-2 h-5 w-5" />
+                Start Exploring
+              </Button>
 
-            {/* Right Column - Screenshot */}
-            <div className="relative">
+              {/* Screenshot */}
               <div className="relative mx-auto max-w-sm lg:max-w-md">
                 <div className="absolute inset-0 bg-gradient-to-r from-diani-teal-500 to-coral-sunset-500 rounded-3xl blur-2xl opacity-20 animate-pulse"></div>
                 <img
