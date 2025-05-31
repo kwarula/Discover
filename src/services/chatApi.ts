@@ -1,6 +1,6 @@
 import { ChatApiRequest, ChatApiResponse } from '@/types';
 
-const API_ENDPOINT = 'https://n8n.zaidicreatorlab.com/webhook/b65b3de6-506a-4c2a-86be-9bfd1c81d8ea';
+const API_ENDPOINT = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-proxy`;
 
 export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiResponse> => {
   try {
@@ -11,6 +11,7 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
       },
       body: JSON.stringify(request),
     });
