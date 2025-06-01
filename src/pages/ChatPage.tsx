@@ -11,6 +11,8 @@ import { ProactiveSuggestions } from '@/components/ProactiveSuggestions';
 import { sendChatMessage } from '@/services/chatApi';
 import { ChatMessage as ChatMessageType } from '@/types';
 import { useToast } from '@/hooks/use-toast';
+import { generateProactiveSuggestions } from '@/services/suggestionService';
+import { getWeatherData, WeatherData } from '@/services/weatherApi';
 
 const ChatInterface: React.FC = () => {
   const {
@@ -24,6 +26,7 @@ const ChatInterface: React.FC = () => {
   
   const [isTyping, setIsTyping] = useState(false);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -51,6 +54,33 @@ const ChatInterface: React.FC = () => {
       );
     }
   }, []);
+
+  // Fetch weather data
+  useEffect(() => {
+    const fetchWeatherData = async () => {
+      try {
+        const data = await getWeatherData();
+        setWeatherData(data);
+      } catch (error) {
+        console.error('Error fetching weather data:', error);
+      }
+    };
+
+    fetchWeatherData();
+    // Refresh weather data every 30 minutes
+    const interval = setInterval(fetchWeatherData, 30 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Generate proactive suggestions
+  const proactiveSuggestions = useMemo(() => {
+    return generateProactiveSuggestions({
+      userProfile,
+      weatherData,
+      chatMessages: messages,
+      currentTime: new Date()
+    });
+  }, [userProfile, weatherData, messages]);
 
   const handleSendMessage = async (messageText: string) => {
     // Add user message immediately
@@ -148,7 +178,10 @@ const ChatInterface: React.FC = () => {
           <div className="flex-1 overflow-y-auto custom-scrollbar smooth-scroll">
             <div className="space-y-4 pb-4">
               {/* Proactive Suggestions */}
-              <ProactiveSuggestions onSuggestionClick={handleSendMessage} />
+              <ProactiveSuggestions 
+                suggestions={proactiveSuggestions}
+                onSuggestionClick={handleSendMessage} 
+              />
               
               {messages.map((message, index) => (
                 <ChatMessage
