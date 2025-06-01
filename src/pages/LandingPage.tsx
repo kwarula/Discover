@@ -60,24 +60,24 @@ const LandingPage: React.FC = () => {
                 <Button
                   onClick={() => handleStoreClick('App Store')}
                   size="lg"
-                  className="bg-black hover:bg-gray-800 text-white px-6 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 h-[60px] sm:h-[64px] w-full sm:w-auto"
+                  className="bg-black hover:bg-gray-800 text-white px-5 py-2 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 h-[52px] sm:h-[56px] w-full sm:w-[180px]"
                 >
-                  <Apple className="h-7 w-7" />
+                  <Apple className="h-6 w-6" />
                   <div className="text-left">
                     <div className="text-[10px] opacity-80">Download on the</div>
-                    <div className="text-base font-semibold leading-tight">App Store</div>
+                    <div className="text-sm font-semibold leading-tight">App Store</div>
                   </div>
                 </Button>
 
                 <Button
                   onClick={() => handleStoreClick('Google Play')}
                   size="lg"
-                  className="bg-black hover:bg-gray-800 text-white px-6 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 h-[60px] sm:h-[64px] w-full sm:w-auto"
+                  className="bg-black hover:bg-gray-800 text-white px-5 py-2 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 h-[52px] sm:h-[56px] w-full sm:w-[180px]"
                 >
-                  <PlayCircle className="h-7 w-7" />
+                  <PlayCircle className="h-6 w-6" />
                   <div className="text-left">
                     <div className="text-[10px] opacity-80">Get it on</div>
-                    <div className="text-base font-semibold leading-tight">Google Play</div>
+                    <div className="text-sm font-semibold leading-tight">Google Play</div>
                   </div>
                 </Button>
               </div>
