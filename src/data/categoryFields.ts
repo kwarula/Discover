@@ -1,39 +1,59 @@
 import { CategoryFields } from '@/types/business';
 
 export const categoryFields: CategoryFields = {
-  'Hotel': {
+  'Accommodation': {
     fields: [
       {
-        name: 'hotelName',
-        label: 'Hotel Name',
+        name: 'businessName',
+        label: 'Business Name',
         type: 'text',
         required: true,
-        placeholder: 'Enter hotel name'
-      },
-      {
-        name: 'officialBusinessName',
-        label: 'Official Business Name',
-        type: 'text',
-        required: true,
-        placeholder: 'Legal business name'
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
       },
       {
         name: 'registrationNumber',
-        label: 'Hotel Registration Number',
+        label: 'Business Registration Number',
         type: 'text',
         required: true,
-        placeholder: 'e.g., HTL/2024/001'
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
       },
       {
-        name: 'category',
-        label: 'Hotel Category',
+        name: 'accommodationType',
+        label: 'Accommodation Type',
         type: 'select',
         required: true,
-        options: ['Budget', 'Mid-range', 'Luxury']
+        options: [
+          'Hotel',
+          'Guest House',
+          'Villa',
+          'Cottage',
+          'Boutique Resort',
+          'Beach House',
+          'Serviced Apartment'
+        ]
+      },
+      {
+        name: 'priceRange',
+        label: 'Price Range (KES)',
+        type: 'select',
+        required: true,
+        options: [
+          'Budget (Under 5,000)',
+          'Mid-range (5,000-15,000)',
+          'Luxury (Above 15,000)'
+        ]
       },
       {
         name: 'location',
-        label: 'Hotel Location',
+        label: 'Property Location',
         type: 'location',
         required: true,
         placeholder: 'Select location on map'
@@ -50,21 +70,44 @@ export const categoryFields: CategoryFields = {
       },
       {
         name: 'facilities',
-        label: 'Facilities Offered',
+        label: 'Available Facilities',
         type: 'multiselect',
         required: true,
         options: [
           'WiFi',
-          'Pool',
+          'Swimming Pool',
           'Restaurant',
           'Bar',
-          'Gym',
-          'Spa',
-          'Conference Room',
-          'Beach Access',
           'Room Service',
-          'Airport Shuttle'
+          'Beach Access',
+          'Airport Shuttle',
+          'Parking',
+          'Air Conditioning',
+          'Garden',
+          'Security'
         ]
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
       }
     ],
     documents: [
@@ -74,38 +117,82 @@ export const categoryFields: CategoryFields = {
         required: true,
         accept: '.pdf,.jpg,.jpeg,.png',
         maxSize: 5,
-        description: 'Upload a valid business license'
+        description: 'Upload a valid business license or permit'
       },
       {
         name: 'taxCertificate',
         label: 'Tax Compliance Certificate',
-        required: false,
+        required: true,
         accept: '.pdf',
         maxSize: 2,
-        description: 'KRA PIN certificate (optional)'
+        description: 'Current KRA tax compliance certificate'
+      },
+      {
+        name: 'insuranceCertificate',
+        label: 'Insurance Certificate',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 3,
+        description: 'Public liability insurance certificate'
+      },
+      {
+        name: 'propertyPhotos',
+        label: 'Property Photos',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Upload at least 5 high-quality photos of your property'
       }
     ]
   },
-  'Tuktuk Rides': {
+  'Airport Transfers': {
     fields: [
       {
-        name: 'registrationNumber',
-        label: 'Tuktuk Registration Number',
+        name: 'businessName',
+        label: 'Business Name',
         type: 'text',
         required: true,
-        placeholder: 'e.g., KXX 123A'
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
       },
       {
-        name: 'stage',
-        label: 'Operating Stage',
-        type: 'select',
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'vehicleTypes',
+        label: 'Vehicle Types Available',
+        type: 'multiselect',
         required: true,
         options: [
-          'Naivas',
-          'Carrefour',
-          'Diani Bazaar',
-          'Diani Beach Road',
-          'Other'
+          'Sedan',
+          'SUV',
+          'Van',
+          'Luxury Car',
+          'Minibus'
+        ]
+      },
+      {
+        name: 'serviceAreas',
+        label: 'Service Areas',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Diani - Moi Airport',
+          'Diani - JKIA',
+          'Diani - Mombasa',
+          'Diani - Malindi',
+          'Custom Routes'
         ]
       },
       {
@@ -113,64 +200,128 @@ export const categoryFields: CategoryFields = {
         label: 'Operating Hours',
         type: 'text',
         required: true,
-        placeholder: 'e.g., 7AM - 9PM'
+        placeholder: 'e.g., 24/7 or 6AM - 10PM'
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
       }
     ],
     documents: [
       {
-        name: 'idDocument',
-        label: 'National ID',
-        required: true,
-        accept: '.jpg,.jpeg,.png',
-        maxSize: 2,
-        description: 'Clear photo of your National ID'
-      },
-      {
-        name: 'passportPhoto',
-        label: 'Passport-size Photo',
-        required: true,
-        accept: '.jpg,.jpeg,.png',
-        maxSize: 1,
-        description: 'Recent passport-size photo'
-      },
-      {
-        name: 'vehicleLicense',
-        label: 'Vehicle License',
+        name: 'businessLicense',
+        label: 'Business License',
         required: true,
         accept: '.pdf,.jpg,.jpeg,.png',
-        maxSize: 2,
-        description: 'Valid vehicle license'
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
+      },
+      {
+        name: 'insuranceCertificate',
+        label: 'Vehicle Insurance',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 3,
+        description: 'Commercial vehicle insurance certificate'
+      },
+      {
+        name: 'driverLicenses',
+        label: 'Driver Licenses',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Valid licenses for all drivers'
+      },
+      {
+        name: 'vehiclePhotos',
+        label: 'Vehicle Photos',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Clear photos of all available vehicles'
       }
     ]
   },
-  'Massage Therapist': {
+  'Auto Services': {
     fields: [
       {
-        name: 'services',
+        name: 'businessName',
+        label: 'Business Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
+      },
+      {
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'serviceTypes',
         label: 'Services Offered',
         type: 'multiselect',
         required: true,
         options: [
-          'Swedish Massage',
-          'Deep Tissue Massage',
-          'Sports Massage',
-          'Thai Massage',
-          'Hot Stone Massage',
-          'Aromatherapy',
-          'Reflexology'
+          'General Repairs',
+          'Body Work',
+          'Paint Job',
+          'Tire Services',
+          'Oil Change',
+          'AC Service',
+          'Engine Repair',
+          'Electrical Systems',
+          'Car Wash',
+          'Diagnostics'
         ]
       },
       {
-        name: 'serviceArea',
-        label: 'Service Area',
-        type: 'multiselect',
+        name: 'location',
+        label: 'Workshop Location',
+        type: 'location',
         required: true,
+        placeholder: 'Select location on map'
+      },
+      {
+        name: 'specializations',
+        label: 'Brand Specializations',
+        type: 'multiselect',
+        required: false,
         options: [
-          'Diani Beach',
-          'Ukunda',
-          'Tiwi',
-          'Galu',
-          'Mobile Service'
+          'Toyota',
+          'Nissan',
+          'Mazda',
+          'Subaru',
+          'Mercedes',
+          'BMW',
+          'All Brands'
         ]
       },
       {
@@ -178,33 +329,63 @@ export const categoryFields: CategoryFields = {
         label: 'Operating Hours',
         type: 'text',
         required: true,
-        placeholder: 'e.g., 9AM - 7PM'
+        placeholder: 'e.g., Mon-Sat 8AM - 6PM'
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
       }
     ],
     documents: [
       {
-        name: 'certification',
-        label: 'Professional Certification',
+        name: 'businessLicense',
+        label: 'Business License',
         required: true,
         accept: '.pdf,.jpg,.jpeg,.png',
-        maxSize: 3,
-        description: 'Upload your massage therapy certification'
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
       },
       {
-        name: 'idDocument',
-        label: 'National ID',
+        name: 'certifications',
+        label: 'Technical Certifications',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Relevant technical certifications for your services'
+      },
+      {
+        name: 'workshopPhotos',
+        label: 'Workshop Photos',
         required: true,
         accept: '.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Photos of your workshop and equipment'
+      },
+      {
+        name: 'insuranceCertificate',
+        label: 'Insurance Certificate',
+        required: false,
+        accept: '.pdf',
         maxSize: 2,
-        description: 'Clear photo of your National ID'
-      },
-      {
-        name: 'passportPhoto',
-        label: 'Professional Photo',
-        required: true,
-        accept: '.jpg,.jpeg,.png',
-        maxSize: 1,
-        description: 'Professional photo in work attire'
+        description: 'Business liability insurance (recommended)'
       }
     ]
   }

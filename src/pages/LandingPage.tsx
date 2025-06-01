@@ -231,7 +231,7 @@ const LandingPage: React.FC = () => {
               className="w-full sm:w-auto bg-white text-diani-teal-700 hover:bg-diani-sand-50 px-4 sm:px-8 py-3 sm:py-6 text-base sm:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
               <Building2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
-              List Your Business on Discover Diani
+              List Your Business
             </Button>
           </div>
         </div>
