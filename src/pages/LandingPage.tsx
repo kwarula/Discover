@@ -56,28 +56,28 @@ const LandingPage: React.FC = () => {
               </div>
               
               {/* App Store Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
                 <Button
                   onClick={() => handleStoreClick('App Store')}
                   size="lg"
-                  className="bg-black hover:bg-gray-800 text-white px-8 py-6 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-3"
+                  className="bg-black hover:bg-gray-800 text-white px-6 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 h-[60px] sm:h-[64px] w-full sm:w-auto"
                 >
-                  <Apple className="h-8 w-8" />
+                  <Apple className="h-7 w-7" />
                   <div className="text-left">
-                    <div className="text-xs opacity-80">Download on the</div>
-                    <div className="text-xl font-semibold">App Store</div>
+                    <div className="text-[10px] opacity-80">Download on the</div>
+                    <div className="text-base font-semibold leading-tight">App Store</div>
                   </div>
                 </Button>
 
                 <Button
                   onClick={() => handleStoreClick('Google Play')}
                   size="lg"
-                  className="bg-black hover:bg-gray-800 text-white px-8 py-6 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-3"
+                  className="bg-black hover:bg-gray-800 text-white px-6 py-3 text-lg font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2 h-[60px] sm:h-[64px] w-full sm:w-auto"
                 >
-                  <PlayCircle className="h-8 w-8" />
+                  <PlayCircle className="h-7 w-7" />
                   <div className="text-left">
-                    <div className="text-xs opacity-80">Get it on</div>
-                    <div className="text-xl font-semibold">Google Play</div>
+                    <div className="text-[10px] opacity-80">Get it on</div>
+                    <div className="text-base font-semibold leading-tight">Google Play</div>
                   </div>
                 </Button>
               </div>
