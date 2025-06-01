@@ -13,20 +13,31 @@ import { toast } from '@/hooks/use-toast';
 import { Building2, Search, ArrowLeft } from 'lucide-react';
 import { businessCategories } from '@/data/businessCategories';
 import { useAppContext } from '@/contexts/AppContext';
+import { CategoryFields, BusinessListing, Field, DocumentField } from '@/types/business';
+import { categoryFields } from '@/data/categoryFields';
+import { FileUpload } from '@/components/FileUpload';
+import { LocationPicker } from '@/components/LocationPicker';
+import { cn } from '@/lib/utils';
 
 interface BusinessListingModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-type FormStep = 'category' | 'contact' | 'business' | 'confirm';
+type FormStep = 'category' | 'contact' | 'business' | 'documents' | 'confirm';
 
-interface FormData {
+interface BusinessListingFormState {
   email: string;
   firstName: string;
   lastName: string;
-  businessCategory: string;
+  selectedBusinessCategory: string;
   position: string;
+  businessDetails: {
+    [key: string]: any;
+  };
+  uploadedDocuments: {
+    [key: string]: File | null;
+  };
 }
 
 export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
@@ -37,15 +48,16 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
   const [currentStep, setCurrentStep] = useState<FormStep>('category');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [categorySearch, setCategorySearch] = useState('');
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<BusinessListingFormState>({
     email: '',
     firstName: '',
     lastName: '',
-    businessCategory: '',
+    selectedBusinessCategory: '',
     position: 'Owner',
+    businessDetails: {},
+    uploadedDocuments: {},
   });
 
-  // Reset form when modal opens
   useEffect(() => {
     if (isOpen) {
       setCurrentStep('category');
@@ -68,9 +80,46 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
     : businessCategories;
 
   const handleCategorySelect = (category: string) => {
-    setFormData(prev => ({ ...prev, businessCategory: category }));
+    setFormData(prev => ({ ...prev, selectedBusinessCategory: category }));
     setCategorySearch('');
     setCurrentStep(isLoggedIn ? 'business' : 'contact');
+  };
+
+  const handleFieldChange = (name: string, value: any) => {
+    setFormData(prev => ({
+      ...prev,
+      businessDetails: {
+        ...prev.businessDetails,
+        [name]: value
+      }
+    }));
+  };
+
+  const handleMultiSelectToggle = (fieldName: string, option: string) => {
+    setFormData(prev => {
+      const currentValues = prev.businessDetails[fieldName] || [];
+      const newValues = currentValues.includes(option)
+        ? currentValues.filter(v => v !== option)
+        : [...currentValues, option];
+      
+      return {
+        ...prev,
+        businessDetails: {
+          ...prev.businessDetails,
+          [fieldName]: newValues
+        }
+      };
+    });
+  };
+
+  const handleDocumentChange = (docName: string, file: File | null) => {
+    setFormData(prev => ({
+      ...prev,
+      uploadedDocuments: {
+        ...prev.uploadedDocuments,
+        [docName]: file
+      }
+    }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -90,7 +139,7 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
     }
 
     if (currentStep === 'business') {
-      if (!formData.businessCategory || !formData.position) {
+      if (!formData.selectedBusinessCategory || !formData.position) {
         toast({
           title: "All fields required",
           description: "Please select both category and position.",
@@ -98,6 +147,11 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
         });
         return;
       }
+      setCurrentStep('documents');
+      return;
+    }
+
+    if (currentStep === 'documents') {
       setCurrentStep('confirm');
       return;
     }
@@ -105,6 +159,22 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
     // Final submission
     setIsSubmitting(true);
     try {
+      const businessListing: BusinessListing = {
+        category: formData.selectedBusinessCategory,
+        contactInfo: {
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          email: formData.email,
+          phoneNumber: formData.businessDetails.phoneNumber || '',
+          whatsappNumber: formData.businessDetails.whatsappNumber,
+        },
+        businessInfo: {
+          ...formData.businessDetails,
+        },
+        documents: formData.uploadedDocuments,
+        verificationStatus: 'pending',
+      };
+
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1500));
       
@@ -117,8 +187,10 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
         email: '',
         firstName: '',
         lastName: '',
-        businessCategory: '',
+        selectedBusinessCategory: '',
         position: 'Owner',
+        businessDetails: {},
+        uploadedDocuments: {},
       });
     } catch (error) {
       toast({
@@ -129,6 +201,112 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const renderCategoryFields = (category: string) => {
+    const fields = categoryFields[category]?.fields || [];
+    
+    return (
+      <div className="space-y-4">
+        {fields.map((field: Field) => {
+          switch (field.type) {
+            case 'select':
+              return (
+                <div key={field.name} className="space-y-2">
+                  <Label htmlFor={field.name}>{field.label}</Label>
+                  <Select
+                    value={formData.businessDetails[field.name] || ''}
+                    onValueChange={(value) => handleFieldChange(field.name, value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder={field.placeholder} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {field.options?.map(option => (
+                        <SelectItem key={option} value={option}>{option}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              );
+              
+            case 'multiselect':
+              return (
+                <div key={field.name} className="space-y-2">
+                  <Label>{field.label}</Label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {field.options?.map(option => (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => handleMultiSelectToggle(field.name, option)}
+                        className={cn(
+                          "px-3 py-2 text-sm rounded-lg border transition-all duration-200",
+                          formData.businessDetails[field.name]?.includes(option)
+                            ? "bg-diani-teal-500 text-white border-diani-teal-500"
+                            : "bg-white text-diani-sand-700 border-diani-sand-300 hover:border-diani-teal-500"
+                        )}
+                      >
+                        {option}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              );
+
+            case 'location':
+              return (
+                <div key={field.name} className="space-y-2">
+                  <Label>{field.label}</Label>
+                  <LocationPicker
+                    value={formData.businessDetails.location}
+                    onChange={(location) => handleFieldChange('location', location)}
+                    required={field.required}
+                  />
+                </div>
+              );
+
+            default:
+              return (
+                <div key={field.name} className="space-y-2">
+                  <Label htmlFor={field.name}>{field.label}</Label>
+                  <Input
+                    id={field.name}
+                    type={field.type}
+                    value={formData.businessDetails[field.name] || ''}
+                    onChange={(e) => handleFieldChange(field.name, e.target.value)}
+                    placeholder={field.placeholder}
+                    required={field.required}
+                  />
+                </div>
+              );
+          }
+        })}
+      </div>
+    );
+  };
+
+  const renderDocumentFields = (category: string) => {
+    const documents = categoryFields[category]?.documents || [];
+    
+    return (
+      <div className="space-y-4">
+        {documents.map((doc: DocumentField) => (
+          <div key={doc.name} className="space-y-2">
+            <Label htmlFor={doc.name}>{doc.label}</Label>
+            <FileUpload
+              id={doc.name}
+              accept={doc.accept}
+              maxSize={doc.maxSize}
+              required={doc.required}
+              description={doc.description}
+              value={formData.uploadedDocuments[doc.name]}
+              onChange={(file) => handleDocumentChange(doc.name, file)}
+            />
+          </div>
+        ))}
+      </div>
+    );
   };
 
   const renderStep = () => {
@@ -199,30 +377,27 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
 
       case 'business':
         return (
-          <div className="space-y-4">
-            <div className="bg-diani-teal-50 px-3 py-2 rounded-lg">
+          <div className="space-y-6">
+            <div className="bg-diani-teal-50 px-4 py-3 rounded-lg">
               <div className="text-xs text-diani-teal-600">Selected Category</div>
-              <div className="text-diani-teal-700 font-medium">{formData.businessCategory}</div>
+              <div className="text-diani-teal-700 font-medium">{formData.selectedBusinessCategory}</div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="position">Your Position</Label>
-              <Select
-                value={formData.position}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, position: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select your position" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Owner">Owner</SelectItem>
-                  <SelectItem value="Manager">Manager</SelectItem>
-                  <SelectItem value="Marketing Lead">Marketing Lead</SelectItem>
-                  <SelectItem value="Staff Member">Staff Member</SelectItem>
-                  <SelectItem value="Consultant">Consultant</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
-                </SelectContent>
-              </Select>
+            
+            {renderCategoryFields(formData.selectedBusinessCategory)}
+          </div>
+        );
+        
+      case 'documents':
+        return (
+          <div className="space-y-6">
+            <div className="bg-diani-sand-50 rounded-lg p-4">
+              <h4 className="font-medium text-diani-sand-900 mb-2">Required Documents</h4>
+              <p className="text-sm text-diani-sand-600">
+                Please provide clear, readable copies of all required documents.
+              </p>
             </div>
+            
+            {renderDocumentFields(formData.selectedBusinessCategory)}
           </div>
         );
 
@@ -234,7 +409,7 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
               <div className="space-y-2 text-sm">
                 <p><span className="text-diani-sand-600">Name:</span> {formData.firstName} {formData.lastName}</p>
                 <p><span className="text-diani-sand-600">Email:</span> {formData.email}</p>
-                <p><span className="text-diani-sand-600">Business Category:</span> {formData.businessCategory}</p>
+                <p><span className="text-diani-sand-600">Business Category:</span> {formData.selectedBusinessCategory}</p>
                 <p><span className="text-diani-sand-600">Position:</span> {formData.position}</p>
               </div>
             </div>
@@ -259,6 +434,8 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
         return 'Your Contact Information';
       case 'business':
         return 'Business Details';
+      case 'documents':
+        return 'Upload Documents';
       case 'confirm':
         return 'Review & Submit';
     }
@@ -302,7 +479,8 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
                 type="button"
                 variant="ghost"
                 onClick={() => setCurrentStep(prev => {
-                  if (prev === 'confirm') return 'business';
+                  if (prev === 'confirm') return 'documents';
+                  if (prev === 'documents') return 'business';
                   if (prev === 'business') return isLoggedIn ? 'category' : 'contact';
                   return 'category';
                 })}
