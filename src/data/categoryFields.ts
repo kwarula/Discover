@@ -1186,5 +1186,1129 @@ export const categoryFields: CategoryFields = {
         description: 'Photos of your butchery and facilities'
       }
     ]
+  },
+  'Car Hire': {
+    fields: [
+      {
+        name: 'businessName',
+        label: 'Business Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
+      },
+      {
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'location',
+        label: 'Office Location',
+        type: 'location',
+        required: true,
+        placeholder: 'Select location on map'
+      },
+      {
+        name: 'fleetTypes',
+        label: 'Available Vehicles',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Economy Cars',
+          'SUVs',
+          'Luxury Cars',
+          'Vans',
+          'Minibuses',
+          'Off-road Vehicles',
+          'With Driver',
+          'Self-drive'
+        ]
+      },
+      {
+        name: 'services',
+        label: 'Additional Services',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Airport Pickup',
+          'Hotel Delivery',
+          'GPS Navigation',
+          'Child Seats',
+          'Roadside Assistance',
+          'Long-term Rental',
+          'Insurance Coverage'
+        ]
+      },
+      {
+        name: 'operatingHours',
+        label: 'Operating Hours',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., 24/7 or 8AM - 8PM'
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      }
+    ],
+    documents: [
+      {
+        name: 'businessLicense',
+        label: 'Business License',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
+      },
+      {
+        name: 'insuranceCertificates',
+        label: 'Vehicle Insurance Certificates',
+        required: true,
+        accept: '.pdf',
+        maxSize: 10,
+        description: 'Insurance certificates for all vehicles'
+      },
+      {
+        name: 'vehicleRegistrations',
+        label: 'Vehicle Registration Documents',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Registration documents for all vehicles'
+      },
+      {
+        name: 'fleetPhotos',
+        label: 'Fleet Photos',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 15,
+        description: 'Clear photos of all available vehicles'
+      }
+    ]
+  },
+  'Car Wash': {
+    fields: [
+      {
+        name: 'businessName',
+        label: 'Business Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
+      },
+      {
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'location',
+        label: 'Car Wash Location',
+        type: 'location',
+        required: true,
+        placeholder: 'Select location on map'
+      },
+      {
+        name: 'services',
+        label: 'Services Offered',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Exterior Wash',
+          'Interior Cleaning',
+          'Full Detailing',
+          'Engine Wash',
+          'Waxing',
+          'Polishing',
+          'Carpet Cleaning',
+          'Leather Treatment'
+        ]
+      },
+      {
+        name: 'vehicleTypes',
+        label: 'Vehicle Types Serviced',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Cars',
+          'SUVs',
+          'Vans',
+          'Motorcycles',
+          'Trucks',
+          'Boats'
+        ]
+      },
+      {
+        name: 'operatingHours',
+        label: 'Operating Hours',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., Mon-Sun 7AM - 7PM'
+      },
+      {
+        name: 'facilities',
+        label: 'Facilities',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Waiting Area',
+          'Refreshments',
+          'WiFi',
+          'Covered Area',
+          'Mobile Service',
+          'Card Payment'
+        ]
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      }
+    ],
+    documents: [
+      {
+        name: 'businessLicense',
+        label: 'Business License',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
+      },
+      {
+        name: 'environmentalCertificate',
+        label: 'Environmental Compliance',
+        required: true,
+        accept: '.pdf',
+        maxSize: 3,
+        description: 'Environmental compliance certificate'
+      },
+      {
+        name: 'facilityPhotos',
+        label: 'Facility Photos',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Photos of your car wash facility'
+      }
+    ]
+  },
+  'Chiropractor': {
+    fields: [
+      {
+        name: 'businessName',
+        label: 'Business Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
+      },
+      {
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'practitionerName',
+        label: 'Practitioner Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Full name of chiropractor'
+      },
+      {
+        name: 'location',
+        label: 'Practice Location',
+        type: 'location',
+        required: true,
+        placeholder: 'Select location on map'
+      },
+      {
+        name: 'specializations',
+        label: 'Specializations',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Sports Injuries',
+          'Back Pain',
+          'Neck Pain',
+          'Joint Problems',
+          'Pediatric Care',
+          'Pregnancy Care',
+          'Rehabilitation'
+        ]
+      },
+      {
+        name: 'services',
+        label: 'Services Offered',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Spinal Adjustment',
+          'Massage Therapy',
+          'Physical Therapy',
+          'Exercise Programs',
+          'Nutritional Counseling',
+          'X-ray Services'
+        ]
+      },
+      {
+        name: 'operatingHours',
+        label: 'Operating Hours',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., Mon-Fri 9AM - 5PM'
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      }
+    ],
+    documents: [
+      {
+        name: 'businessLicense',
+        label: 'Business License',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
+      },
+      {
+        name: 'practitionerLicense',
+        label: 'Practitioner License',
+        required: true,
+        accept: '.pdf',
+        maxSize: 3,
+        description: 'Valid chiropractic license'
+      },
+      {
+        name: 'qualifications',
+        label: 'Professional Qualifications',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Certificates and qualifications'
+      },
+      {
+        name: 'insuranceCertificate',
+        label: 'Professional Insurance',
+        required: true,
+        accept: '.pdf',
+        maxSize: 2,
+        description: 'Professional liability insurance'
+      },
+      {
+        name: 'clinicPhotos',
+        label: 'Clinic Photos',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Photos of your clinic and facilities'
+      }
+    ]
+  },
+  'Clothing Shop': {
+    fields: [
+      {
+        name: 'businessName',
+        label: 'Business Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
+      },
+      {
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'location',
+        label: 'Shop Location',
+        type: 'location',
+        required: true,
+        placeholder: 'Select location on map'
+      },
+      {
+        name: 'clothingTypes',
+        label: 'Clothing Categories',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Men\'s Wear',
+          'Women\'s Wear',
+          'Children\'s Wear',
+          'Beach Wear',
+          'Sportswear',
+          'Traditional Wear',
+          'Accessories',
+          'Shoes'
+        ]
+      },
+      {
+        name: 'specialties',
+        label: 'Specialties',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Designer Brands',
+          'Local Designs',
+          'Custom Tailoring',
+          'Plus Size',
+          'Swimwear',
+          'African Fashion',
+          'Formal Wear'
+        ]
+      },
+      {
+        name: 'services',
+        label: 'Additional Services',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Alterations',
+          'Personal Shopping',
+          'Custom Orders',
+          'Delivery',
+          'Gift Wrapping',
+          'Layaway'
+        ]
+      },
+      {
+        name: 'operatingHours',
+        label: 'Operating Hours',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., Mon-Sat 9AM - 7PM'
+      },
+      {
+        name: 'facilities',
+        label: 'Facilities',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Fitting Rooms',
+          'Air Conditioning',
+          'Mirror Wall',
+          'Card Payment',
+          'Parking',
+          'WiFi'
+        ]
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      }
+    ],
+    documents: [
+      {
+        name: 'businessLicense',
+        label: 'Business License',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
+      },
+      {
+        name: 'shopPhotos',
+        label: 'Shop Photos',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Photos of your shop and displays'
+      },
+      {
+        name: 'productCatalog',
+        label: 'Product Catalog (Optional)',
+        required: false,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 15,
+        description: 'Catalog of your clothing collection'
+      }
+    ]
+  },
+  'Coffee Shop': {
+    fields: [
+      {
+        name: 'businessName',
+        label: 'Business Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
+      },
+      {
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'location',
+        label: 'Shop Location',
+        type: 'location',
+        required: true,
+        placeholder: 'Select location on map'
+      },
+      {
+        name: 'beverages',
+        label: 'Beverage Menu',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Espresso',
+          'Cappuccino',
+          'Latte',
+          'Cold Brew',
+          'Tea Selection',
+          'Fresh Juices',
+          'Smoothies',
+          'Specialty Coffee'
+        ]
+      },
+      {
+        name: 'foodItems',
+        label: 'Food Menu',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Pastries',
+          'Sandwiches',
+          'Cakes',
+          'Breakfast Items',
+          'Light Meals',
+          'Vegan Options',
+          'Gluten-free Options'
+        ]
+      },
+      {
+        name: 'facilities',
+        label: 'Facilities',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Indoor Seating',
+          'Outdoor Seating',
+          'Air Conditioning',
+          'WiFi',
+          'Power Outlets',
+          'Restrooms',
+          'Parking'
+        ]
+      },
+      {
+        name: 'services',
+        label: 'Additional Services',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Takeaway',
+          'Delivery',
+          'Event Catering',
+          'Coffee Beans Retail',
+          'Private Events',
+          'Loyalty Program'
+        ]
+      },
+      {
+        name: 'operatingHours',
+        label: 'Operating Hours',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., Mon-Sun 7AM - 8PM'
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      }
+    ],
+    documents: [
+      {
+        name: 'businessLicense',
+        label: 'Business License',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
+      },
+      {
+        name: 'healthCertificate',
+        label: 'Health Certificate',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 3,
+        description: 'Food handling and health certification'
+      },
+      {
+        name: 'menuPhotos',
+        label: 'Menu & Product Photos',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Photos of your menu items and products'
+      },
+      {
+        name: 'cafePhotos',
+        label: 'Café Photos',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Photos of your café interior and exterior'
+      }
+    ]
+  },
+  'Computer Repairs': {
+    fields: [
+      {
+        name: 'businessName',
+        label: 'Business Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
+      },
+      {
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'location',
+        label: 'Shop Location',
+        type: 'location',
+        required: true,
+        placeholder: 'Select location on map'
+      },
+      {
+        name: 'services',
+        label: 'Services Offered',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Hardware Repairs',
+          'Software Installation',
+          'Virus Removal',
+          'Data Recovery',
+          'Network Setup',
+          'Screen Replacement',
+          'Laptop Repairs',
+          'Desktop Repairs'
+        ]
+      },
+      {
+        name: 'specializations',
+        label: 'Brand Specializations',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Apple',
+          'Dell',
+          'HP',
+          'Lenovo',
+          'Acer',
+          'ASUS',
+          'Samsung',
+          'All Brands'
+        ]
+      },
+      {
+        name: 'additionalServices',
+        label: 'Additional Services',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'On-site Service',
+          'Remote Support',
+          'Parts Sales',
+          'Maintenance Plans',
+          'IT Consulting',
+          'Training'
+        ]
+      },
+      {
+        name: 'operatingHours',
+        label: 'Operating Hours',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., Mon-Sat 9AM - 6PM'
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      }
+    ],
+    documents: [
+      {
+        name: 'businessLicense',
+        label: 'Business License',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
+      },
+      {
+        name: 'technicalCertifications',
+        label: 'Technical Certifications',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Relevant technical certifications'
+      },
+      {
+        name: 'workshopPhotos',
+        label: 'Workshop Photos',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Photos of your repair facility'
+      }
+    ]
+  },
+  'Construction Services': {
+    fields: [
+      {
+        name: 'businessName',
+        label: 'Business Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
+      },
+      {
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'location',
+        label: 'Office Location',
+        type: 'location',
+        required: true,
+        placeholder: 'Select location on map'
+      },
+      {
+        name: 'services',
+        label: 'Services Offered',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'New Construction',
+          'Renovations',
+          'Home Extensions',
+          'Commercial Buildings',
+          'Interior Finishing',
+          'Roofing',
+          'Foundation Work',
+          'Project Management'
+        ]
+      },
+      {
+        name: 'specializations',
+        label: 'Specializations',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Residential',
+          'Commercial',
+          'Industrial',
+          'Beach Properties',
+          'Eco-friendly Construction',
+          'Luxury Homes',
+          'Hotels & Resorts'
+        ]
+      },
+      {
+        name: 'equipment',
+        label: 'Available Equipment',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Heavy Machinery',
+          'Concrete Equipment',
+          'Scaffolding',
+          'Power Tools',
+          'Transport Vehicles',
+          'Safety Equipment'
+        ]
+      },
+      {
+        name: 'operatingHours',
+        label: 'Operating Hours',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., Mon-Sat 8AM - 5PM'
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      }
+    ],
+    documents: [
+      {
+        name: 'businessLicense',
+        label: 'Business License',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
+      },
+      {
+        name: 'contractorLicense',
+        label: 'Contractor License',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 3,
+        description: 'Valid contractor license'
+      },
+      {
+        name: 'insuranceCertificates',
+        label: 'Insurance Certificates',
+        required: true,
+        accept: '.pdf',
+        maxSize: 5,
+        description: 'Liability and workers compensation insurance'
+      },
+      {
+        name: 'safetyCompliance',
+        label: 'Safety Compliance',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 3,
+        description: 'Safety certifications and compliance documents'
+      },
+      {
+        name: 'projectPhotos',
+        label: 'Project Portfolio',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 15,
+        description: 'Photos of completed projects'
+      }
+    ]
+  },
+  'Courier Services': {
+    fields: [
+      {
+        name: 'businessName',
+        label: 'Business Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
+      },
+      {
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'location',
+        label: 'Office Location',
+        type: 'location',
+        required: true,
+        placeholder: 'Select location on map'
+      },
+      {
+        name: 'services',
+        label: 'Services Offered',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Local Delivery',
+          'National Delivery',
+          'International Shipping',
+          'Express Delivery',
+          'Same Day Delivery',
+          'Document Delivery',
+          'Package Delivery',
+          'Bulk Shipping'
+        ]
+      },
+      {
+        name: 'deliveryTypes',
+        label: 'Delivery Types',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Motorcycle',
+          'Car',
+          'Van',
+          'Truck',
+          'Bicycle'
+        ]
+      },
+      {
+        name: 'serviceAreas',
+        label: 'Service Areas',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Diani Area',
+          'South Coast',
+          'Mombasa',
+          'Nairobi',
+          'Nationwide',
+          'International'
+        ]
+      },
+      {
+        name: 'operatingHours',
+        label: 'Operating Hours',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., Mon-Sat 8AM - 6PM'
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      }
+    ],
+    documents: [
+      {
+        name: 'businessLicense',
+        label: 'Business License',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
+      },
+      {
+        name: 'transportLicenses',
+        label: 'Transport Licenses',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Vehicle and transport licenses'
+      },
+      {
+        name: 'insuranceCertificates',
+        label: 'Insurance Certificates',
+        required: true,
+        accept: '.pdf',
+        maxSize: 3,
+        description: 'Cargo and liability insurance'
+      },
+      {
+        name: 'vehiclePhotos',
+        label: 'Vehicle Photos',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Photos of your delivery vehicles'
+      }
+    ]
   }
 };
