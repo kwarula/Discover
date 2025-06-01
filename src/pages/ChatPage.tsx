@@ -180,7 +180,7 @@ const ChatInterface: React.FC = () => {
               {/* Proactive Suggestions */}
               <ProactiveSuggestions 
                 suggestions={proactiveSuggestions}
-                onSuggestionClick={handleSendMessage} 
+                onSelectSuggestion={handleSendMessage} 
               />
               
               {messages.map((message, index) => (
