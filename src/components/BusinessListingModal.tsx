@@ -36,6 +36,7 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
   const { isLoggedIn, userProfile } = useAppContext();
   const [currentStep, setCurrentStep] = useState<FormStep>('contact');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showCategorySearch, setShowCategorySearch] = useState(true);
   const [categorySearch, setCategorySearch] = useState('');
   const [formData, setFormData] = useState<FormData>({
     email: '',
@@ -49,6 +50,8 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
   useEffect(() => {
     if (isOpen) {
       setCurrentStep(isLoggedIn ? 'business' : 'contact');
+      setShowCategorySearch(true);
+      setCategorySearch('');
       if (isLoggedIn && userProfile) {
         const [firstName = '', lastName = ''] = userProfile.username.split(' ');
         setFormData(prev => ({
@@ -65,6 +68,12 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
         cat.toLowerCase().includes(categorySearch.toLowerCase())
       )
     : businessCategories;
+
+  const handleCategorySelect = (category: string) => {
+    setFormData(prev => ({ ...prev, businessCategory: category }));
+    setCategorySearch('');
+    setShowCategorySearch(false); // Hide the category search after selection
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -167,53 +176,65 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="category">Business Category</Label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-diani-sand-400" />
-                <Input
-                  value={categorySearch}
-                  onChange={(e) => setCategorySearch(e.target.value)}
-                  placeholder="Search categories..."
-                  className="pl-9"
-                />
-              </div>
-              <div className="mt-2 max-h-40 overflow-y-auto space-y-1">
-                {filteredCategories.map((category) => (
-                  <div
-                    key={category}
-                    onClick={() => {
-                      setFormData(prev => ({ ...prev, businessCategory: category }));
-                      setCategorySearch('');
-                    }}
-                    className={`px-3 py-2 rounded-lg cursor-pointer transition-colors ${
-                      formData.businessCategory === category
-                        ? 'bg-diani-teal-500 text-white'
-                        : 'hover:bg-diani-sand-100'
-                    }`}
-                  >
-                    {category}
+              {showCategorySearch ? (
+                <>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-diani-sand-400" />
+                    <Input
+                      value={categorySearch}
+                      onChange={(e) => setCategorySearch(e.target.value)}
+                      placeholder="Search categories..."
+                      className="pl-9"
+                    />
                   </div>
-                ))}
+                  <div className="mt-2 max-h-40 overflow-y-auto space-y-1">
+                    {filteredCategories.map((category) => (
+                      <div
+                        key={category}
+                        onClick={() => handleCategorySelect(category)}
+                        className="px-3 py-2 rounded-lg cursor-pointer transition-colors hover:bg-diani-sand-100"
+                      >
+                        {category}
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center justify-between bg-diani-teal-50 px-3 py-2 rounded-lg">
+                  <span className="text-diani-teal-700">{formData.businessCategory}</span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowCategorySearch(true)}
+                    className="text-diani-teal-600 hover:text-diani-teal-700"
+                  >
+                    Change
+                  </Button>
+                </div>
+              )}
+            </div>
+            {!showCategorySearch && (
+              <div className="space-y-2 animate-fade-in">
+                <Label htmlFor="position">Your Position</Label>
+                <Select
+                  value={formData.position}
+                  onValueChange={(value) => setFormData(prev => ({ ...prev, position: value }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select your position" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Owner">Owner</SelectItem>
+                    <SelectItem value="Manager">Manager</SelectItem>
+                    <SelectItem value="Marketing Lead">Marketing Lead</SelectItem>
+                    <SelectItem value="Staff Member">Staff Member</SelectItem>
+                    <SelectItem value="Consultant">Consultant</SelectItem>
+                    <SelectItem value="Other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="position">Your Position</Label>
-              <Select
-                value={formData.position}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, position: value }))}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select your position" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Owner">Owner</SelectItem>
-                  <SelectItem value="Manager">Manager</SelectItem>
-                  <SelectItem value="Marketing Lead">Marketing Lead</SelectItem>
-                  <SelectItem value="Staff Member">Staff Member</SelectItem>
-                  <SelectItem value="Consultant">Consultant</SelectItem>
-                  <SelectItem value="Other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+            )}
           </div>
         );
 
@@ -258,7 +279,7 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
           <div className="flex flex-col gap-3">
             <Button
               type="submit"
-              disabled={isSubmitting}
+              disabled={isSubmitting || (currentStep === 'business' && showCategorySearch)}
               className="w-full bg-gradient-to-r from-diani-teal-500 to-diani-teal-600 hover:from-diani-teal-600 hover:to-diani-teal-700 text-white rounded-full py-3 font-medium transition-all duration-200"
             >
               {isSubmitting ? (

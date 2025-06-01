@@ -215,22 +215,22 @@ const LandingPage: React.FC = () => {
       </section>
 
       {/* Business Listing CTA */}
-      <section className="py-16 bg-gradient-to-r from-diani-teal-500 to-diani-teal-700">
+      <section className="py-12 sm:py-16 bg-gradient-to-r from-diani-teal-500 to-diani-teal-700">
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <div className="bg-white/10 rounded-3xl p-8 sm:p-12 backdrop-blur-sm border border-white/20">
-            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+          <div className="bg-white/10 rounded-3xl p-6 sm:p-8 md:p-12 backdrop-blur-sm border border-white/20">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-4">
               Own a Business in Diani?
             </h2>
-            <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+            <p className="text-base sm:text-lg text-white/90 mb-6 sm:mb-8 max-w-2xl mx-auto">
               Join hundreds of local businesses reaching thousands of travelers. 
               Get featured in AI-powered recommendations and boost your visibility.
             </p>
             <Button
               onClick={() => setBusinessModalOpen(true)}
               size="lg"
-              className="bg-white text-diani-teal-700 hover:bg-diani-sand-50 px-8 py-6 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+              className="w-full sm:w-auto bg-white text-diani-teal-700 hover:bg-diani-sand-50 px-4 sm:px-8 py-3 sm:py-6 text-base sm:text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
             >
-              <Building2 className="mr-2 h-5 w-5" />
+              <Building2 className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
               List Your Business on Discover Diani
             </Button>
           </div>
