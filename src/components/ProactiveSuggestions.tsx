@@ -30,11 +30,11 @@ export const ProactiveSuggestions: React.FC<ProactiveSuggestionsProps> = ({
                 "flex items-center gap-2",
                 suggestion.priority === 'high' 
                   ? "bg-diani-teal-500 text-white hover:bg-diani-teal-600"
-                  : "text-diani-sand-700 hover:text-diani-teal-700 hover:bg-white/80"
+                  : "bg-white/90 text-diani-sand-800 hover:bg-white hover:text-diani-teal-700"
               )}
             >
               <Icon size={16} />
-              <span className="truncate">{suggestion.text}</span>
+              <span className="truncate max-w-[200px]">{suggestion.text}</span>
             </button>
           )}
         )}

@@ -1,14 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { LanguageSelector } from '@/components/LanguageSelector';
-import { MessageCircle, Search, MapPin, Phone, Calendar } from 'lucide-react';
+import { MessageCircle, Search, MapPin, Phone, Calendar, Apple, PlayCircle } from 'lucide-react';
+import { StoreModal } from '@/components/StoreModal';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
+  const [storeModalOpen, setStoreModalOpen] = useState(false);
+  const [selectedStore, setSelectedStore] = useState<'App Store' | 'Google Play'>('App Store');
 
   const handleStartExploring = () => {
     navigate('/chat');
+  };
+
+  const handleStoreClick = (store: 'App Store' | 'Google Play') => {
+    setSelectedStore(store);
+    setStoreModalOpen(true);
   };
 
   return (
@@ -47,13 +55,40 @@ const LandingPage: React.FC = () => {
                 </p>
               </div>
               
+              {/* App Store Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <Button
+                  onClick={() => handleStoreClick('App Store')}
+                  size="lg"
+                  className="bg-black hover:bg-gray-800 text-white px-8 py-6 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-3"
+                >
+                  <Apple className="h-8 w-8" />
+                  <div className="text-left">
+                    <div className="text-xs opacity-80">Download on the</div>
+                    <div className="text-xl font-semibold">App Store</div>
+                  </div>
+                </Button>
+
+                <Button
+                  onClick={() => handleStoreClick('Google Play')}
+                  size="lg"
+                  className="bg-black hover:bg-gray-800 text-white px-8 py-6 text-lg font-semibold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-3"
+                >
+                  <PlayCircle className="h-8 w-8" />
+                  <div className="text-left">
+                    <div className="text-xs opacity-80">Get it on</div>
+                    <div className="text-xl font-semibold">Google Play</div>
+                  </div>
+                </Button>
+              </div>
+
               <Button
                 onClick={handleStartExploring}
                 size="lg"
-                className="bg-diani-teal-500 hover:bg-diani-teal-700 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="bg-diani-teal-500 hover:bg-diani-teal-700 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 mt-8"
               >
                 <MessageCircle className="mr-2 h-5 w-5" />
-                Start Exploring
+                Try Web Version
               </Button>
 
               {/* Screenshot */}
@@ -207,6 +242,13 @@ const LandingPage: React.FC = () => {
           </div>
         </div>
       </footer>
+
+      {/* Store Modal */}
+      <StoreModal
+        isOpen={storeModalOpen}
+        onClose={() => setStoreModalOpen(false)}
+        storeName={selectedStore}
+      />
     </div>
   );
 };

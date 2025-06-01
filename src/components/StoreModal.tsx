@@ -59,21 +59,21 @@ export const StoreModal: React.FC<StoreModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px] bg-gradient-to-br from-diani-sand-50 to-white rounded-3xl">
+      <DialogContent className="sm:max-w-[425px] w-[95vw] mx-auto bg-gradient-to-br from-diani-sand-50 to-white rounded-3xl p-4 sm:p-6">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center flex items-center justify-center gap-2">
-            <Sparkles className="h-6 w-6 text-diani-teal-500" />
+          <DialogTitle className="text-xl sm:text-2xl font-bold text-center flex items-center justify-center gap-2">
+            <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 text-diani-teal-500" />
             Get Priority Access
           </DialogTitle>
         </DialogHeader>
 
-        <div className="mt-6 space-y-6">
+        <div className="mt-4 sm:mt-6 space-y-4 sm:space-y-6">
           {/* Icon and Description */}
           <div className="text-center space-y-3">
-            <div className="w-16 h-16 bg-diani-teal-100 rounded-full flex items-center justify-center mx-auto">
-              <Mail className="h-8 w-8 text-diani-teal-600" />
+            <div className="w-12 h-12 sm:w-16 sm:h-16 bg-diani-teal-100 rounded-full flex items-center justify-center mx-auto">
+              <Mail className="h-6 w-6 sm:h-8 sm:w-8 text-diani-teal-600" />
             </div>
-            <p className="text-diani-sand-700">
+            <p className="text-sm sm:text-base text-diani-sand-700">
               Be among the first to experience Discover Diani on {storeName}. 
               Sign up for exclusive early access and special perks!
             </p>
@@ -87,14 +87,14 @@ export const StoreModal: React.FC<StoreModalProps> = ({
                 placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-12 bg-white border-diani-sand-200 focus:border-diani-teal-500 focus:ring-diani-teal-500"
+                className="h-10 sm:h-12 bg-white border-diani-sand-200 focus:border-diani-teal-500 focus:ring-diani-teal-500"
               />
             </div>
 
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-12 bg-gradient-to-r from-diani-teal-500 to-diani-teal-600 hover:from-diani-teal-600 hover:to-diani-teal-700 text-white rounded-full font-medium transition-all duration-200"
+              className="w-full h-10 sm:h-12 bg-gradient-to-r from-diani-teal-500 to-diani-teal-600 hover:from-diani-teal-600 hover:to-diani-teal-700 text-white rounded-full font-medium transition-all duration-200"
             >
               {isSubmitting ? (
                 <div className="flex items-center gap-2">
@@ -108,9 +108,9 @@ export const StoreModal: React.FC<StoreModalProps> = ({
           </form>
 
           {/* Benefits */}
-          <div className="bg-diani-teal-50 rounded-xl p-4 space-y-2">
-            <h4 className="font-medium text-diani-teal-700">Early Access Benefits:</h4>
-            <ul className="text-sm text-diani-teal-600 space-y-1">
+          <div className="bg-diani-teal-50 rounded-xl p-3 sm:p-4 space-y-2">
+            <h4 className="font-medium text-diani-teal-700 text-sm sm:text-base">Early Access Benefits:</h4>
+            <ul className="text-xs sm:text-sm text-diani-teal-600 space-y-1">
               <li>• Priority access to new features</li>
               <li>• Exclusive in-app rewards</li>
               <li>• Special launch day offers</li>
