@@ -173,22 +173,11 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
         },
         documents: formData.uploadedDocuments,
         verificationStatus: 'pending',
-        submittedAt: new Date(),
       };
 
-      // Send to webhook
-      const response = await fetch('https://n8n.zaidicreatorlab.com/webhook-test/add-listing', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(businessListing),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit listing');
-      }
-
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
       toast({
         title: "Submission successful!",
         description: "We'll review your listing and contact you soon.",
@@ -204,7 +193,6 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
         uploadedDocuments: {},
       });
     } catch (error) {
-      console.error('Submission error:', error);
       toast({
         title: "Submission failed",
         description: "Please try again later.",
