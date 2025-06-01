@@ -58,6 +58,9 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
     uploadedDocuments: {},
   });
 
+  // Get implemented categories from categoryFields
+  const implementedCategories = Object.keys(categoryFields);
+
   useEffect(() => {
     if (isOpen) {
       setCurrentStep('category');
@@ -74,10 +77,10 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
   }, [isOpen, isLoggedIn, userProfile]);
 
   const filteredCategories = categorySearch
-    ? businessCategories.filter(cat => 
+    ? implementedCategories.filter(cat => 
         cat.toLowerCase().includes(categorySearch.toLowerCase())
       )
-    : businessCategories;
+    : implementedCategories;
 
   const handleCategorySelect = (category: string) => {
     setFormData(prev => ({ ...prev, selectedBusinessCategory: category }));
@@ -176,11 +179,12 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
         submittedAt: new Date(),
       };
 
-      // Send to webhook
-      const response = await fetch('https://n8n.zaidicreatorlab.com/webhook-test/add-listing', {
+      // Send to our edge function proxy instead of directly to webhook
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/webhook-proxy`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify(businessListing),
       });
@@ -336,7 +340,7 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
                 autoFocus
               />
             </div>
-            <div className="max-h-[50vh] overflow-y-auto space-y-1 rounded-lg">
+            <div className="max-h-[50vh] overflow-y-auto space-y-1 rounded-lg custom-scrollbar">
               {filteredCategories.map((category) => (
                 <button
                   key={category}
@@ -347,6 +351,15 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
                   {category}
                 </button>
               ))}
+              {filteredCategories.length === 0 && (
+                <div className="text-center py-4 text-diani-sand-500">
+                  {categorySearch ? (
+                    <p>No matching categories found</p>
+                  ) : (
+                    <p>Loading categories...</p>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         );
