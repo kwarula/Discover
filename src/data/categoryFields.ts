@@ -2310,5 +2310,628 @@ export const categoryFields: CategoryFields = {
         description: 'Photos of your delivery vehicles'
       }
     ]
+  },
+  'Dentist': {
+    fields: [
+      {
+        name: 'businessName',
+        label: 'Business Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
+      },
+      {
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'practitionerName',
+        label: 'Dentist Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Full name of dentist'
+      },
+      {
+        name: 'location',
+        label: 'Clinic Location',
+        type: 'location',
+        required: true,
+        placeholder: 'Select location on map'
+      },
+      {
+        name: 'services',
+        label: 'Services Offered',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'General Dentistry',
+          'Cosmetic Dentistry',
+          'Orthodontics',
+          'Periodontics',
+          'Root Canal',
+          'Dental Implants',
+          'Teeth Whitening',
+          'Emergency Care'
+        ]
+      },
+      {
+        name: 'specializations',
+        label: 'Specializations',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Family Dentistry',
+          'Pediatric Dentistry',
+          'Oral Surgery',
+          'Prosthodontics',
+          'Endodontics',
+          'Dental Aesthetics'
+        ]
+      },
+      {
+        name: 'facilities',
+        label: 'Clinic Facilities',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Digital X-ray',
+          'Sterilization Room',
+          'Waiting Area',
+          'Wheelchair Access',
+          'Parking',
+          'Air Conditioning'
+        ]
+      },
+      {
+        name: 'operatingHours',
+        label: 'Operating Hours',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., Mon-Fri 9AM - 5PM'
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      }
+    ],
+    documents: [
+      {
+        name: 'businessLicense',
+        label: 'Business License',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
+      },
+      {
+        name: 'practitionerLicense',
+        label: 'Dental Practice License',
+        required: true,
+        accept: '.pdf',
+        maxSize: 3,
+        description: 'Valid dental practice license'
+      },
+      {
+        name: 'qualifications',
+        label: 'Professional Qualifications',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Dental qualifications and certifications'
+      },
+      {
+        name: 'insuranceCertificate',
+        label: 'Professional Insurance',
+        required: true,
+        accept: '.pdf',
+        maxSize: 2,
+        description: 'Professional liability insurance'
+      },
+      {
+        name: 'clinicPhotos',
+        label: 'Clinic Photos',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Photos of your dental clinic and facilities'
+      }
+    ]
+  },
+  'DJ Services': {
+    fields: [
+      {
+        name: 'businessName',
+        label: 'Business Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
+      },
+      {
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'artistName',
+        label: 'DJ Name/Stage Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Your DJ or stage name'
+      },
+      {
+        name: 'location',
+        label: 'Base Location',
+        type: 'location',
+        required: true,
+        placeholder: 'Select location on map'
+      },
+      {
+        name: 'musicGenres',
+        label: 'Music Genres',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'House',
+          'Afrobeats',
+          'Hip Hop',
+          'R&B',
+          'Reggae',
+          'EDM',
+          'Top 40',
+          'African Traditional'
+        ]
+      },
+      {
+        name: 'services',
+        label: 'Services Offered',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Club DJ',
+          'Wedding DJ',
+          'Corporate Events',
+          'Private Parties',
+          'Beach Events',
+          'Mobile DJ',
+          'MC Services',
+          'Sound Equipment Rental'
+        ]
+      },
+      {
+        name: 'equipment',
+        label: 'Available Equipment',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Professional Mixer',
+          'Speakers',
+          'Lighting System',
+          'Microphones',
+          'Turntables',
+          'Smoke Machine',
+          'LED Screens'
+        ]
+      },
+      {
+        name: 'availability',
+        label: 'Typical Availability',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., Weekends, Evenings, 24/7'
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      }
+    ],
+    documents: [
+      {
+        name: 'businessLicense',
+        label: 'Business License',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
+      },
+      {
+        name: 'equipmentPhotos',
+        label: 'Equipment Photos',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Photos of your DJ equipment setup'
+      },
+      {
+        name: 'performanceVideos',
+        label: 'Performance Videos (Optional)',
+        required: false,
+        accept: '.mp4,.mov',
+        maxSize: 20,
+        description: 'Short clips of your performances'
+      },
+      {
+        name: 'musicLicenses',
+        label: 'Music Licenses (Optional)',
+        required: false,
+        accept: '.pdf',
+        maxSize: 5,
+        description: 'Any relevant music licensing documentation'
+      }
+    ]
+  },
+  'Electrician': {
+    fields: [
+      {
+        name: 'businessName',
+        label: 'Business Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
+      },
+      {
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'location',
+        label: 'Business Location',
+        type: 'location',
+        required: true,
+        placeholder: 'Select location on map'
+      },
+      {
+        name: 'services',
+        label: 'Services Offered',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Residential Wiring',
+          'Commercial Wiring',
+          'Industrial Electrical',
+          'Emergency Repairs',
+          'Electrical Maintenance',
+          'Solar Installation',
+          'Generator Installation',
+          'Safety Inspections'
+        ]
+      },
+      {
+        name: 'specializations',
+        label: 'Specializations',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'New Construction',
+          'Renovations',
+          'Troubleshooting',
+          'Smart Home Systems',
+          'Security Systems',
+          'Lighting Design',
+          'Power Backup Systems'
+        ]
+      },
+      {
+        name: 'certifications',
+        label: 'Professional Certifications',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Licensed Electrician',
+          'High Voltage Certified',
+          'Solar Installation',
+          'Industrial Systems',
+          'Safety Certified'
+        ]
+      },
+      {
+        name: 'operatingHours',
+        label: 'Operating Hours',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., Mon-Sat 8AM - 6PM'
+      },
+      {
+        name: 'emergencyAvailable',
+        label: '24/7 Emergency Service',
+        type: 'select',
+        required: true,
+        options: ['Yes', 'No']
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      }
+    ],
+    documents: [
+      {
+        name: 'businessLicense',
+        label: 'Business License',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
+      },
+      {
+        name: 'electricianLicense',
+        label: 'Electrical Contractor License',
+        required: true,
+        accept: '.pdf',
+        maxSize: 3,
+        description: 'Valid electrical contractor license'
+      },
+      {
+        name: 'certifications',
+        label: 'Professional Certifications',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 10,
+        description: 'Relevant electrical certifications'
+      },
+      {
+        name: 'insuranceCertificate',
+        label: 'Liability Insurance',
+        required: true,
+        accept: '.pdf',
+        maxSize: 2,
+        description: 'Professional liability insurance'
+      },
+      {
+        name: 'workPhotos',
+        label: 'Work Portfolio',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 15,
+        description: 'Photos of completed electrical work'
+      }
+    ]
+  },
+  'Event Organizer': {
+    fields: [
+      {
+        name: 'businessName',
+        label: 'Business Name',
+        type: 'text',
+        required: true,
+        placeholder: 'Enter business name',
+        validation: {
+          pattern: '^[a-zA-Z0-9\\s\\-&\']{2,50}$',
+          message: 'Business name must be between 2-50 characters'
+        }
+      },
+      {
+        name: 'registrationNumber',
+        label: 'Business Registration Number',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., BN2024/001',
+        validation: {
+          pattern: '^[A-Z0-9/\\-]{5,20}$',
+          message: 'Enter a valid registration number'
+        }
+      },
+      {
+        name: 'location',
+        label: 'Office Location',
+        type: 'location',
+        required: true,
+        placeholder: 'Select location on map'
+      },
+      {
+        name: 'eventTypes',
+        label: 'Event Types',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Weddings',
+          'Corporate Events',
+          'Beach Parties',
+          'Birthday Celebrations',
+          'Conferences',
+          'Product Launches',
+          'Cultural Events',
+          'Private Parties'
+        ]
+      },
+      {
+        name: 'services',
+        label: 'Services Offered',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Full Event Planning',
+          'Venue Selection',
+          'Catering Coordination',
+          'Decor Services',
+          'Entertainment Booking',
+          'Photography/Videography',
+          'Transportation',
+          'On-site Management'
+        ]
+      },
+      {
+        name: 'specialties',
+        label: 'Specialties',
+        type: 'multiselect',
+        required: true,
+        options: [
+          'Luxury Events',
+          'Beach Weddings',
+          'Traditional Ceremonies',
+          'Corporate Retreats',
+          'Team Building',
+          'Festival Management',
+          'Destination Events'
+        ]
+      },
+      {
+        name: 'capacity',
+        label: 'Event Capacity Range',
+        type: 'select',
+        required: true,
+        options: [
+          'Up to 50 guests',
+          '50-200 guests',
+          '200-500 guests',
+          '500+ guests'
+        ]
+      },
+      {
+        name: 'operatingHours',
+        label: 'Office Hours',
+        type: 'text',
+        required: true,
+        placeholder: 'e.g., Mon-Fri 9AM - 5PM'
+      },
+      {
+        name: 'phoneNumber',
+        label: 'Business Phone',
+        type: 'tel',
+        required: true,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      },
+      {
+        name: 'whatsappNumber',
+        label: 'WhatsApp Number (Optional)',
+        type: 'tel',
+        required: false,
+        placeholder: '+254 XXX XXX XXX',
+        validation: {
+          pattern: '^\\+254[0-9]{9}$',
+          message: 'Enter a valid Kenyan phone number'
+        }
+      }
+    ],
+    documents: [
+      {
+        name: 'businessLicense',
+        label: 'Business License',
+        required: true,
+        accept: '.pdf,.jpg,.jpeg,.png',
+        maxSize: 5,
+        description: 'Upload a valid business license or permit'
+      },
+      {
+        name: 'insuranceCertificate',
+        label: 'Event Insurance',
+        required: true,
+        accept: '.pdf',
+        maxSize: 3,
+        description: 'Event liability insurance certificate'
+      },
+      {
+        name: 'portfolioPhotos',
+        label: 'Event Portfolio',
+        required: true,
+        accept: '.jpg,.jpeg,.png',
+        maxSize: 20,
+        description: 'Photos of past events'
+      },
+      {
+        name: 'clientTestimonials',
+        label: 'Client Testimonials (Optional)',
+        required: false,
+        accept: '.pdf',
+        maxSize: 5,
+        description: 'Written testimonials from past clients'
+      },
+      {
+        name: 'vendorAgreements',
+        label: 'Vendor Partnerships (Optional)',
+        required: false,
+        accept: '.pdf',
+        maxSize: 10,
+        description: 'Documentation of vendor partnerships'
+      }
+    ]
   }
 };
