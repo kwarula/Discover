@@ -443,23 +443,25 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[500px] bg-white rounded-3xl p-6">
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center flex items-center justify-center gap-2">
-            <Building2 className="h-6 w-6 text-diani-teal-500" />
+      <DialogContent className="sm:max-w-[500px] w-[95vw] mx-auto bg-white rounded-3xl p-4 sm:p-6 max-h-[90vh] overflow-hidden flex flex-col">
+        <DialogHeader className="flex-shrink-0">
+          <DialogTitle className="text-xl sm:text-2xl font-bold text-center flex items-center justify-center gap-2">
+            <Building2 className="h-5 w-5 sm:h-6 sm:w-6 text-diani-teal-500" />
             {getStepTitle()}
           </DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {renderStep()}
+        <form onSubmit={handleSubmit} className="flex flex-col flex-1 overflow-hidden">
+          <div className="flex-1 overflow-y-auto px-1 py-4 space-y-6 custom-scrollbar">
+            {renderStep()}
+          </div>
 
-          <div className="flex flex-col gap-3">
+          <div className="flex-shrink-0 flex flex-col gap-3 pt-4 mt-auto border-t border-gray-100">
             {currentStep !== 'category' && (
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-gradient-to-r from-diani-teal-500 to-diani-teal-600 hover:from-diani-teal-600 hover:to-diani-teal-700 text-white rounded-full py-3 font-medium transition-all duration-200"
+                className="w-full bg-gradient-to-r from-diani-teal-500 to-diani-teal-600 hover:from-diani-teal-600 hover:to-diani-teal-700 text-white rounded-full py-2.5 sm:py-3 font-medium transition-all duration-200"
               >
                 {isSubmitting ? (
                   <div className="flex items-center gap-2">
