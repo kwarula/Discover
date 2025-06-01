@@ -7,6 +7,7 @@ import { TypingIndicator } from '@/components/TypingIndicator';
 import { SignupModal } from '@/components/SignupModal';
 import { ProfileModal } from '@/components/ProfileModal';
 import { FloatingActionButton } from '@/components/FloatingActionButton';
+import { ProactiveSuggestions } from '@/components/ProactiveSuggestions';
 import { sendChatMessage } from '@/services/chatApi';
 import { ChatMessage as ChatMessageType } from '@/types';
 import { useToast } from '@/hooks/use-toast';
@@ -146,6 +147,9 @@ const ChatInterface: React.FC = () => {
         <div className="h-full max-w-5xl mx-auto px-4 py-6 flex flex-col">
           <div className="flex-1 overflow-y-auto custom-scrollbar smooth-scroll">
             <div className="space-y-4 pb-4">
+              {/* Proactive Suggestions */}
+              <ProactiveSuggestions onSuggestionClick={handleSendMessage} />
+              
               {messages.map((message, index) => (
                 <ChatMessage
                   key={message.id}

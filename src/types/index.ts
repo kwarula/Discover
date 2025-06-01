@@ -1,4 +1,3 @@
-
 export interface ChatMessage {
   id: string;
   text: string;
@@ -29,4 +28,18 @@ export interface ChatApiRequest {
   message: string;
   userId: string;
   userProfile?: UserProfile;
+}
+
+export interface Suggestion {
+  id: string;
+  text: string;
+  query: string;
+  icon: keyof typeof import('lucide-react');
+  priority: 'low' | 'medium' | 'high';
+  category: 'time' | 'weather' | 'preference' | 'memory';
+  context?: {
+    time?: string;
+    weather?: string;
+    previousQuery?: string;
+  };
 }
