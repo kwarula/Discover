@@ -1,6 +1,6 @@
-
 import React from 'react';
 import { User } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useAppContext } from '@/contexts/AppContext';
 import { Button } from '@/components/ui/button';
 import { WeatherWidget } from '@/components/WeatherWidget';
@@ -15,13 +15,15 @@ export const Header: React.FC = () => {
     <header className="glass border-b border-white/20 sticky top-0 z-40">
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between">
         <div className="flex items-center flex-shrink-0">
-          <img 
-            src="/discover_diani_website_logo.png" 
-            alt="Discover Diani Logo" 
-            className={`w-auto hover:scale-105 transition-transform ${
-              isMobile ? 'h-8 sm:h-10' : 'h-12'
-            }`}
-          />
+          <Link to="/">
+            <img 
+              src="/discover_diani_website_logo.png" 
+              alt="Discover Diani Logo" 
+              className={`w-auto hover:scale-105 transition-transform ${
+                isMobile ? 'h-8 sm:h-10' : 'h-12'
+              }`}
+            />
+          </Link>
         </div>
         
         <div className={`flex items-center ${
