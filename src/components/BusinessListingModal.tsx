@@ -10,7 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
-import { Building2, Search } from 'lucide-react';
+import { Building2, Search, ArrowLeft } from 'lucide-react';
 import { businessCategories } from '@/data/businessCategories';
 import { useAppContext } from '@/contexts/AppContext';
 
@@ -19,7 +19,7 @@ interface BusinessListingModalProps {
   onClose: () => void;
 }
 
-type FormStep = 'contact' | 'business' | 'confirm';
+type FormStep = 'category' | 'contact' | 'business' | 'confirm';
 
 interface FormData {
   email: string;
@@ -34,9 +34,8 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
   onClose,
 }) => {
   const { isLoggedIn, userProfile } = useAppContext();
-  const [currentStep, setCurrentStep] = useState<FormStep>('contact');
+  const [currentStep, setCurrentStep] = useState<FormStep>('category');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showCategorySearch, setShowCategorySearch] = useState(true);
   const [categorySearch, setCategorySearch] = useState('');
   const [formData, setFormData] = useState<FormData>({
     email: '',
@@ -49,8 +48,7 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
   // Reset form when modal opens
   useEffect(() => {
     if (isOpen) {
-      setCurrentStep(isLoggedIn ? 'business' : 'contact');
-      setShowCategorySearch(true);
+      setCurrentStep('category');
       setCategorySearch('');
       if (isLoggedIn && userProfile) {
         const [firstName = '', lastName = ''] = userProfile.username.split(' ');
@@ -72,7 +70,7 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
   const handleCategorySelect = (category: string) => {
     setFormData(prev => ({ ...prev, businessCategory: category }));
     setCategorySearch('');
-    setShowCategorySearch(false); // Hide the category search after selection
+    setCurrentStep(isLoggedIn ? 'business' : 'contact');
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -135,6 +133,34 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
 
   const renderStep = () => {
     switch (currentStep) {
+      case 'category':
+        return (
+          <div className="space-y-4">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-diani-sand-400" />
+              <Input
+                value={categorySearch}
+                onChange={(e) => setCategorySearch(e.target.value)}
+                placeholder="Search business categories..."
+                className="pl-9"
+                autoFocus
+              />
+            </div>
+            <div className="max-h-[50vh] overflow-y-auto space-y-1 rounded-lg">
+              {filteredCategories.map((category) => (
+                <button
+                  key={category}
+                  type="button"
+                  onClick={() => handleCategorySelect(category)}
+                  className="w-full text-left px-3 py-2 rounded-lg cursor-pointer transition-colors hover:bg-diani-sand-100 focus:outline-none focus:ring-2 focus:ring-diani-teal-500"
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+
       case 'contact':
         return (
           <div className="space-y-4">
@@ -174,67 +200,29 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
       case 'business':
         return (
           <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="category">Business Category</Label>
-              {showCategorySearch ? (
-                <>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-diani-sand-400" />
-                    <Input
-                      value={categorySearch}
-                      onChange={(e) => setCategorySearch(e.target.value)}
-                      placeholder="Search categories..."
-                      className="pl-9"
-                    />
-                  </div>
-                  <div className="mt-2 max-h-40 overflow-y-auto space-y-1">
-                    {filteredCategories.map((category) => (
-                      <div
-                        key={category}
-                        onClick={() => handleCategorySelect(category)}
-                        className="px-3 py-2 rounded-lg cursor-pointer transition-colors hover:bg-diani-sand-100"
-                      >
-                        {category}
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div className="flex items-center justify-between bg-diani-teal-50 px-3 py-2 rounded-lg">
-                  <span className="text-diani-teal-700">{formData.businessCategory}</span>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setShowCategorySearch(true)}
-                    className="text-diani-teal-600 hover:text-diani-teal-700"
-                  >
-                    Change
-                  </Button>
-                </div>
-              )}
+            <div className="bg-diani-teal-50 px-3 py-2 rounded-lg">
+              <div className="text-xs text-diani-teal-600">Selected Category</div>
+              <div className="text-diani-teal-700 font-medium">{formData.businessCategory}</div>
             </div>
-            {!showCategorySearch && (
-              <div className="space-y-2 animate-fade-in">
-                <Label htmlFor="position">Your Position</Label>
-                <Select
-                  value={formData.position}
-                  onValueChange={(value) => setFormData(prev => ({ ...prev, position: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select your position" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Owner">Owner</SelectItem>
-                    <SelectItem value="Manager">Manager</SelectItem>
-                    <SelectItem value="Marketing Lead">Marketing Lead</SelectItem>
-                    <SelectItem value="Staff Member">Staff Member</SelectItem>
-                    <SelectItem value="Consultant">Consultant</SelectItem>
-                    <SelectItem value="Other">Other</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            )}
+            <div className="space-y-2">
+              <Label htmlFor="position">Your Position</Label>
+              <Select
+                value={formData.position}
+                onValueChange={(value) => setFormData(prev => ({ ...prev, position: value }))}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your position" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Owner">Owner</SelectItem>
+                  <SelectItem value="Manager">Manager</SelectItem>
+                  <SelectItem value="Marketing Lead">Marketing Lead</SelectItem>
+                  <SelectItem value="Staff Member">Staff Member</SelectItem>
+                  <SelectItem value="Consultant">Consultant</SelectItem>
+                  <SelectItem value="Other">Other</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         );
 
@@ -263,13 +251,26 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
     }
   };
 
+  const getStepTitle = () => {
+    switch (currentStep) {
+      case 'category':
+        return 'Choose Your Business Category';
+      case 'contact':
+        return 'Your Contact Information';
+      case 'business':
+        return 'Business Details';
+      case 'confirm':
+        return 'Review & Submit';
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[500px] bg-white rounded-3xl p-6">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center flex items-center justify-center gap-2">
             <Building2 className="h-6 w-6 text-diani-teal-500" />
-            List Your Business
+            {getStepTitle()}
           </DialogTitle>
         </DialogHeader>
 
@@ -277,30 +278,37 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
           {renderStep()}
 
           <div className="flex flex-col gap-3">
-            <Button
-              type="submit"
-              disabled={isSubmitting || (currentStep === 'business' && showCategorySearch)}
-              className="w-full bg-gradient-to-r from-diani-teal-500 to-diani-teal-600 hover:from-diani-teal-600 hover:to-diani-teal-700 text-white rounded-full py-3 font-medium transition-all duration-200"
-            >
-              {isSubmitting ? (
-                <div className="flex items-center gap-2">
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
-                  <span>Processing...</span>
-                </div>
-              ) : currentStep === 'confirm' ? (
-                'Submit Listing'
-              ) : (
-                'Continue'
-              )}
-            </Button>
+            {currentStep !== 'category' && (
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-gradient-to-r from-diani-teal-500 to-diani-teal-600 hover:from-diani-teal-600 hover:to-diani-teal-700 text-white rounded-full py-3 font-medium transition-all duration-200"
+              >
+                {isSubmitting ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent" />
+                    <span>Processing...</span>
+                  </div>
+                ) : currentStep === 'confirm' ? (
+                  'Submit Listing'
+                ) : (
+                  'Continue'
+                )}
+              </Button>
+            )}
 
-            {currentStep !== 'contact' && (
+            {currentStep !== 'category' && (
               <Button
                 type="button"
                 variant="ghost"
-                onClick={() => setCurrentStep(currentStep === 'confirm' ? 'business' : 'contact')}
+                onClick={() => setCurrentStep(prev => {
+                  if (prev === 'confirm') return 'business';
+                  if (prev === 'business') return isLoggedIn ? 'category' : 'contact';
+                  return 'category';
+                })}
                 className="text-diani-sand-600 hover:text-diani-teal-700"
               >
+                <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Button>
             )}
