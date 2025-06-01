@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { LanguageSelector } from '@/components/LanguageSelector';
-import { MessageCircle, Search, MapPin, Phone, Calendar, Apple, PlayCircle } from 'lucide-react';
+import { MessageCircle, Search, MapPin, Phone, Calendar, Apple, PlayCircle, Building2 } from 'lucide-react';
 import { StoreModal } from '@/components/StoreModal';
+import { BusinessListingModal } from '@/components/BusinessListingModal';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const [storeModalOpen, setStoreModalOpen] = useState(false);
   const [selectedStore, setSelectedStore] = useState<'App Store' | 'Google Play'>('App Store');
+  const [businessModalOpen, setBusinessModalOpen] = useState(false);
 
   const handleStartExploring = () => {
     navigate('/chat');
@@ -212,6 +214,29 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* Business Listing CTA */}
+      <section className="py-16 bg-gradient-to-r from-diani-teal-500 to-diani-teal-700">
+        <div className="max-w-6xl mx-auto px-4 text-center">
+          <div className="bg-white/10 rounded-3xl p-8 sm:p-12 backdrop-blur-sm border border-white/20">
+            <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+              Own a Business in Diani?
+            </h2>
+            <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto">
+              Join hundreds of local businesses reaching thousands of travelers. 
+              Get featured in AI-powered recommendations and boost your visibility.
+            </p>
+            <Button
+              onClick={() => setBusinessModalOpen(true)}
+              size="lg"
+              className="bg-white text-diani-teal-700 hover:bg-diani-sand-50 px-8 py-6 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+            >
+              <Building2 className="mr-2 h-5 w-5" />
+              List Your Business on Discover Diani
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Footer */}
       <footer className="bg-diani-sand-900 text-white py-12">
         <div className="max-w-6xl mx-auto px-4">
@@ -243,11 +268,15 @@ const LandingPage: React.FC = () => {
         </div>
       </footer>
 
-      {/* Store Modal */}
+      {/* Modals */}
       <StoreModal
         isOpen={storeModalOpen}
         onClose={() => setStoreModalOpen(false)}
         storeName={selectedStore}
+      />
+      <BusinessListingModal
+        isOpen={businessModalOpen}
+        onClose={() => setBusinessModalOpen(false)}
       />
     </div>
   );
