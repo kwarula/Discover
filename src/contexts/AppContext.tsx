@@ -69,14 +69,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Load profile from Supabase auth service
   useEffect(() => {
     const loadCurrentUser = async () => {
-      const currentUser = await authService.getCurrentUser();
-      if (currentUser) {
-        setUserProfileState({
-          username: currentUser.username,
+      try {
+        const currentUser = await authService.getCurrentUser();
+        if (currentUser) {
+          setUserProfileState({
+            username: currentUser.username,
           travelStyle: currentUser.travelStyle,
           interests: currentUser.interests,
           preferredLanguage: currentUser.preferredLanguage
         });
+      }
+    } catch (error) {
+        console.error("Failed to load current user on initial load:", error);
+        // Optionally, set userProfile to null or handle error state
+        setUserProfileState(null);
       }
     };
 
@@ -85,14 +91,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // Listen to auth state changes
     const { data: { subscription } } = authService.onAuthStateChange(async (user) => {
       if (user) {
-        const currentUser = await authService.getCurrentUser();
-        if (currentUser) {
-          setUserProfileState({
-            username: currentUser.username,
-            travelStyle: currentUser.travelStyle,
-            interests: currentUser.interests,
-            preferredLanguage: currentUser.preferredLanguage
-          });
+        try {
+          const currentUser = await authService.getCurrentUser();
+          if (currentUser) {
+            setUserProfileState({
+              username: currentUser.username,
+              travelStyle: currentUser.travelStyle,
+              interests: currentUser.interests,
+              preferredLanguage: currentUser.preferredLanguage
+            });
+          } else {
+            // This case might occur if the user exists in auth but not in the profile table
+            setUserProfileState(null);
+          }
+        } catch (error) {
+          console.error("Failed to load current user on auth state change:", error);
+          setUserProfileState(null);
         }
       } else {
         setUserProfileState(null);

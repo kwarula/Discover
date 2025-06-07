@@ -139,10 +139,36 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
     }
 
     if (currentStep === 'business') {
-      if (!formData.selectedBusinessCategory || !formData.position) {
-        toast({
-          title: "All fields required",
-          description: "Please select both category and position.",
+      // Validate required dynamic fields for the selected category
+      const currentCategoryFields = categoryFields[formData.selectedBusinessCategory]?.fields || [];
+      for (const field of currentCategoryFields) {
+        if (field.required) {
+          const value = formData.businessDetails[field.name];
+          let isEmpty = false;
+          if (Array.isArray(value)) {
+            isEmpty = value.length === 0;
+          } else if (typeof value === 'string') {
+            isEmpty = !value.trim();
+          } else if (value === null || value === undefined) {
+            isEmpty = true;
+          }
+          // Add other type checks if necessary, e.g. for 'location' type
+
+          if (isEmpty) {
+            toast({
+              title: "Missing required field",
+              description: `Please fill in the "${field.label}" field.`,
+              variant: "destructive",
+            });
+            return;
+          }
+        }
+      }
+      // Also validate position, though it's static in this form version
+      if (!formData.position) {
+         toast({
+          title: "Position required",
+          description: "Please specify your position in the business.",
           variant: "destructive",
         });
         return;
@@ -152,6 +178,20 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
     }
 
     if (currentStep === 'documents') {
+      // Validate required documents for the selected category
+      const currentCategoryDocuments = categoryFields[formData.selectedBusinessCategory]?.documents || [];
+      for (const docField of currentCategoryDocuments) {
+        if (docField.required) {
+          if (!formData.uploadedDocuments[docField.name]) {
+            toast({
+              title: "Missing required document",
+              description: `Please upload the "${docField.label}".`,
+              variant: "destructive",
+            });
+            return;
+          }
+        }
+      }
       setCurrentStep('confirm');
       return;
     }
@@ -193,9 +233,10 @@ export const BusinessListingModal: React.FC<BusinessListingModalProps> = ({
         uploadedDocuments: {},
       });
     } catch (error) {
+      console.error("Business listing submission failed:", error);
       toast({
         title: "Submission failed",
-        description: "Please try again later.",
+        description: error instanceof Error ? error.message : "An unexpected error occurred. Please try again later.",
         variant: "destructive",
       });
     } finally {

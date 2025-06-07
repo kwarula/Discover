@@ -1,5 +1,13 @@
 import { ChatApiRequest, ChatApiResponse } from '@/types';
 
+// Custom error for unexpected response formats
+export class UnexpectedResponseFormatError extends Error {
+  constructor(message: string, public responseData?: any) {
+    super(message);
+    this.name = 'UnexpectedResponseFormatError';
+  }
+}
+
 const API_ENDPOINT = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-proxy`;
 
 export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiResponse> => {
@@ -17,71 +25,76 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
     });
 
     console.log('API Response status:', response.status);
-    console.log('API Response headers:', response.headers);
+    // console.log('API Response headers:', response.headers); // Can be verbose
 
     if (response.status === 401) {
       console.error('Authentication failed - 401 Unauthorized');
+      // Return a specific message for auth failure, not throwing an error here
+      // as the UI might want to handle this as a content message rather than a system error.
       return {
-        text: "I'm having trouble connecting to my knowledge base right now. This might be a temporary authentication issue. Meanwhile, I'd be happy to share some general information about Diani Beach! It's renowned for its pristine white sand beaches, crystal-clear waters, and amazing coral reefs perfect for snorkeling and diving."
+        text: "I'm having trouble connecting to my knowledge base right now due to an authentication issue. Please ensure the API keys are correctly configured. In the meantime, Diani Beach is famous for its stunning white sands and vibrant coral reefs!"
       };
     }
 
     if (!response.ok) {
-      console.error(`HTTP error! status: ${response.status}`);
+      // For other non-ok responses, log the status and throw a generic HTTP error
+      const errorText = await response.text();
+      console.error(`HTTP error! status: ${response.status}, body: ${errorText}`);
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    // Get the response as text first to see what we're receiving
     const responseText = await response.text();
-    console.log('Raw response text:', responseText);
+    // console.log('Raw response text:', responseText); // Can be verbose
 
-    let data;
+    if (!responseText) {
+      // If the response body is empty, it's an unexpected scenario.
+      console.error('Empty response body from API');
+      throw new UnexpectedResponseFormatError('Received an empty response from the chat API.');
+    }
+
     try {
-      // Try to parse as JSON
-      data = JSON.parse(responseText);
-      console.log('Parsed JSON data:', data);
+      const parsedData = JSON.parse(responseText);
+      console.log('Parsed JSON data:', parsedData);
+
+      // Check if the parsed data conforms to ChatApiResponse (has a 'text' property of type string)
+      if (parsedData && typeof parsedData.text === 'string') {
+        // It matches the expected ChatApiResponse structure (or a superset of it)
+        return parsedData as ChatApiResponse;
+      } else if (typeof parsedData === 'string') {
+        // If the JSON itself is a string (e.g., API directly returns "some message")
+        return { text: parsedData };
+      } else {
+        // The JSON structure is not what we expect (e.g., missing 'text' or 'text' is not a string)
+        console.error('Unexpected JSON structure:', parsedData);
+        throw new UnexpectedResponseFormatError('The chat API returned an unexpected JSON structure.', parsedData);
+      }
     } catch (parseError) {
-      console.log('Response is not JSON, treating as plain text');
-      // If it's not JSON, treat the response as plain text
+      // If JSON.parse fails, it means the responseText is not valid JSON.
+      // In this case, we treat the entire responseText as the chat message.
+      console.log('Response is not JSON, treating as plain text:', responseText);
+      return { text: responseText };
+    }
+
+  } catch (error) {
+    console.error('Chat API processing error:', error);
+
+    if (error instanceof UnexpectedResponseFormatError) {
+      // Rethrow custom error to be potentially handled differently by the UI
+      // Or transform it into a user-friendly ChatApiResponse
       return {
-        text: responseText
+        text: `I received a response, but the format was unexpected. Details: ${error.message}`
       };
     }
     
-    // Handle different possible response formats from n8n
-    if (typeof data === 'string') {
-      return { text: data };
-    }
-    
-    // If the response is already in the expected format with text and possibly richContent
-    if (data && typeof data.text === 'string') {
-      // Return the entire response object, which may include richContent
-      return data;
-    }
-    
-    // Fallback to other possible response formats
-    if (data && typeof data.message === 'string') {
-      return { text: data.message };
-    }
-    
-    if (data && typeof data.response === 'string') {
-      return { text: data.response };
+    if (error instanceof Error && error.message.startsWith('HTTP error!')) {
+       return {
+        text: "Sorry, I couldn't connect to the chat service. There seems to be a server-side issue. Please try again later."
+      };
     }
 
-    // If we can't find text in expected fields, log the structure
-    console.error('Unexpected response format:', data);
-    console.error('Available keys:', Object.keys(data || {}));
-    
+    // Generic fallback for other errors (e.g., network issues)
     return {
-      text: "I received a response but couldn't parse it properly. The webhook is working, but the response format might need adjustment."
-    };
-
-  } catch (error) {
-    console.error('Chat API error:', error);
-    
-    // Return a graceful fallback response
-    return {
-      text: "I apologize, but I'm having trouble connecting right now. Please try again in a moment. In the meantime, I'd love to help you explore Diani Beach - it's known for its pristine white sand beaches, excellent diving spots, and vibrant local culture!"
+      text: "I apologize, but I'm having trouble connecting right now. Please check your internet connection and try again. Diani Beach is a wonderful destination with lots to offer!"
     };
   }
 };

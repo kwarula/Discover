@@ -208,8 +208,11 @@ export const authService = {
         preferredLanguage: profile.preferred_language
       };
     } catch (error) {
-      console.error('Get current user error:', error);
-      return null;
+      console.error('Error fetching current user:', error);
+      // Rethrow the error or throw a custom error to be handled by the caller
+      // For now, let's rethrow the original error for the caller to handle.
+      // In a more mature system, we might define custom error classes.
+      throw error;
     }
   },
 

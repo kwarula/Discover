@@ -211,17 +211,33 @@ export const SignupModal: React.FC = () => {
   };
 
   const handleVerificationSuccess = async () => {
-    // User will be automatically logged in after verification
-    const currentUser = await authService.getCurrentUser();
-    if (currentUser) {
-      setUserProfile({
-        username: currentUser.username,
-        travelStyle: currentUser.travelStyle,
-        interests: currentUser.interests,
-        preferredLanguage: currentUser.preferredLanguage
+    try {
+      // User will be automatically logged in after verification
+      const currentUser = await authService.getCurrentUser();
+      if (currentUser) {
+        setUserProfile({
+          username: currentUser.username,
+          travelStyle: currentUser.travelStyle,
+          interests: currentUser.interests,
+          preferredLanguage: currentUser.preferredLanguage
+        });
+        // Potentially show a success toast here as well
+      } else {
+        // This case (user verified but profile not found immediately)
+        // might indicate a slight delay or an issue.
+        // For now, we'll log it and the AppContext will handle null profile.
+        console.warn("User verified, but profile not immediately available.");
+      }
+    } catch (error) {
+      console.error("Error fetching user profile after verification:", error);
+      toast({
+        title: "Error loading profile",
+        description: "Your email is verified, but we couldn't load your profile right away. Please try logging in.",
+        variant: "destructive",
       });
+    } finally {
+      resetForm();
     }
-    resetForm();
   };
 
   const availableInterests = [

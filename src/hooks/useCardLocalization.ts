@@ -14,6 +14,11 @@ export const useCardLocalization = () => {
         maximumFractionDigits: 0,
       }).format(amount);
     } catch (error) {
+      console.warn(
+        `Failed to format currency using Intl.NumberFormat.
+        Amount: ${amount}, Currency: ${currency}, Language: ${language}. Error:`,
+        error
+      );
       // Fallback for unsupported currencies
       return `${currency} ${amount.toLocaleString(language)}`;
     }
@@ -26,32 +31,64 @@ export const useCardLocalization = () => {
 
   // Format distance
   const formatDistance = useCallback((distance: string) => {
-    // Extract number and unit from distance string
-    const match = distance.match(/^([\d.]+)\s*(.+)$/);
+    // Regex to capture value and common units, allowing for variations in spacing and decimal format.
+    // It also captures optional "approx." prefix.
+    const distanceRegex = /^(?:approx\.\s*)?([\d.,]+)\s*(km|kilometers|kilometer|m|meters|metre|miles|mile)\b/i;
+    const match = distance.match(distanceRegex);
+
     if (match) {
-      const [, value, unit] = match;
-      return t('common.distance', { value, unit });
+      const valueStr = match[1].replace(',', '.'); // Normalize decimal separator to period
+      const value = parseFloat(valueStr);
+      const unit = match[2].toLowerCase(); // Normalize unit to lowercase
+
+      if (!isNaN(value)) {
+        // Normalize units to a standard key for translation if necessary
+        let unitKey = unit;
+        if (unit === 'kilometers' || unit === 'kilometer') unitKey = 'km';
+        if (unit === 'meters' || unit === 'metre') unitKey = 'm';
+        if (unit === 'miles') unitKey = 'mile';
+
+        return t('common.distance', { value: value.toLocaleString(language), unit: unitKey });
+      }
     }
+
+    console.warn(`Could not parse distance string: "${distance}". Returning original.`);
     return distance;
-  }, [t]);
+  }, [t, language]);
 
   // Format time duration
   const formatDuration = useCallback((duration: string) => {
-    // Handle common duration formats
-    const hourMatch = duration.match(/(\d+)\s*h(?:ours?)?/i);
-    const minMatch = duration.match(/(\d+)\s*m(?:ins?|inutes?)?/i);
-    
-    if (hourMatch && minMatch) {
-      return t('common.duration.hoursAndMinutes', { 
-        hours: hourMatch[1], 
-        minutes: minMatch[1] 
-      });
-    } else if (hourMatch) {
-      return t('common.duration.hours', { hours: hourMatch[1] });
-    } else if (minMatch) {
-      return t('common.duration.minutes', { minutes: minMatch[1] });
+    // Try to parse formats like "1h 30m", "1hr 30min", "1 hour 30 minutes", "1h", "30m"
+    const generalDurationRegex = /(?:(\d+)\s*(?:h|hr|hours?))?\s*(?:(\d+)\s*(?:m|min|minutes?))?/i;
+    const generalMatch = duration.match(generalDurationRegex);
+
+    if (generalMatch && (generalMatch[1] || generalMatch[2])) {
+      const hours = generalMatch[1];
+      const minutes = generalMatch[2];
+
+      if (hours && minutes) {
+        return t('common.duration.hoursAndMinutes', { hours, minutes });
+      } else if (hours) {
+        return t('common.duration.hours', { hours });
+      } else if (minutes) {
+        return t('common.duration.minutes', { minutes });
+      }
+    }
+
+    // Try to parse format like "1:30" (interpreted as 1 hour 30 minutes)
+    const timeFormatRegex = /^(\d{1,2}):(\d{2})$/;
+    const timeMatch = duration.match(timeFormatRegex);
+
+    if (timeMatch) {
+      const hours = timeMatch[1];
+      const minutes = timeMatch[2];
+      // Ensure minutes are less than 60 if we interpret it this way strictly
+      if (parseInt(minutes, 10) < 60) {
+        return t('common.duration.hoursAndMinutes', { hours, minutes });
+      }
     }
     
+    console.warn(`Could not parse duration string: "${duration}". Returning original.`);
     return duration;
   }, [t]);
 
