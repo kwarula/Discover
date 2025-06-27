@@ -1,7 +1,9 @@
 
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { ChatMessage as ChatMessageType } from '@/types';
 import { cn } from '@/lib/utils';
+import { supabase } from '@/lib/supabase';
+import { RealtimeChannel } from '@supabase/supabase-js';
 import { HotelCard } from './cards/HotelCard';
 import { RestaurantCard } from './cards/RestaurantCard';
 import { ActivityCard } from './cards/ActivityCard';
@@ -25,12 +27,58 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest }) =
   };
 
   // Check if message contains rich content
+  const [currentTransports, setCurrentTransports] = useState<Transport[]>([]);
+  const channelRef = useRef<RealtimeChannel | null>(null);
+  const [selectedTransport, setSelectedTransport] = useState<Transport | null>(null);
+
+  useEffect(() => {
+    if (message.richContent && message.richContent.type === 'transports') {
+      const initialTransports = message.richContent.data as Transport[];
+      setCurrentTransports(initialTransports);
+
+      // Ensure a unique channel per message if needed, or a general one.
+      // For simplicity, using a general channel name. Consider message ID for specific channels.
+      const channelId = `transports-message-${message.id}`;
+      channelRef.current = supabase.channel(channelId);
+
+      channelRef.current
+        .on('broadcast', { event: 'transport-update' }, (payload) => {
+          console.log(`Transport update received for message ${message.id}:`, payload);
+          if (payload.payload && Array.isArray(payload.payload.transports)) {
+            // Here, you might want to merge or replace transports based on your app's logic
+            // For now, replacing the entire list.
+            setCurrentTransports(payload.payload.transports);
+          }
+        })
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            console.log(`Subscribed to ${channelId}`);
+          }
+        });
+    }
+
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        console.log(`Unsubscribed from ${channelRef.current.topic}`);
+        channelRef.current = null;
+      }
+    };
+  }, [message.id, message.richContent]);
+
+
+  const handleTransportSelect = (transport: Transport) => {
+    setSelectedTransport(transport);
+    // Potentially send a message or perform an action
+    console.log('Transport selected in ChatMessage:', transport);
+  };
+
   const renderContent = () => {
-    // Check for special card markers in the message
     if (message.richContent) {
       switch (message.richContent.type) {
         case 'hotel':
           return <HotelCard {...message.richContent.data} />;
+        // ... other cases for hotel, restaurant, activity, map ...
         case 'restaurant':
           return <RestaurantCard {...message.richContent.data} />;
         case 'activity':
@@ -64,35 +112,39 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest }) =
               <MapView locations={message.richContent.data} />
             </div>
           );
-        case 'transport':
+        case 'transport': // Single transport card
           return (
             <div className="space-y-4">
               <p className="text-diani-sand-800 mb-4">{message.text}</p>
-              <TransportCard 
-                transport={message.richContent.data} 
+              <TransportCard
+                transport={message.richContent.data as Transport}
                 onCall={(transport) => window.open(`tel:${transport.driverPhone}`)}
                 onBook={(transport) => console.log('Booking transport:', transport)}
               />
             </div>
           );
-        case 'transports':
-          const transports = message.richContent.data as Transport[];
+        case 'transports': // Multiple transports with map and cards
           const userLocation = (message.richContent as any).userLocation;
+          // Use currentTransports state for rendering
           return (
             <div className="space-y-4">
               <p className="text-diani-sand-800 mb-4">{message.text}</p>
-              <TransportMap 
-                transports={transports}
+              <TransportMap
+                // Pass currentTransports which updates from WebSocket
+                initialTransports={currentTransports}
                 userLocation={userLocation}
-                onTransportSelect={(transport) => console.log('Selected transport:', transport)}
+                onTransportSelect={handleTransportSelect}
+                selectedTransport={selectedTransport}
               />
               <div className="grid gap-4 md:grid-cols-2">
-                {transports.map((transport: Transport) => (
-                  <TransportCard 
+                {currentTransports.map((transport: Transport) => (
+                  <TransportCard
                     key={transport.id}
                     transport={transport}
+                    isSelected={selectedTransport?.id === transport.id}
                     onCall={(t) => window.open(`tel:${t.driverPhone}`)}
                     onBook={(t) => console.log('Booking transport:', t)}
+                    onClick={() => handleTransportSelect(transport)}
                   />
                 ))}
               </div>
@@ -102,7 +154,6 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest }) =
           return <p className="whitespace-pre-wrap break-words">{message.text}</p>;
       }
     }
-
     return <p className="whitespace-pre-wrap break-words">{message.text}</p>;
   };
 

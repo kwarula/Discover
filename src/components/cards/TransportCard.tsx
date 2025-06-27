@@ -10,13 +10,15 @@ interface TransportCardProps {
   onBook?: (transport: Transport) => void;
   onCall?: (transport: Transport) => void;
   onClick?: () => void;
+  isSelected?: boolean;
 }
 
 export const TransportCard = memo<TransportCardProps>(({ 
   transport, 
   onBook,
   onCall,
-  onClick
+  onClick,
+  isSelected = false
 }) => {
   const { formatCurrency, formatRating, formatDistance, cardTexts } = useCardLocalization();
   
@@ -63,7 +65,8 @@ export const TransportCard = memo<TransportCardProps>(({
     <article 
       className={cn(
         "glass rounded-2xl p-4 hover:scale-[1.02] transition-all duration-200",
-        "border border-white/50",
+        "border",
+        isSelected ? "border-diani-teal-500 ring-2 ring-diani-teal-500 shadow-lg" : "border-white/50",
         "focus-within:ring-2 focus-within:ring-diani-teal-500 focus-within:ring-offset-2",
         "w-full h-full flex flex-col",
         onClick && "cursor-pointer"

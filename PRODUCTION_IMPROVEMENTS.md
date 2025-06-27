@@ -177,7 +177,10 @@ import {
 ```
 
 ## Future Enhancements
-- WebSocket integration for real-time transport updates
+- ✅ WebSocket integration for real-time transport updates
+  - Implemented using Supabase Realtime (Broadcast) to update transport availability within active chat messages.
+  - `ChatMessage.tsx` now manages WebSocket subscriptions for messages with `richContent.type === 'transports'`.
+  - Real-time updates are reflected in both `TransportMap` and `TransportCard` components.
 - Push notifications for transport arrival
 - In-app payment integration
 - Driver rating and feedback system

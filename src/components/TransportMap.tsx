@@ -3,14 +3,14 @@ import { Transport } from '@/types/transport';
 import { MapPin, Navigation } from 'lucide-react';
 
 interface TransportMapProps {
-  transports: Transport[];
+  initialTransports: Transport[]; // Renaming to 'transports' as it's now directly used
   userLocation?: { lat: number; lng: number };
   onTransportSelect?: (transport: Transport) => void;
   selectedTransport?: Transport | null;
 }
 
 export const TransportMap: React.FC<TransportMapProps> = ({
-  transports,
+  initialTransports: transports, // Use initialTransports and alias as transports
   userLocation,
   onTransportSelect,
   selectedTransport
@@ -80,8 +80,10 @@ export const TransportMap: React.FC<TransportMapProps> = ({
     };
   }, [userLocation]);
 
+  // Removed the useEffect for WebSocket connection as it's now handled by ChatMessage.tsx
+
   useEffect(() => {
-    if (!mapInstanceRef.current) return;
+    if (!mapInstanceRef.current || !transports) return; // Ensure transports is available
 
     // Clear existing transport markers
     markersRef.current.forEach(marker => marker.setMap(null));

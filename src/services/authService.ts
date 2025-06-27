@@ -1,11 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
 import { UserProfile } from '@/types';
-
-// Supabase client configuration
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+import { supabase } from '@/lib/supabase'; // Import the shared Supabase client
 
 export interface SignupData {
   email: string;
