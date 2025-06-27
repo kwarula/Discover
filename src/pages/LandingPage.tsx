@@ -5,6 +5,7 @@ import { LanguageSelector } from '@/components/LanguageSelector';
 import { MessageCircle, Search, MapPin, Phone, Calendar, Apple, PlayCircle, Building2 } from 'lucide-react';
 import { StoreModal } from '@/components/StoreModal';
 import { BusinessListingModal } from '@/components/BusinessListingModal';
+import { InfiniteSlider } from '@/components/ui/infinite-slider';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -191,13 +192,40 @@ const LandingPage: React.FC = () => {
             Trusted by 2,000+ Diani travelers
           </h3>
           
-          {/* Partner logos placeholder */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center opacity-80">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white/20 rounded-lg p-6 h-16 flex items-center justify-center">
-                <div className="text-white/60 font-semibold">Partner {i}</div>
-              </div>
-            ))}
+          {/* Partner logos infinite slider */}
+          <div className="opacity-80">
+            <InfiniteSlider gap={48} duration={20} reverse className="w-full">
+              <img
+                src="https://res.cloudinary.com/doprdld4l/image/upload/v1751030563/logo_ws5qgw.png"
+                alt="Partner logo"
+                className="h-[80px] w-auto filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://res.cloudinary.com/doprdld4l/image/upload/v1751030562/logo_1_ydzo6h.png"
+                alt="Partner logo"
+                className="h-[80px] w-auto filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://res.cloudinary.com/doprdld4l/image/upload/v1751030562/bp_logo_y3ayle.png"
+                alt="Partner logo"
+                className="h-[80px] w-auto filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://res.cloudinary.com/doprdld4l/image/upload/v1751030596/leonardos514082_kxl07z.png"
+                alt="Partner logo"
+                className="h-[80px] w-auto filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://res.cloudinary.com/doprdld4l/image/upload/v1751030595/diani-bikes-logo_qq4vqk.png"
+                alt="Partner logo"
+                className="h-[80px] w-auto filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://res.cloudinary.com/doprdld4l/image/upload/v1751030597/saltys-logo_asoah4.png"
+                alt="Partner logo"
+                className="h-[80px] w-auto filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity"
+              />
+            </InfiniteSlider>
           </div>
 
           <div className="mt-12">
