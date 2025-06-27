@@ -10,15 +10,7 @@ interface TransportMapProps {
 }
 
 export const TransportMap: React.FC<TransportMapProps> = ({
-  transports,
-  userLocation,
-  onTransportSelect,
-  selectedTransport
-  initialTransports,
-  userLocation,
-  onTransportSelect,
-  selectedTransport
-  initialTransports: transports, // Destructuring and renaming for clarity
+  initialTransports: transports, // Use initialTransports and alias as transports
   userLocation,
   onTransportSelect,
   selectedTransport
