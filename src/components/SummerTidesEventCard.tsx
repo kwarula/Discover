@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, ExternalLink } from 'lucide-react';
+import { X, ExternalLink, Calendar, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -11,9 +11,9 @@ export const SummerTidesEventCard: React.FC<SummerTidesEventCardProps> = ({ clas
   const [isVisible, setIsVisible] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
 
-  // Event dates
-  const eventStartDate = new Date('2025-07-05');
-  const eventEndDate = new Date('2025-07-07');
+  // Event dates - Updated to match flyer (July 4 & 5)
+  const eventStartDate = new Date('2025-07-04');
+  const eventEndDate = new Date('2025-07-05');
   const currentDate = new Date();
 
   useEffect(() => {
@@ -52,75 +52,110 @@ export const SummerTidesEventCard: React.FC<SummerTidesEventCardProps> = ({ clas
 
   return (
     <div className={cn(
-      "relative bg-white/90 backdrop-blur-sm border-2 border-diani-teal-500 rounded-lg shadow-lg transition-all duration-300",
+      "relative bg-gradient-to-br from-red-500 via-red-600 to-red-700 rounded-xl shadow-xl overflow-hidden transition-all duration-300 transform hover:scale-[1.02]",
       isClosing && "opacity-0 transform scale-95",
       className
     )}>
       {/* Close button */}
       <button
         onClick={handleDismiss}
-        className="absolute top-2 right-2 z-10 p-1 rounded-full hover:bg-diani-sand-100 transition-colors"
+        className="absolute top-3 right-3 z-20 p-1.5 rounded-full bg-black/20 hover:bg-black/40 transition-all duration-200 backdrop-blur-sm"
         aria-label="Close event card"
       >
-        <X size={16} className="text-diani-sand-600" />
+        <X size={16} className="text-white" />
       </button>
 
-      {/* Header */}
-      <div className="px-4 pt-3 pb-2">
-        <h3 className="text-diani-teal-500 font-medium text-sm font-['Montserrat']">
-          Summer Tides Event | July 5–7
-        </h3>
+      {/* Background Pattern - Clouds */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-2 right-8 w-16 h-8 bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full opacity-80 transform rotate-12"></div>
+        <div className="absolute top-6 right-20 w-12 h-6 bg-gradient-to-r from-orange-300 to-yellow-300 rounded-full opacity-60 transform -rotate-6"></div>
+        <div className="absolute top-1 right-32 w-10 h-5 bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full opacity-70 transform rotate-45"></div>
+        
+        <div className="absolute top-4 left-8 w-14 h-7 bg-gradient-to-r from-orange-400 to-yellow-400 rounded-full opacity-75 transform -rotate-12"></div>
+        <div className="absolute top-8 left-20 w-10 h-5 bg-gradient-to-r from-orange-300 to-yellow-300 rounded-full opacity-55 transform rotate-6"></div>
       </div>
 
-      {/* Hero Image Banner */}
-      <div className="px-4 pb-2">
-        <div className="w-full h-20 bg-gradient-to-r from-diani-teal-500 to-coral-sunset-500 rounded-md overflow-hidden relative">
-          {/* Placeholder for beach concert/sunset image */}
-          <div className="absolute inset-0 bg-gradient-to-r from-diani-teal-500/80 to-coral-sunset-500/80 flex items-center justify-center">
-            <div className="text-white text-center">
-              <div className="text-2xl mb-1">🎵</div>
-              <div className="text-xs font-medium">Beach Concert</div>
-            </div>
+      {/* Main Content */}
+      <div className="relative z-10 p-4 sm:p-6">
+        {/* Header */}
+        <div className="text-center mb-4">
+          <h1 className="text-white font-bold text-2xl sm:text-3xl md:text-4xl tracking-wider mb-1 drop-shadow-lg" 
+              style={{ fontFamily: 'Impact, Arial Black, sans-serif', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+            SUMMER TIDES
+          </h1>
+          <div className="flex items-center justify-center gap-2 text-white text-sm sm:text-base font-semibold mb-2">
+            <MapPin size={16} className="flex-shrink-0" />
+            <span>DIANI, KENYA</span>
           </div>
+        </div>
+
+        {/* Date and Details */}
+        <div className="text-center mb-4">
+          <div className="text-white font-bold text-3xl sm:text-4xl md:text-5xl mb-2 drop-shadow-lg"
+               style={{ fontFamily: 'Impact, Arial Black, sans-serif', textShadow: '2px 2px 4px rgba(0,0,0,0.5)' }}>
+            JULY 4 & 5
+          </div>
+          <div className="text-white text-lg sm:text-xl font-bold tracking-wide">
+            2 STAGES | 2 NIGHTS
+          </div>
+        </div>
+
+        {/* Activities */}
+        <div className="text-center mb-4">
+          <p className="text-white text-sm sm:text-base font-medium opacity-95">
+            🎵 Live Music ∙ 🏖️ Beach Parties ∙ 🍽️ Local Cuisine ∙ 👨‍👩‍👧‍👦 Family Activities
+          </p>
+        </div>
+
+        {/* Decorative Wave Pattern */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 overflow-hidden">
+          <svg className="absolute bottom-0 w-full h-full" viewBox="0 0 400 64" preserveAspectRatio="none">
+            <path d="M0,32 Q100,16 200,32 T400,32 L400,64 L0,64 Z" 
+                  fill="rgba(255,255,255,0.1)" />
+            <path d="M0,40 Q100,24 200,40 T400,40 L400,64 L0,64 Z" 
+                  fill="rgba(255,255,255,0.05)" />
+          </svg>
+        </div>
+
+        {/* CTA Section */}
+        <div className="relative z-10 space-y-3">
+          <Button
+            onClick={handleViewDetails}
+            className="w-full bg-white text-red-600 hover:bg-red-50 font-bold text-sm sm:text-base py-3 rounded-lg shadow-lg transition-all duration-200 transform hover:scale-105"
+          >
+            <ExternalLink size={16} className="mr-2" />
+            Get Your Tickets Now
+          </Button>
           
-          {/* Overlay pattern for visual interest */}
-          <div className="absolute inset-0 opacity-20">
-            <svg className="w-full h-full" viewBox="0 0 240 80">
-              <pattern id="waves" x="0" y="0" width="40" height="20" patternUnits="userSpaceOnUse">
-                <path d="M0 10 Q10 0 20 10 T40 10" stroke="white" strokeWidth="1" fill="none" opacity="0.3"/>
-              </pattern>
-              <rect width="100%" height="100%" fill="url(#waves)" />
-            </svg>
+          {/* Ticket info */}
+          <div className="text-center">
+            <p className="text-white text-xs sm:text-sm font-medium bg-black/20 rounded-full px-3 py-1 inline-block backdrop-blur-sm">
+              Phase 3 Weekend Pass - KSH 5,500 (Last tickets available!)
+            </p>
           </div>
         </div>
       </div>
 
-      {/* Body text */}
-      <div className="px-4 pb-3">
-        <p className="text-diani-sand-700 text-sm font-['Montserrat'] font-medium">
-          Live music ∙ Beach parties ∙ Local cuisine ∙ Family activities
-        </p>
+      {/* Palm Tree Silhouette (Bottom Left) */}
+      <div className="absolute bottom-0 left-0 w-16 h-20 opacity-30">
+        <svg viewBox="0 0 64 80" className="w-full h-full">
+          <path d="M32 80 L32 40 M20 45 Q32 35 44 45 M18 50 Q32 40 46 50 M16 55 Q32 45 48 55" 
+                stroke="rgba(0,0,0,0.6)" strokeWidth="2" fill="none"/>
+          <circle cx="32" cy="40" r="3" fill="rgba(0,0,0,0.6)"/>
+        </svg>
       </div>
 
-      {/* CTA Button */}
-      <div className="px-4 pb-4">
-        <Button
-          onClick={handleViewDetails}
-          variant="outline"
-          size="sm"
-          className="w-full border-2 border-diani-teal-500 text-diani-teal-500 hover:bg-diani-teal-50 rounded-md h-8 text-xs font-medium font-['Montserrat'] transition-all duration-200"
-        >
-          <ExternalLink size={12} className="mr-1" />
-          View Details & Tickets
-        </Button>
-      </div>
-
-      {/* Ticket info */}
-      <div className="px-4 pb-3 border-t border-diani-sand-200 pt-2">
-        <p className="text-xs text-diani-sand-600 text-center">
-          Phase 3 Weekend Pass - KSH 5,500 (Last tickets available!)
-        </p>
-      </div>
+      {/* Responsive adjustments */}
+      <style jsx>{`
+        @media (max-width: 640px) {
+          .text-4xl { font-size: 1.875rem; }
+          .text-5xl { font-size: 2.25rem; }
+        }
+        @media (max-width: 480px) {
+          .text-3xl { font-size: 1.5rem; }
+          .text-4xl { font-size: 1.75rem; }
+        }
+      `}</style>
     </div>
   );
 };
