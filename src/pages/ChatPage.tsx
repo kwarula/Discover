@@ -8,6 +8,7 @@ import { SignupModal } from '@/components/SignupModal';
 import { ProfileModal } from '@/components/ProfileModal';
 import { FloatingActionButton } from '@/components/FloatingActionButton';
 import { ProactiveSuggestions } from '@/components/ProactiveSuggestions';
+import { SummerTidesEventCard } from '@/components/SummerTidesEventCard';
 import { sendChatMessage } from '@/services/chatApi';
 import { ChatMessage as ChatMessageType } from '@/types';
 import { useToast } from '@/hooks/use-toast';
@@ -197,6 +198,11 @@ const ChatInterface: React.FC = () => {
           
           {/* Chat Input */}
           <div className="mt-6">
+            {/* Summer Tides Event Card */}
+            <div className="mb-4">
+              <SummerTidesEventCard />
+            </div>
+            
             <ChatInput
               onSendMessage={handleSendMessage}
               disabled={isLoading || isTyping}

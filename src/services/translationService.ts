@@ -11,12 +11,12 @@ interface Translations {
 
 const commonPhrases: Translations = {
   'welcome': {
-    'en': "Hello! I'm your Diani Concierge AI. How can I help you discover the magic of Diani today?",
-    'sw': "Jambo! Mimi ni AI Concierge wako wa Diani. Ninawezaje kukusaidia kugundua uchawi wa Diani leo?",
-    'fr': "Bonjour! Je suis votre Concierge AI de Diani. Comment puis-je vous aider à découvrir la magie de Diani aujourd'hui?",
-    'de': "Hallo! Ich bin Ihr Diani Concierge AI. Wie kann ich Ihnen helfen, die Magie von Diani heute zu entdecken?",
-    'it': "Ciao! Sono il tuo Concierge AI di Diani. Come posso aiutarti a scoprire la magia di Diani oggi?",
-    'es': "¡Hola! Soy tu Concierge AI de Diani. ¿Cómo puedo ayudarte a descubrir la magia de Diani hoy?",
+    'en': "Ready to explore Diani? Tell me what you're looking for—best beaches, top restaurants, hidden gems.",
+    'sw': "Uko tayari kugundua Diani? Niambie unachokitafuta—fukwe bora, mikahawa ya juu, siri za mahali.",
+    'fr': "Prêt à explorer Diani? Dites-moi ce que vous cherchez—meilleures plages, restaurants, joyaux cachés.",
+    'de': "Bereit, Diani zu erkunden? Sagen Sie mir, was Sie suchen—beste Strände, Restaurants, versteckte Schätze.",
+    'it': "Pronti a esplorare Diani? Dimmi cosa stai cercando—migliori spiagge, ristoranti, gemme nascoste.",
+    'es': "¿Listo para explorar Diani? Dime qué buscas—mejores playas, restaurantes, joyas ocultas.",
   },
   'askAnything': {
     'en': "Ask me anything about Diani Beach...",
