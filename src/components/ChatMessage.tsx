@@ -157,14 +157,16 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
         case 'restaurants':
         case 'activities':
           const contentType = message.richContent.type.replace('s', '') as 'hotel' | 'restaurant' | 'activity';
-          const dataToRender = filteredData.length > 0 ? filteredData : message.richContent.data;
+          // Ensure data is an array before using it
+          const rawData = Array.isArray(message.richContent.data) ? message.richContent.data : [];
+          const dataToRender = filteredData.length > 0 ? filteredData : rawData;
           
           return (
             <div className="space-y-4">
               <p className="text-diani-sand-800 mb-4">{message.text}</p>
               
               {/* Filter Controls */}
-              {message.richContent.data.length > 2 && (
+              {rawData.length > 2 && (
                 <ContentFilter
                   contentType={contentType === 'hotel' ? 'hotels' : contentType === 'restaurant' ? 'restaurants' : 'activities'}
                   onFilterChange={handleFilterChange}
@@ -174,26 +176,32 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
               )}
               
               {/* Results count */}
-              {filteredData.length !== originalData.length && (
+              {filteredData.length !== originalData.length && originalData.length > 0 && (
                 <p className="text-sm text-diani-sand-600 mb-2">
                   Showing {filteredData.length} of {originalData.length} results
                 </p>
               )}
               
-              <div className="grid gap-4 md:grid-cols-2">
-                {dataToRender.map((item: any, index: number) => {
-                  switch (message.richContent.type) {
-                    case 'hotels':
-                      return <HotelCard key={index} {...item} />;
-                    case 'restaurants':
-                      return <RestaurantCard key={index} {...item} />;
-                    case 'activities':
-                      return <ActivityCard key={index} {...item} />;
-                    default:
-                      return null;
-                  }
-                })}
-              </div>
+              {dataToRender.length > 0 ? (
+                <div className="grid gap-4 md:grid-cols-2">
+                  {dataToRender.map((item: any, index: number) => {
+                    switch (message.richContent.type) {
+                      case 'hotels':
+                        return <HotelCard key={index} {...item} />;
+                      case 'restaurants':
+                        return <RestaurantCard key={index} {...item} />;
+                      case 'activities':
+                        return <ActivityCard key={index} {...item} />;
+                      default:
+                        return null;
+                    }
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-diani-sand-600">
+                  <p>No results found matching your criteria.</p>
+                </div>
+              )}
             </div>
           );
         case 'map':
@@ -215,26 +223,35 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
             </div>
           );
         case 'transports':
-          const transports = message.richContent.data as Transport[];
+          // Ensure transports data is an array
+          const transports = Array.isArray(message.richContent.data) ? message.richContent.data as Transport[] : [];
           const userLocation = (message.richContent as any).userLocation;
           return (
             <div className="space-y-4">
               <p className="text-diani-sand-800 mb-4">{message.text}</p>
-              <TransportMap 
-                transports={transports}
-                userLocation={userLocation}
-                onTransportSelect={(transport) => console.log('Selected transport:', transport)}
-              />
-              <div className="grid gap-4 md:grid-cols-2">
-                {transports.map((transport: Transport) => (
-                  <TransportCard 
-                    key={transport.id}
-                    transport={transport}
-                    onCall={(t) => window.open(`tel:${t.driverPhone}`)}
-                    onBook={(t) => console.log('Booking transport:', t)}
+              {transports.length > 0 ? (
+                <>
+                  <TransportMap 
+                    transports={transports}
+                    userLocation={userLocation}
+                    onTransportSelect={(transport) => console.log('Selected transport:', transport)}
                   />
-                ))}
-              </div>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {transports.map((transport: Transport) => (
+                      <TransportCard 
+                        key={transport.id}
+                        transport={transport}
+                        onCall={(t) => window.open(`tel:${t.driverPhone}`)}
+                        onBook={(t) => console.log('Booking transport:', t)}
+                      />
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <div className="text-center py-8 text-diani-sand-600">
+                  <p>No transport options available at the moment.</p>
+                </div>
+              )}
             </div>
           );
         default:
