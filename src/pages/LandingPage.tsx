@@ -95,13 +95,25 @@ const LandingPage: React.FC = () => {
               </Button>
 
               {/* Screenshot */}
-              <div className="relative mx-auto max-w-sm lg:max-w-md">
+              <div className="relative mx-auto max-w-sm md:max-w-lg lg:max-w-2xl xl:max-w-3xl">
                 <div className="absolute inset-0 bg-gradient-to-r from-diani-teal-500 to-coral-sunset-500 rounded-3xl blur-2xl opacity-20 animate-pulse"></div>
-                <img
-                  src="/Screenshot 2025-06-28 at 18.30.09.png"
-                  alt="Discover Diani Chat Interface"
+                <video
+                  src="https://res.cloudinary.com/doprdld4l/video/upload/v1751125990/xwgvs6glimc6uxdbuioc.mov"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
                   className="relative z-10 w-full h-auto rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500 max-w-full"
-                />
+                  poster="/Screenshot 2025-06-28 at 18.30.09.png"
+                >
+                  <source src="https://res.cloudinary.com/doprdld4l/video/upload/v1751125990/xwgvs6glimc6uxdbuioc.mov" type="video/mp4" />
+                  {/* Fallback for browsers that don't support video */}
+                  <img
+                    src="/Screenshot 2025-06-28 at 18.30.09.png"
+                    alt="Discover Diani Chat Interface"
+                    className="w-full h-auto rounded-3xl shadow-2xl"
+                  />
+                </video>
               </div>
             </div>
           </div>
