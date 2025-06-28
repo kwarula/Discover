@@ -15,6 +15,12 @@ Deno.serve(async (req) => {
     // Forward the request body to the webhook
     const requestData = await req.json();
     
+    console.log('Forwarding request to webhook:', {
+      url: WEBHOOK_URL,
+      method: 'POST',
+      hasData: !!requestData
+    });
+    
     const response = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: {
@@ -23,17 +29,47 @@ Deno.serve(async (req) => {
       body: JSON.stringify(requestData),
     });
 
-    const data = await response.text();
+    console.log('Webhook response received:', {
+      status: response.status,
+      statusText: response.statusText,
+      ok: response.ok,
+      headers: Object.fromEntries(response.headers.entries())
+    });
 
-    return new Response(data, {
+    // Get response body
+    const responseBody = await response.text();
+    console.log('Webhook response body:', responseBody);
+
+    // Check if the webhook response is successful
+    if (!response.ok) {
+      // Propagate the exact status code and body from the webhook
+      console.error(`Webhook returned error: ${response.status} ${response.statusText}`);
+      
+      return new Response(responseBody, {
+        status: response.status,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': response.headers.get('Content-Type') || 'application/json',
+        },
+      });
+    }
+
+    // Return successful response with webhook data
+    return new Response(responseBody, {
       headers: {
         ...corsHeaders,
-        'Content-Type': 'application/json',
+        'Content-Type': response.headers.get('Content-Type') || 'application/json',
       },
     });
   } catch (error) {
-    console.error('Error:', error);
-    return new Response(JSON.stringify({ error: 'Internal Server Error' }), {
+    console.error('Chat-proxy function error:', error);
+    
+    // Return a 500 error for internal function errors
+    return new Response(JSON.stringify({ 
+      error: 'Internal Server Error',
+      message: 'Failed to process request in chat-proxy function',
+      details: error.message 
+    }), {
       status: 500,
       headers: {
         ...corsHeaders,
