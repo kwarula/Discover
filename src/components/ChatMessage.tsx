@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactMarkdown from 'react-markdown';
 import { ChatMessage as ChatMessageType } from '@/types';
 import { cn } from '@/lib/utils';
 import { MessageFeedback } from './MessageFeedback';
