@@ -98,9 +98,9 @@ const LandingPage: React.FC = () => {
               <div className="relative mx-auto max-w-sm lg:max-w-md">
                 <div className="absolute inset-0 bg-gradient-to-r from-diani-teal-500 to-coral-sunset-500 rounded-3xl blur-2xl opacity-20 animate-pulse"></div>
                 <img
-                  src="/discover-diani-screenshot.png"
+                  src="/Screenshot 2025-06-28 at 18.30.09.png"
                   alt="Discover Diani Chat Interface"
-                  className="relative z-10 w-full h-auto rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500"
+                  className="relative z-10 w-full h-auto rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500 max-w-full"
                 />
               </div>
             </div>
