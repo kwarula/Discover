@@ -103,7 +103,7 @@ export const SummerTidesEventCard: React.FC<SummerTidesEventCardProps> = ({ clas
         {/* Activities */}
         <div className="text-center mb-4">
           <p className="text-white text-sm sm:text-base font-medium opacity-95">
-            🎵 Live Music ∙ 🏖️ Beach Parties ∙ 🍽️ Local Cuisine ∙ 👨‍👩‍👧‍👦 Family Activities
+            🎵 Live Music ∙ 🏖️ Beach Parties ∙ 🍽️ Local Cuisine ∙ 🔞 18+ Only
           </p>
         </div>
 
@@ -129,9 +129,14 @@ export const SummerTidesEventCard: React.FC<SummerTidesEventCardProps> = ({ clas
           
           {/* Ticket info */}
           <div className="text-center">
-            <p className="text-white text-xs sm:text-sm font-medium bg-black/20 rounded-full px-3 py-1 inline-block backdrop-blur-sm">
-              Phase 3 Weekend Pass - KSH 5,500 (Last tickets available!)
-            </p>
+            <div className="space-y-1">
+              <p className="text-white text-xs sm:text-sm font-medium bg-black/20 rounded-full px-3 py-1 inline-block backdrop-blur-sm">
+                Phase 3 Weekend Pass - KSH 5,500 (Last tickets available!)
+              </p>
+              <p className="text-white text-xs font-bold bg-red-800/40 rounded-full px-3 py-1 inline-block backdrop-blur-sm border border-white/20">
+                🔞 STRICTLY 18+ EVENT
+              </p>
+            </div>
           </div>
         </div>
       </div>
