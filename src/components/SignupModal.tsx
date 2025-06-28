@@ -375,27 +375,6 @@ export const SignupModal: React.FC = () => {
               )}
 
               <Button
-            {/* Google Sign-in Button */}
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-diani-sand-200" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-diani-sand-50 px-2 text-diani-sand-500">Or continue with</span>
-              </div>
-            </div>
-
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handleGoogleSignIn}
-              disabled={isLoading}
-              className="w-full border-diani-sand-300 text-diani-sand-700 hover:bg-diani-sand-50 rounded-full py-3 font-medium transition-all duration-200"
-            >
-              <Chrome className="h-4 w-4 mr-2" />
-              Sign in with Google
-            </Button>
-
                 type="submit"
                 disabled={isLoading}
                 className="w-full bg-diani-teal-500 hover:bg-diani-teal-700 text-white rounded-full py-3 font-medium transition-all duration-200"
@@ -404,18 +383,10 @@ export const SignupModal: React.FC = () => {
                   <div className="flex items-center space-x-2">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
                     <span>{authMode === 'login' ? 'Signing in...' : 'Creating account...'}</span>
-
-          {/* Profile Step */}
-          {currentStep === 'profile' && (
-            <form onSubmit={handleProfileSubmit} className="space-y-6">
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => setCurrentStep('auth')}
-                className="flex items-center space-x-1 text-diani-sand-600 hover:text-diani-teal-700 p-0 h-auto"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Back</span>
+                  </div>
+                ) : (
+                  authMode === 'login' ? 'Sign In' : 'Continue'
+                )}
               </Button>
 
               {/* Google Sign-in Button */}
@@ -437,6 +408,21 @@ export const SignupModal: React.FC = () => {
               >
                 <Chrome className="h-4 w-4 mr-2" />
                 Sign in with Google
+              </Button>
+            </form>
+          )}
+
+          {/* Profile Step */}
+          {currentStep === 'profile' && (
+            <form onSubmit={handleProfileSubmit} className="space-y-6">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setCurrentStep('auth')}
+                className="flex items-center space-x-1 text-diani-sand-600 hover:text-diani-teal-700 p-0 h-auto"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                <span>Back</span>
               </Button>
 
               <div className="space-y-2">
