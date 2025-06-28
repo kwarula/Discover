@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ChatMessage as ChatMessageType } from '@/types';
 import { cn } from '@/lib/utils';
@@ -22,6 +21,40 @@ interface ChatMessageProps {
 export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, userId }) => {
   const [filteredData, setFilteredData] = React.useState<any[]>([]);
   const [originalData, setOriginalData] = React.useState<any[]>([]);
+
+  // Helper function to parse rating from string like "4.6/5"
+  const parseRating = (ratingStr: string): number => {
+    if (!ratingStr) return 0;
+    const match = ratingStr.match(/(\d+\.?\d*)/);
+    return match ? parseFloat(match[1]) : 0;
+  };
+
+  // Helper function to convert price range to price level (1-4)
+  const getPriceLevelFromRange = (priceRange: string): 1 | 2 | 3 | 4 => {
+    if (!priceRange) return 2;
+    
+    // Extract the maximum price from range like "KES 2500-5000"
+    const match = priceRange.match(/(\d+)-(\d+)/);
+    if (match) {
+      const maxPrice = parseInt(match[2]);
+      if (maxPrice < 1000) return 1;
+      if (maxPrice < 2500) return 2;
+      if (maxPrice < 5000) return 3;
+      return 4;
+    }
+    
+    // If no range, try to extract single price
+    const singleMatch = priceRange.match(/(\d+)/);
+    if (singleMatch) {
+      const price = parseInt(singleMatch[1]);
+      if (price < 1000) return 1;
+      if (price < 2500) return 2;
+      if (price < 5000) return 3;
+      return 4;
+    }
+    
+    return 2; // Default to moderate
+  };
 
   // Initialize data when message changes
   React.useEffect(() => {
@@ -131,7 +164,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
     if (item.fare?.amount) return item.fare.amount;
     
     // Extract from price string
-    const priceStr = item.price || '';
+    const priceStr = item.price || item.price_range || '';
     const match = priceStr.match(/(\d+)/);
     return match ? parseInt(match[1]) : 0;
   };
@@ -150,6 +183,53 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
         case 'hotel':
           return <HotelCard {...message.richContent.data} />;
         case 'restaurant':
+          // Handle single restaurant from webhook
+          if (message.richContent.data && message.richContent.data.recommendations) {
+            // If there are multiple recommendations, treat as restaurants (plural)
+            const recommendations = message.richContent.data.recommendations;
+            if (Array.isArray(recommendations) && recommendations.length > 1) {
+              const mappedRestaurants = recommendations.map((item: any, index: number) => ({
+                id: item.name || `restaurant-${index}`,
+                name: item.name || 'Unknown Restaurant',
+                cuisine: item.cuisine || 'International',
+                rating: parseRating(item.rating || '0'),
+                priceLevel: getPriceLevelFromRange(item.price_range || ''),
+                location: item.location || 'Diani Beach',
+                image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+                hours: item.hours || 'N/A',
+                phone: item.contact || undefined,
+                specialties: Array.isArray(item.highlights) ? item.highlights : []
+              }));
+
+              return (
+                <div className="space-y-4">
+                  <p className="text-diani-sand-800 mb-4">{message.text}</p>
+                  <div className="grid gap-4 md:grid-cols-2">
+                    {mappedRestaurants.map((restaurant: any) => (
+                      <RestaurantCard key={restaurant.id} {...restaurant} />
+                    ))}
+                  </div>
+                </div>
+              );
+            } else if (recommendations.length === 1) {
+              // Single restaurant
+              const item = recommendations[0];
+              const mappedRestaurant = {
+                id: item.name || 'restaurant-1',
+                name: item.name || 'Unknown Restaurant',
+                cuisine: item.cuisine || 'International',
+                rating: parseRating(item.rating || '0'),
+                priceLevel: getPriceLevelFromRange(item.price_range || ''),
+                location: item.location || 'Diani Beach',
+                image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+                hours: item.hours || 'N/A',
+                phone: item.contact || undefined,
+                specialties: Array.isArray(item.highlights) ? item.highlights : []
+              };
+              return <RestaurantCard {...mappedRestaurant} />;
+            }
+          }
+          // Fallback for direct restaurant data
           return <RestaurantCard {...message.richContent.data} />;
         case 'activity':
           return <ActivityCard {...message.richContent.data} />;
@@ -157,8 +237,28 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
         case 'restaurants':
         case 'activities':
           const contentType = message.richContent.type.replace('s', '') as 'hotel' | 'restaurant' | 'activity';
-          // Ensure data is an array before using it
-          const rawData = Array.isArray(message.richContent.data) ? message.richContent.data : [];
+          
+          // Handle webhook data structure for restaurants
+          let rawData: any[] = [];
+          if (message.richContent.type === 'restaurants' && message.richContent.data && message.richContent.data.recommendations) {
+            // Map webhook restaurant data to expected format
+            rawData = message.richContent.data.recommendations.map((item: any, index: number) => ({
+              id: item.name || `restaurant-${index}`,
+              name: item.name || 'Unknown Restaurant',
+              cuisine: item.cuisine || 'International',
+              rating: parseRating(item.rating || '0'),
+              priceLevel: getPriceLevelFromRange(item.price_range || ''),
+              location: item.location || 'Diani Beach',
+              image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
+              hours: item.hours || 'N/A',
+              phone: item.contact || undefined,
+              specialties: Array.isArray(item.highlights) ? item.highlights : []
+            }));
+          } else {
+            // Use data as-is if it's already an array
+            rawData = Array.isArray(message.richContent.data) ? message.richContent.data : [];
+          }
+          
           const dataToRender = filteredData.length > 0 ? filteredData : rawData;
           
           return (
@@ -301,7 +401,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
       <div className={cn(
         "px-5 py-4 rounded-2xl font-inter text-base leading-relaxed transition-all duration-200",
         message.isUser
-          ? "max-w-[75%] glass-dark text-white rounded-br-md shadow-lg hover:scale-[1.02]"
+          ? "max-w-[75%] glass-dark text-diani-sand-900 rounded-br-md shadow-lg hover:scale-[1.02]"
           : message.richContent 
             ? "max-w-[90%]" 
             : "max-w-[75%] glass bg-gradient-to-br from-white/90 to-white/70 text-diani-sand-800 rounded-bl-md shadow-lg border border-white/50 hover:scale-[1.02]"
@@ -309,7 +409,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
         {renderContent()}
         <div className={cn(
           "text-xs mt-3 font-inter flex items-center gap-2",
-          message.isUser ? "text-white/70" : "text-diani-sand-600"
+          message.isUser ? "text-diani-sand-600" : "text-diani-sand-600"
         )}>
           <span>{formatTime(message.timestamp)}</span>
           {!message.isUser && (
