@@ -41,45 +41,9 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
     const responseText = await response.text();
     console.log('Raw response text:', responseText);
 
-    let data;
-    try {
-      // Try to parse as JSON
-      data = JSON.parse(responseText);
-      console.log('Parsed JSON data:', data);
-    } catch (parseError) {
-      console.log('Response is not JSON, treating as plain text');
-      // If it's not JSON, treat the response as plain text
-      return {
-        text: responseText
-      };
-    }
-    
-    // Handle different possible response formats from n8n
-    if (typeof data === 'string') {
-      return { text: data };
-    }
-    
-    // If the response is already in the expected format with text and possibly richContent
-    if (data && typeof data.text === 'string') {
-      // Return only the text property, ignoring any richContent
-      return { text: data.text };
-    }
-    
-    // Fallback to other possible response formats
-    if (data && typeof data.message === 'string') {
-      return { text: data.message };
-    }
-    
-    if (data && typeof data.response === 'string') {
-      return { text: data.response };
-    }
-
-    // If we can't find text in expected fields, log the structure
-    console.error('Unexpected response format:', data);
-    console.error('Available keys:', Object.keys(data || {}));
-    
+    // Since webhook now returns markdown text directly, return it as-is
     return {
-      text: "I received a response but couldn't parse it properly. The webhook is working, but the response format might need adjustment."
+      text: responseText
     };
 
   } catch (error) {

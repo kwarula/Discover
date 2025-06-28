@@ -381,11 +381,23 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
             </div>
           );
         default:
-          return <p className="whitespace-pre-wrap break-words">{message.text}</p>;
+          return (
+            <ReactMarkdown 
+              className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900 prose-a:text-diani-teal-600 hover:prose-a:text-diani-teal-700"
+            >
+              {message.text}
+            </ReactMarkdown>
+          );
       }
     }
 
-    return <p className="whitespace-pre-wrap break-words">{message.text}</p>;
+    return (
+      <ReactMarkdown 
+        className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900 prose-a:text-diani-teal-600 hover:prose-a:text-diani-teal-700"
+      >
+        {message.text}
+      </ReactMarkdown>
+    );
   };
 
   return (
