@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
+import type { Components } from 'react-markdown';
 import { ChatMessage as ChatMessageType } from '@/types';
 import { cn } from '@/lib/utils';
 import { MessageFeedback } from './MessageFeedback';
@@ -20,6 +21,28 @@ interface ChatMessageProps {
 }
 
 export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, userId }) => {
+  // Custom components for ReactMarkdown
+  const markdownComponents: Components = {
+    a: ({ href, children, ...props }) => {
+      console.log('Rendering link:', { href, children });
+      return (
+        <a
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(e) => {
+            console.log('Link clicked:', href);
+            // Let the default behavior handle the navigation
+          }}
+          className="text-diani-teal-600 hover:text-diani-teal-700 underline font-medium transition-colors cursor-pointer"
+          {...props}
+        >
+          {children}
+        </a>
+      );
+    }
+  };
+
   const [filteredData, setFilteredData] = React.useState<any[]>([]);
   const [originalData, setOriginalData] = React.useState<any[]>([]);
 
@@ -384,7 +407,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
         default:
           return (
             <ReactMarkdown 
-              className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900 prose-a:text-diani-teal-600 hover:prose-a:text-diani-teal-700"
+              className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900"
+              components={markdownComponents}
             >
               {message.text}
             </ReactMarkdown>
@@ -394,7 +418,8 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
 
     return (
       <ReactMarkdown 
-        className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900 prose-a:text-diani-teal-600 hover:prose-a:text-diani-teal-700"
+        className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900"
+        components={markdownComponents}
       >
         {message.text}
       </ReactMarkdown>
