@@ -205,10 +205,36 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
             </div>
           );
         case 'map':
+          // Handle the case where data might be an object with highlights array
+          let locationsForMap: any[] = [];
+          
+          if (Array.isArray(message.richContent.data)) {
+            // If data is already an array of locations, use it directly
+            locationsForMap = message.richContent.data;
+          } else if (message.richContent.data && Array.isArray(message.richContent.data.highlights)) {
+            // If data is an object with highlights array, convert to Location objects
+            const baseLocation = message.richContent.data.location || "Diani Beach, Kenya";
+            const baseLat = -4.3167; // Diani Beach coordinates
+            const baseLng = 39.5667;
+            
+            locationsForMap = message.richContent.data.highlights.map((highlight: string, index: number) => ({
+              name: highlight,
+              lat: baseLat + (index * 0.01), // Small offset for each location
+              lng: baseLng + (index * 0.01),
+              type: 'beach' as const
+            }));
+          }
+          
           return (
             <div className="space-y-4">
               <p className="text-diani-sand-800 mb-4">{message.text}</p>
-              <MapView locations={message.richContent.data} />
+              {locationsForMap.length > 0 ? (
+                <MapView locations={locationsForMap} />
+              ) : (
+                <div className="text-center py-8 text-diani-sand-600">
+                  <p>No map data available.</p>
+                </div>
+              )}
             </div>
           );
         case 'transport':
