@@ -61,8 +61,8 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
     
     // If the response is already in the expected format with text and possibly richContent
     if (data && typeof data.text === 'string') {
-      // Return the entire response object, which may include richContent
-      return data;
+      // Return only the text property, ignoring any richContent
+      return { text: data.text };
     }
     
     // Fallback to other possible response formats
