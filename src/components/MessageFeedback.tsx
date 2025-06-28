@@ -41,22 +41,17 @@ export const MessageFeedback: React.FC<MessageFeedbackProps> = ({
     try {
       const result = await feedbackService.submitFeedback(feedback);
       
-      if (result.success) {
-        toast({
-          title: "Thank you!",
-          description: "Your feedback helps us improve.",
-        });
-      } else {
-        // Store locally as fallback
-        await feedbackService.storeFeedbackLocally(feedback);
-        toast({
-          title: "Feedback saved",
-          description: "We'll sync this when you're back online.",
-        });
-      }
+      // Always show success since service handles fallbacks
+      toast({
+        title: "Thank you!",
+        description: result.message || "Your feedback helps us improve.",
+      });
     } catch (error) {
-      console.error('Feedback error:', error);
-      await feedbackService.storeFeedbackLocally(feedback);
+      console.error('Feedback submission failed:', error);
+      toast({
+        title: "Feedback saved",
+        description: "We'll sync this when you're back online.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -82,25 +77,20 @@ export const MessageFeedback: React.FC<MessageFeedbackProps> = ({
     try {
       const result = await feedbackService.submitFeedback(feedback);
       
-      if (result.success) {
-        toast({
-          title: "Thank you for the detailed feedback!",
-          description: "This helps us provide better recommendations.",
-        });
-      } else {
-        await feedbackService.storeFeedbackLocally(feedback);
-        toast({
-          title: "Feedback saved",
-          description: "We'll sync this when you're back online.",
-        });
-      }
+      toast({
+        title: "Thank you for the detailed feedback!",
+        description: result.message || "This helps us provide better recommendations.",
+      });
       
       setShowDetailedFeedback(false);
       setComment('');
       setRating(0);
     } catch (error) {
-      console.error('Detailed feedback error:', error);
-      await feedbackService.storeFeedbackLocally(feedback);
+      console.error('Detailed feedback submission failed:', error);
+      toast({
+        title: "Feedback saved",
+        description: "We'll sync this when you're back online.",
+      });
     } finally {
       setIsSubmitting(false);
     }

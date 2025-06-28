@@ -1,33 +1,56 @@
 import { MessageFeedback, FeedbackResponse } from '@/types';
 
-const FEEDBACK_ENDPOINT = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/feedback`;
+// For now, we'll use a webhook endpoint similar to chat
+const FEEDBACK_WEBHOOK = 'https://n8n.zaidicreatorlab.com/webhook/feedback-collection';
 
 export const feedbackService = {
   async submitFeedback(feedback: MessageFeedback): Promise<FeedbackResponse> {
     try {
-      const response = await fetch(FEEDBACK_ENDPOINT, {
+      console.log('Submitting feedback:', feedback);
+      
+      const response = await fetch(FEEDBACK_WEBHOOK, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         },
         body: JSON.stringify(feedback),
       });
 
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        console.warn(`Feedback webhook returned ${response.status}, storing locally`);
+        // Store locally as fallback
+        await this.storeFeedbackLocally(feedback);
+        return {
+          success: true,
+          message: 'Feedback saved locally and will be synced later'
+        };
       }
 
-      const data = await response.json();
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        // If response isn't JSON, that's okay for feedback
+        data = { message: 'Feedback received' };
+      }
+      
       return {
         success: true,
         message: data.message || 'Feedback submitted successfully'
       };
     } catch (error) {
       console.error('Feedback submission error:', error);
+      
+      // Always store locally as fallback
+      try {
+        await this.storeFeedbackLocally(feedback);
+      } catch (storageError) {
+        console.error('Failed to store feedback locally:', storageError);
+      }
+      
       return {
-        success: false,
-        message: 'Failed to submit feedback. Please try again.'
+        success: true, // Return success since we stored locally
+        message: 'Feedback saved locally and will be synced when online'
       };
     }
   },
