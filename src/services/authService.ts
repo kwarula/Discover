@@ -71,6 +71,36 @@ export const validateEmail = (email: string): boolean => {
 
 // Supabase-based authentication service
 export const authService = {
+  async signInWithGoogle(): Promise<AuthResponse> {
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/chat`
+        }
+      });
+
+      if (error) {
+        return {
+          success: false,
+          message: error.message
+        };
+      }
+
+      // OAuth redirect will handle the rest
+      return {
+        success: true,
+        message: 'Redirecting to Google...'
+      };
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      return {
+        success: false,
+        message: 'Failed to initiate Google sign-in. Please try again.'
+      };
+    }
+  },
+
   async signup(data: SignupData): Promise<AuthResponse> {
     try {
       // Validate email
@@ -197,7 +227,40 @@ export const authService = {
         .eq('id', user.id)
         .single();
 
-      if (!profile) return null;
+      if (!profile) {
+        // If no profile exists but user is authenticated (e.g., Google sign-in),
+        // create a basic profile from auth metadata
+        if (user.user_metadata?.full_name || user.user_metadata?.name) {
+          const username = user.user_metadata.full_name || user.user_metadata.name;
+          
+          // Create profile in database
+          const { data: newProfile, error } = await supabase
+            .from('user_profiles')
+            .insert([
+              {
+                id: user.id,
+                username: username,
+                travel_style: 'relaxed',
+                interests: [],
+                preferred_language: 'English'
+              }
+            ])
+            .select()
+            .single();
+
+          if (!error && newProfile) {
+            return {
+              id: user.id,
+              email: user.email!,
+              username: newProfile.username,
+              travelStyle: newProfile.travel_style,
+              interests: newProfile.interests,
+              preferredLanguage: newProfile.preferred_language
+            };
+          }
+        }
+        return null;
+      }
 
       return {
         id: user.id,
@@ -247,6 +310,7 @@ export const authService = {
   // Listen to auth state changes
   onAuthStateChange(callback: (user: any) => void) {
     return supabase.auth.onAuthStateChange((event, session) => {
+      console.log('Auth state change:', event, session?.user?.id);
       callback(session?.user || null);
     });
   }

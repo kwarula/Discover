@@ -10,7 +10,7 @@ import { toast } from '@/hooks/use-toast';
 import { authService, SignupData, LoginData, validateEmail } from '@/services/authService';
 import { PasswordStrengthIndicator } from './PasswordStrengthIndicator';
 import { EmailVerificationModal } from './EmailVerificationModal';
-import { Eye, EyeOff, Mail, Lock, User, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, Chrome } from 'lucide-react';
 
 type SignupStep = 'auth' | 'profile' | 'verification';
 type AuthMode = 'login' | 'signup';
@@ -224,6 +224,36 @@ export const SignupModal: React.FC = () => {
     resetForm();
   };
 
+  const handleGoogleSignIn = async () => {
+    setIsLoading(true);
+    try {
+      const response = await authService.signInWithGoogle();
+      
+      if (response.success) {
+        // Google OAuth will redirect, so we don't need to do anything else here
+        toast({
+          title: "Redirecting to Google",
+          description: "Please complete the sign-in process with Google.",
+        });
+      } else {
+        toast({
+          title: "Google Sign-in Failed",
+          description: response.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      toast({
+        title: "Sign-in Error",
+        description: "Something went wrong with Google sign-in. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const availableInterests = [
     'Diving', 'Snorkeling', 'Local Cuisine', 'Wildlife', 'Photography', 
     'Beach Activities', 'Cultural Experiences', 'Nightlife', 'Wellness', 'Adventure Sports'
@@ -345,6 +375,27 @@ export const SignupModal: React.FC = () => {
               )}
 
               <Button
+            {/* Google Sign-in Button */}
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-diani-sand-200" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-diani-sand-50 px-2 text-diani-sand-500">Or continue with</span>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              variant="outline"
+              onClick={handleGoogleSignIn}
+              disabled={isLoading}
+              className="w-full border-diani-sand-300 text-diani-sand-700 hover:bg-diani-sand-50 rounded-full py-3 font-medium transition-all duration-200"
+            >
+              <Chrome className="h-4 w-4 mr-2" />
+              Sign in with Google
+            </Button>
+
                 type="submit"
                 disabled={isLoading}
                 className="w-full bg-diani-teal-500 hover:bg-diani-teal-700 text-white rounded-full py-3 font-medium transition-all duration-200"
