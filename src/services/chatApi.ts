@@ -4,7 +4,13 @@ const API_ENDPOINT = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-pro
 
 export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiResponse> => {
   try {
-    console.log('Sending chat request:', request);
+    console.log('Sending enhanced chat request:', {
+      ...request,
+      // Log request structure without sensitive data
+      userProfile: request.userProfile ? 'included' : 'not included',
+      userLocation: request.userLocation ? 'included' : 'not included',
+      context: request.context ? 'included' : 'not included'
+    });
     
     const response = await fetch(API_ENDPOINT, {
       method: 'POST',

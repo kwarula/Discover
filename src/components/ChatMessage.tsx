@@ -2,6 +2,9 @@
 import React from 'react';
 import { ChatMessage as ChatMessageType } from '@/types';
 import { cn } from '@/lib/utils';
+import { MessageFeedback } from './MessageFeedback';
+import { ContentFilter } from './ContentFilter';
+import { FilterOptions, SortOptions } from '@/types';
 import { HotelCard } from './cards/HotelCard';
 import { RestaurantCard } from './cards/RestaurantCard';
 import { ActivityCard } from './cards/ActivityCard';
@@ -13,15 +16,130 @@ import { Transport } from '@/types/transport';
 interface ChatMessageProps {
   message: ChatMessageType;
   isLatest?: boolean;
+  userId?: string;
 }
 
-export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest }) => {
+export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, userId }) => {
+  const [filteredData, setFilteredData] = React.useState<any[]>([]);
+  const [originalData, setOriginalData] = React.useState<any[]>([]);
+
+  // Initialize data when message changes
+  React.useEffect(() => {
+    if (message.richContent && Array.isArray(message.richContent.data)) {
+      setOriginalData(message.richContent.data);
+      setFilteredData(message.richContent.data);
+    }
+  }, [message.richContent]);
+
   const formatTime = (date: Date) => {
     return date.toLocaleTimeString('en-US', { 
       hour: 'numeric', 
       minute: '2-digit',
       hour12: true 
     });
+  };
+
+  const handleFilterChange = (filters: FilterOptions) => {
+    let filtered = [...originalData];
+
+    // Apply price range filter
+    if (filters.priceRange) {
+      filtered = filtered.filter(item => {
+        const price = extractPrice(item);
+        return price >= filters.priceRange!.min && price <= filters.priceRange!.max;
+      });
+    }
+
+    // Apply rating filter
+    if (filters.rating) {
+      filtered = filtered.filter(item => {
+        const rating = item.rating || item.driverRating || 0;
+        return rating >= filters.rating!.min;
+      });
+    }
+
+    // Apply amenities filter
+    if (filters.amenities && filters.amenities.length > 0) {
+      filtered = filtered.filter(item => {
+        const itemAmenities = item.amenities || item.facilities || item.highlights || [];
+        return filters.amenities!.some(amenity => 
+          itemAmenities.some((itemAmenity: string) => 
+            itemAmenity.toLowerCase().includes(amenity.toLowerCase())
+          )
+        );
+      });
+    }
+
+    // Apply cuisine filter (restaurants)
+    if (filters.cuisine && filters.cuisine.length > 0) {
+      filtered = filtered.filter(item => {
+        const itemCuisine = item.cuisine || '';
+        return filters.cuisine!.some(cuisine => 
+          itemCuisine.toLowerCase().includes(cuisine.toLowerCase())
+        );
+      });
+    }
+
+    // Apply difficulty filter (activities)
+    if (filters.difficulty && filters.difficulty.length > 0) {
+      filtered = filtered.filter(item => {
+        return filters.difficulty!.includes(item.difficulty);
+      });
+    }
+
+    setFilteredData(filtered);
+  };
+
+  const handleSortChange = (sort: SortOptions) => {
+    const sorted = [...filteredData].sort((a, b) => {
+      let aValue, bValue;
+
+      switch (sort.field) {
+        case 'rating':
+          aValue = a.rating || a.driverRating || 0;
+          bValue = b.rating || b.driverRating || 0;
+          break;
+        case 'price':
+          aValue = extractPrice(a);
+          bValue = extractPrice(b);
+          break;
+        case 'distance':
+          aValue = extractDistance(a);
+          bValue = extractDistance(b);
+          break;
+        case 'popularity':
+          aValue = a.popularity || a.rating || 0;
+          bValue = b.popularity || b.rating || 0;
+          break;
+        default:
+          return 0;
+      }
+
+      if (sort.direction === 'asc') {
+        return aValue - bValue;
+      } else {
+        return bValue - aValue;
+      }
+    });
+
+    setFilteredData(sorted);
+  };
+
+  const extractPrice = (item: any): number => {
+    if (item.pricePerNight) return item.pricePerNight;
+    if (item.priceValue) return item.priceValue;
+    if (item.fare?.amount) return item.fare.amount;
+    
+    // Extract from price string
+    const priceStr = item.price || '';
+    const match = priceStr.match(/(\d+)/);
+    return match ? parseInt(match[1]) : 0;
+  };
+
+  const extractDistance = (item: any): number => {
+    if (!item.distance) return 0;
+    const match = item.distance.match(/(\d+\.?\d*)/);
+    return match ? parseFloat(match[1]) : 0;
   };
 
   // Check if message contains rich content
@@ -38,11 +156,32 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest }) =
         case 'hotels':
         case 'restaurants':
         case 'activities':
+          const contentType = message.richContent.type.replace('s', '') as 'hotel' | 'restaurant' | 'activity';
+          const dataToRender = filteredData.length > 0 ? filteredData : message.richContent.data;
+          
           return (
             <div className="space-y-4">
               <p className="text-diani-sand-800 mb-4">{message.text}</p>
+              
+              {/* Filter Controls */}
+              {message.richContent.data.length > 2 && (
+                <ContentFilter
+                  contentType={contentType === 'hotel' ? 'hotels' : contentType === 'restaurant' ? 'restaurants' : 'activities'}
+                  onFilterChange={handleFilterChange}
+                  onSortChange={handleSortChange}
+                  className="mb-4"
+                />
+              )}
+              
+              {/* Results count */}
+              {filteredData.length !== originalData.length && (
+                <p className="text-sm text-diani-sand-600 mb-2">
+                  Showing {filteredData.length} of {originalData.length} results
+                </p>
+              )}
+              
               <div className="grid gap-4 md:grid-cols-2">
-                {message.richContent.data.map((item: any, index: number) => {
+                {dataToRender.map((item: any, index: number) => {
                   switch (message.richContent.type) {
                     case 'hotels':
                       return <HotelCard key={index} {...item} />;
@@ -134,6 +273,15 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest }) =
             <span className="text-diani-teal-600">• Diani AI</span>
           )}
         </div>
+        
+        {/* Add feedback for AI messages */}
+        {!message.isUser && userId && (
+          <MessageFeedback
+            messageId={message.id}
+            userId={userId}
+            className="mt-2"
+          />
+        )}
       </div>
     </div>
   );

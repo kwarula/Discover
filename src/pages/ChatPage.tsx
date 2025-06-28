@@ -99,11 +99,17 @@ const ChatInterface: React.FC = () => {
 
     try {
       // Send to API with user location if available
+      // Enhanced request with more context
       const requestData = {
         message: messageText,
         userId,
         userProfile: userProfile || undefined,
-        ...(userLocation && { userLocation })
+        ...(userLocation && { userLocation }),
+        context: {
+          previousMessages: messages.slice(-5), // Last 5 messages for context
+          currentTime: new Date().toISOString(),
+          sessionId: `session-${userId}-${Date.now()}` // Simple session tracking
+        }
       };
 
       const response = await sendChatMessage(requestData);
@@ -189,6 +195,7 @@ const ChatInterface: React.FC = () => {
                   key={message.id}
                   message={message}
                   isLatest={index === messages.length - 1}
+                  userId={userId}
                 />
               ))}
               {isTyping && <TypingIndicator />}
