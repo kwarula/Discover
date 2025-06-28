@@ -25,6 +25,9 @@ export const ActivityCard = memo<ActivityCardProps>(({
   onLearnMore,
 }) => {
   const { formatCurrency, formatDuration, cardTexts, getDifficultyLabel } = useCardLocalization();
+  
+  // Ensure highlights is always an array
+  const safeHighlights = Array.isArray(highlights) ? highlights : [];
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Prevent card click when clicking buttons
@@ -132,11 +135,11 @@ export const ActivityCard = memo<ActivityCardProps>(({
         </div>
 
         {/* Highlights */}
-        {highlights.length > 0 && (
+        {safeHighlights.length > 0 && (
           <div className="space-y-1 flex-1">
             <p className="text-xs font-medium text-diani-sand-600">{cardTexts.highlights}</p>
             <div className="flex flex-wrap gap-1" role="list" aria-label="Activity highlights">
-              {highlights.slice(0, 3).map((highlight, index) => (
+              {safeHighlights.slice(0, 3).map((highlight, index) => (
                 <span
                   key={`${id}-highlight-${index}`}
                   className="px-2 py-1 bg-diani-teal-50 text-diani-teal-700 rounded-full text-xs"
@@ -145,9 +148,9 @@ export const ActivityCard = memo<ActivityCardProps>(({
                   ✓ {highlight}
                 </span>
               ))}
-              {highlights.length > 3 && (
+              {safeHighlights.length > 3 && (
                 <span className="px-2 py-1 bg-diani-teal-50 text-diani-teal-700 rounded-full text-xs">
-                  {cardTexts.more.replace('{count}', String(highlights.length - 3))}
+                  {cardTexts.more.replace('{count}', String(safeHighlights.length - 3))}
                 </span>
               )}
             </div>

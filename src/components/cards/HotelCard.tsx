@@ -41,6 +41,9 @@ export const HotelCard = memo<HotelCardProps>(({
   
   // Validate rating
   const validRating = Math.min(Math.max(rating, 0), 5);
+  
+  // Ensure amenities is always an array
+  const safeAmenities = Array.isArray(amenities) ? amenities : [];
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Prevent card click when clicking buttons
@@ -136,7 +139,7 @@ export const HotelCard = memo<HotelCardProps>(({
         <div className="space-y-1">
           <p className="text-xs font-medium text-diani-sand-600">{cardTexts.amenities}</p>
           <div className="flex flex-wrap gap-1.5" role="list" aria-label="Hotel amenities">
-            {amenities.slice(0, 4).map((amenity, index) => {
+            {safeAmenities.slice(0, 4).map((amenity, index) => {
               const Icon = amenityIconMap[amenity.toLowerCase() as keyof typeof amenityIconMap] || Coffee;
               return (
                 <div
@@ -151,10 +154,10 @@ export const HotelCard = memo<HotelCardProps>(({
                 </div>
               );
             })}
-            {amenities.length > 4 && (
+            {safeAmenities.length > 4 && (
               <div className="px-2 py-1 bg-diani-teal-50 rounded-full">
                 <span className="text-xs text-diani-teal-700">
-                  {cardTexts.more.replace('{count}', String(amenities.length - 4))}
+                  {cardTexts.more.replace('{count}', String(safeAmenities.length - 4))}
                 </span>
               </div>
             )}
