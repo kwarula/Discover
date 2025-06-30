@@ -1,6 +1,6 @@
 import { corsHeaders } from '../_shared/cors.ts';
 
-const WEBHOOK_URL = 'https://n8n.zaidicreatorlab.com/webhook/b65b3de6-506a-4c2a-86be-9bfd1c81d8ea';
+const WEBHOOK_URL = 'https://n8n.zaidicreatorlab.com/webhook-test/221fc276-061b-4a35-8edf-c6ab4a2cd233';
 
 Deno.serve(async (req) => {
   // Handle CORS
