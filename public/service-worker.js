@@ -6,6 +6,7 @@ const RUNTIME_CACHE = 'discover-diani-runtime-v1.0.0';
 const STATIC_ASSETS = [
   '/',
   '/chat',
+  '/info',
   '/index.html',
   '/manifest.json',
   '/Discover Diani.png',

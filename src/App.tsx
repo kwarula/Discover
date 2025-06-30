@@ -7,6 +7,7 @@ import { AppProvider } from "./contexts/AppContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import LandingPage from "./pages/LandingPage";
 import ChatPage from "./pages/ChatPage";
+import InfoPage from "./pages/InfoPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -20,6 +21,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/info" element={<InfoPage />} />
             <Route 
               path="/chat" 
               element={

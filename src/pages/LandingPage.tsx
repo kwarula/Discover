@@ -291,6 +291,8 @@ const LandingPage: React.FC = () => {
             
             <div className="text-center">
               <div className="flex flex-wrap justify-center gap-6 text-sm">
+                <Link to="/info" className="hover:text-diani-teal-300 transition-colors">Essential Info</Link>
+                <span className="text-diani-sand-500">•</span>
                 <a href="#" className="hover:text-diani-teal-300 transition-colors">Terms</a>
                 <span className="text-diani-sand-500">•</span>
                 <a href="#" className="hover:text-diani-teal-300 transition-colors">Privacy</a>
