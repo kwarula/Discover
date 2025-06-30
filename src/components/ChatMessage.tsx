@@ -10,8 +10,13 @@ import { HotelCard } from './cards/HotelCard';
 import { RestaurantCard } from './cards/RestaurantCard';
 import { ActivityCard } from './cards/ActivityCard';
 import { TransportCard } from './cards/TransportCard';
+import { ServiceCard } from './cards/ServiceCard';
+import { ShopCard } from './cards/ShopCard';
+import { RealEstateCard } from './cards/RealEstateCard';
+import { TourCard } from './cards/TourCard';
 import { MapView } from './MapView';
 import { TransportMap } from './TransportMap';
+import { ListingCard } from './cards/ListingCard';
 import { Transport } from '@/types/transport';
 
 interface ChatMessageProps {
@@ -20,14 +25,46 @@ interface ChatMessageProps {
   userId?: string;
 }
 
+// Base listing interface matching the schema
+interface ListingBase {
+  id: string;
+  name: string;
+  type: 'hotel' | 'restaurant' | 'activity' | 'transport' | 'service' | 'shop' | 'real_estate' | 'tour';
+  description: string;
+  categories: string[];
+  location: {
+    address: string;
+    coordinates: {
+      lat: number;
+      lng: number;
+    };
+  };
+  images: string[];
+  phone: string;
+  whatsapp?: string;
+  website?: string;
+  email?: string;
+  price_level: 'low' | 'medium' | 'high' | 'premium' | 'variable' | 'free';
+  languages_spoken: string[];
+  available: boolean;
+  featured: boolean;
+  last_updated: string;
+}
+
 // Enhanced interface for webhook structured responses
 interface WebhookResponse {
   text: string;
   isUser: boolean;
   timestamp: string;
   richContent?: {
-    type: 'suggestion' | 'hotel' | 'restaurant' | 'activity' | 'hotels' | 'restaurants' | 'activities' | 'map' | 'transport' | 'transports';
+    type: 'suggestion' | 'listing' | 'listings' | 'map' | 'mixed_results';
     data: any;
+    metadata?: {
+      total_count?: number;
+      filters_applied?: string[];
+      search_query?: string;
+      location_context?: string;
+    };
   };
 }
 
@@ -41,7 +78,6 @@ const SuggestionCard: React.FC<{ suggestions: string[] }> = ({ suggestions }) =>
           key={index}
           className="flex items-start gap-2 p-2 bg-white/60 rounded-md hover:bg-white/80 transition-colors cursor-pointer"
           onClick={() => {
-            // Trigger suggestion as new user message
             const event = new CustomEvent('suggestion-selected', { 
               detail: { suggestion } 
             });
@@ -76,36 +112,61 @@ const QuickActions: React.FC<{ actions: Array<{label: string, action: string}> }
   </div>
 );
 
+// Search results header component
+const SearchResultsHeader: React.FC<{
+  metadata?: WebhookResponse['richContent']['metadata'];
+  resultsCount: number;
+  filteredCount: number;
+}> = ({ metadata, resultsCount, filteredCount }) => (
+  <div className="mb-4 p-3 bg-gradient-to-r from-diani-blue-50 to-diani-teal-50 rounded-lg border border-diani-blue-200">
+    <div className="flex items-center justify-between">
+      <div>
+        <h4 className="text-sm font-semibold text-diani-blue-800">
+          Search Results {metadata?.search_query && `for "${metadata.search_query}"`}
+        </h4>
+        <p className="text-xs text-diani-blue-600 mt-1">
+          {filteredCount !== resultsCount 
+            ? `Showing ${filteredCount} of ${resultsCount} results`
+            : `${resultsCount} result${resultsCount !== 1 ? 's' : ''} found`
+          }
+          {metadata?.location_context && ` in ${metadata.location_context}`}
+        </p>
+      </div>
+      {metadata?.filters_applied && metadata.filters_applied.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {metadata.filters_applied.map((filter, index) => (
+            <span key={index} className="px-2 py-1 text-xs bg-diani-teal-100 text-diani-teal-700 rounded-full">
+              {filter}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  </div>
+);
+
 export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, userId }) => {
   // Custom components for ReactMarkdown
   const markdownComponents: Components = {
-    a: ({ href, children, ...props }) => {
-      console.log('Rendering link:', { href, children });
-      return (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          onClick={(e) => {
-            console.log('Link clicked:', href);
-            // Let the default behavior handle the navigation
-          }}
-          className="text-diani-teal-600 hover:text-diani-teal-700 underline font-medium transition-colors cursor-pointer"
-          {...props}
-        >
-          {children}
-        </a>
-      );
-    }
+    a: ({ href, children, ...props }) => (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-diani-teal-600 hover:text-diani-teal-700 underline font-medium transition-colors cursor-pointer"
+        {...props}
+      >
+        {children}
+      </a>
+    )
   };
 
-  const [filteredData, setFilteredData] = React.useState<any[]>([]);
-  const [originalData, setOriginalData] = React.useState<any[]>([]);
+  const [filteredData, setFilteredData] = React.useState<ListingBase[]>([]);
+  const [originalData, setOriginalData] = React.useState<ListingBase[]>([]);
 
   // Enhanced helper function to parse webhook response
   const parseWebhookResponse = (message: ChatMessageType): WebhookResponse | null => {
     try {
-      // Check if message.text is a JSON string (from webhook)
       if (typeof message.text === 'string' && message.text.trim().startsWith('{')) {
         const parsed = JSON.parse(message.text);
         if (parsed.text && parsed.hasOwnProperty('isUser') && parsed.timestamp) {
@@ -119,38 +180,73 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
     }
   };
 
-  // Helper function to parse rating from string like "4.6/5"
-  const parseRating = (ratingStr: string): number => {
-    if (!ratingStr) return 0;
-    const match = ratingStr.match(/(\d+\.?\d*)/);
-    return match ? parseFloat(match[1]) : 0;
+  // Helper function to validate listing structure
+  const validateListing = (item: any): item is ListingBase => {
+    return item && 
+           typeof item.id === 'string' &&
+           typeof item.name === 'string' &&
+           typeof item.type === 'string' &&
+           ['hotel', 'restaurant', 'activity', 'transport', 'service', 'shop', 'real_estate', 'tour'].includes(item.type);
   };
 
-  // Helper function to convert price range to price level (1-4)
-  const getPriceLevelFromRange = (priceRange: string): 1 | 2 | 3 | 4 => {
-    if (!priceRange) return 2;
-    
-    // Extract the maximum price from range like "KES 2500-5000"
-    const match = priceRange.match(/(\d+)-(\d+)/);
-    if (match) {
-      const maxPrice = parseInt(match[2]);
-      if (maxPrice < 1000) return 1;
-      if (maxPrice < 2500) return 2;
-      if (maxPrice < 5000) return 3;
-      return 4;
+  // Helper function to normalize legacy data to new listing format
+  const normalizeLegacyData = (item: any, type: string): ListingBase | null => {
+    try {
+      // Create base structure with defaults
+      const normalized: ListingBase = {
+        id: item.id || item.name?.replace(/\s+/g, '-').toLowerCase() || `${type}-${Date.now()}`,
+        name: item.name || 'Unknown Name',
+        type: type as ListingBase['type'],
+        description: item.description || item.summary || item.highlights?.join('. ') || '',
+        categories: item.categories || item.cuisine_types || item.product_types || [],
+        location: {
+          address: item.location || item.address || 'Diani Beach, Kenya',
+          coordinates: {
+            lat: item.coordinates?.lat || item.lat || -4.3167,
+            lng: item.coordinates?.lng || item.lng || 39.5667
+          }
+        },
+        images: item.images || [item.image] || [],
+        phone: item.phone || item.contact || item.driverPhone || '',
+        whatsapp: item.whatsapp,
+        website: item.website,
+        email: item.email,
+        price_level: normalizePriceLevel(item.priceLevel || item.price_level || item.priceRange),
+        languages_spoken: item.languages_spoken || ['English'],
+        available: item.available !== false,
+        featured: item.featured || false,
+        last_updated: new Date().toISOString()
+      };
+
+      return normalized;
+    } catch (error) {
+      console.warn('Failed to normalize legacy data:', error);
+      return null;
+    }
+  };
+
+  // Helper function to normalize price level
+  const normalizePriceLevel = (priceData: any): ListingBase['price_level'] => {
+    if (typeof priceData === 'string' && ['low', 'medium', 'high', 'premium', 'variable', 'free'].includes(priceData)) {
+      return priceData as ListingBase['price_level'];
     }
     
-    // If no range, try to extract single price
-    const singleMatch = priceRange.match(/(\d+)/);
-    if (singleMatch) {
-      const price = parseInt(singleMatch[1]);
-      if (price < 1000) return 1;
-      if (price < 2500) return 2;
-      if (price < 5000) return 3;
-      return 4;
+    if (typeof priceData === 'number') {
+      if (priceData === 1) return 'low';
+      if (priceData === 2) return 'medium';
+      if (priceData === 3) return 'high';
+      if (priceData === 4) return 'premium';
     }
     
-    return 2; // Default to moderate
+    if (typeof priceData === 'string') {
+      const lowerPrice = priceData.toLowerCase();
+      if (lowerPrice.includes('free') || lowerPrice.includes('0')) return 'free';
+      if (lowerPrice.includes('budget') || lowerPrice.includes('cheap')) return 'low';
+      if (lowerPrice.includes('luxury') || lowerPrice.includes('expensive')) return 'premium';
+      if (lowerPrice.includes('moderate')) return 'medium';
+    }
+    
+    return 'medium'; // Default fallback
   };
 
   // Initialize data when message changes
@@ -158,9 +254,27 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
     const webhookResponse = parseWebhookResponse(message);
     const richContent = webhookResponse?.richContent || message.richContent;
     
-    if (richContent && Array.isArray(richContent.data)) {
-      setOriginalData(richContent.data);
-      setFilteredData(richContent.data);
+    if (richContent?.data) {
+      let processedData: ListingBase[] = [];
+      
+      if (Array.isArray(richContent.data)) {
+        processedData = richContent.data
+          .map(item => validateListing(item) ? item : normalizeLegacyData(item, richContent.type || 'listing'))
+          .filter((item): item is ListingBase => item !== null);
+      } else if (typeof richContent.data === 'object') {
+        // Handle single listing or wrapped data
+        if (richContent.data.recommendations) {
+          processedData = richContent.data.recommendations
+            .map((item: any) => validateListing(item) ? item : normalizeLegacyData(item, richContent.type || 'listing'))
+            .filter((item: ListingBase | null): item is ListingBase => item !== null);
+        } else {
+          const normalized = validateListing(richContent.data) ? richContent.data : normalizeLegacyData(richContent.data, richContent.type || 'listing');
+          if (normalized) processedData = [normalized];
+        }
+      }
+      
+      setOriginalData(processedData);
+      setFilteredData(processedData);
     }
   }, [message]);
 
@@ -172,7 +286,6 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
     });
   };
 
-  // Enhanced time formatting to handle webhook timestamp strings
   const formatWebhookTime = (timestamp: string) => {
     try {
       const date = new Date(timestamp);
@@ -182,52 +295,39 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
     }
   };
 
+  // Enhanced filter handling for new listing structure
   const handleFilterChange = (filters: FilterOptions) => {
     let filtered = [...originalData];
 
-    // Apply price range filter
+    // Apply price level filter
     if (filters.priceRange) {
       filtered = filtered.filter(item => {
-        const price = extractPrice(item);
-        return price >= filters.priceRange!.min && price <= filters.priceRange!.max;
+        const priceLevel = item.price_level;
+        const levelMap = { 'free': 0, 'low': 1, 'medium': 2, 'high': 3, 'premium': 4, 'variable': 2 };
+        const itemLevel = levelMap[priceLevel] || 2;
+        return itemLevel >= filters.priceRange!.min && itemLevel <= filters.priceRange!.max;
       });
     }
 
-    // Apply rating filter
-    if (filters.rating) {
-      filtered = filtered.filter(item => {
-        const rating = item.rating || item.driverRating || 0;
-        return rating >= filters.rating!.min;
-      });
-    }
-
-    // Apply amenities filter
-    if (filters.amenities && filters.amenities.length > 0) {
-      filtered = filtered.filter(item => {
-        const itemAmenities = item.amenities || item.facilities || item.highlights || [];
-        return filters.amenities!.some(amenity => 
-          itemAmenities.some((itemAmenity: string) => 
-            itemAmenity.toLowerCase().includes(amenity.toLowerCase())
+    // Apply category filter
+    if (filters.categories && filters.categories.length > 0) {
+      filtered = filtered.filter(item => 
+        filters.categories!.some(category => 
+          item.categories.some(itemCategory => 
+            itemCategory.toLowerCase().includes(category.toLowerCase())
           )
-        );
-      });
+        )
+      );
     }
 
-    // Apply cuisine filter (restaurants)
-    if (filters.cuisine && filters.cuisine.length > 0) {
-      filtered = filtered.filter(item => {
-        const itemCuisine = item.cuisine || '';
-        return filters.cuisine!.some(cuisine => 
-          itemCuisine.toLowerCase().includes(cuisine.toLowerCase())
-        );
-      });
+    // Apply availability filter
+    if (filters.availability) {
+      filtered = filtered.filter(item => item.available);
     }
 
-    // Apply difficulty filter (activities)
-    if (filters.difficulty && filters.difficulty.length > 0) {
-      filtered = filtered.filter(item => {
-        return filters.difficulty!.includes(item.difficulty);
-      });
+    // Apply featured filter
+    if (filters.featured) {
+      filtered = filtered.filter(item => item.featured);
     }
 
     setFilteredData(filtered);
@@ -238,21 +338,18 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
       let aValue, bValue;
 
       switch (sort.field) {
-        case 'rating':
-          aValue = a.rating || a.driverRating || 0;
-          bValue = b.rating || b.driverRating || 0;
-          break;
+        case 'name':
+          aValue = a.name;
+          bValue = b.name;
+          return sort.direction === 'asc' ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
         case 'price':
-          aValue = extractPrice(a);
-          bValue = extractPrice(b);
+          const levelMap = { 'free': 0, 'low': 1, 'medium': 2, 'high': 3, 'premium': 4, 'variable': 2 };
+          aValue = levelMap[a.price_level] || 2;
+          bValue = levelMap[b.price_level] || 2;
           break;
-        case 'distance':
-          aValue = extractDistance(a);
-          bValue = extractDistance(b);
-          break;
-        case 'popularity':
-          aValue = a.popularity || a.rating || 0;
-          bValue = b.popularity || b.rating || 0;
+        case 'featured':
+          aValue = a.featured ? 1 : 0;
+          bValue = b.featured ? 1 : 0;
           break;
         default:
           return 0;
@@ -268,33 +365,39 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
     setFilteredData(sorted);
   };
 
-  const extractPrice = (item: any): number => {
-    if (item.pricePerNight) return item.pricePerNight;
-    if (item.priceValue) return item.priceValue;
-    if (item.fare?.amount) return item.fare.amount;
+  // Enhanced card rendering function
+  const renderListingCard = (listing: ListingBase, index: number) => {
+    const key = `${listing.type}-${listing.id}-${index}`;
     
-    // Extract from price string
-    const priceStr = item.price || item.price_range || '';
-    const match = priceStr.match(/(\d+)/);
-    return match ? parseInt(match[1]) : 0;
-  };
-
-  const extractDistance = (item: any): number => {
-    if (!item.distance) return 0;
-    const match = item.distance.match(/(\d+\.?\d*)/);
-    return match ? parseFloat(match[1]) : 0;
+    switch (listing.type) {
+      case 'hotel':
+        return <HotelCard key={key} {...listing} />;
+      case 'restaurant':
+        return <RestaurantCard key={key} {...listing} />;
+      case 'activity':
+        return <ActivityCard key={key} {...listing} />;
+      case 'transport':
+        return <TransportCard key={key} transport={listing as any} onCall={() => {}} onBook={() => {}} />;
+      case 'service':
+        return <ServiceCard key={key} {...listing} />;
+      case 'shop':
+        return <ShopCard key={key} {...listing} />;
+      case 'real_estate':
+        return <RealEstateCard key={key} {...listing} />;
+      case 'tour':
+        return <TourCard key={key} {...listing} />;
+      default:
+        return <ListingCard key={key} listing={listing} />;
+    }
   };
 
   // Enhanced content rendering with webhook support
   const renderContent = () => {
-    // First, check if this is a webhook response
     const webhookResponse = parseWebhookResponse(message);
-    
-    // Use webhook richContent if available, otherwise use message richContent
     const richContent = webhookResponse?.richContent || message.richContent;
     const textContent = webhookResponse?.text || message.text;
 
-    // Handle webhook suggestion type
+    // Handle suggestion type
     if (richContent?.type === 'suggestion') {
       const suggestionData = richContent.data;
       
@@ -307,17 +410,14 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
             {textContent}
           </ReactMarkdown>
           
-          {/* Render suggestions if available */}
           {suggestionData?.suggestions && Array.isArray(suggestionData.suggestions) && (
             <SuggestionCard suggestions={suggestionData.suggestions} />
           )}
           
-          {/* Render quick actions if available */}
           {suggestionData?.quickActions && Array.isArray(suggestionData.quickActions) && (
             <QuickActions actions={suggestionData.quickActions} />
           )}
           
-          {/* Render location highlights */}
           {suggestionData?.highlights && Array.isArray(suggestionData.highlights) && (
             <div className="bg-gradient-to-r from-diani-blue-50 to-diani-teal-50 border border-diani-blue-200 rounded-lg p-3 mt-2">
               <h4 className="text-sm font-semibold text-diani-blue-800 mb-2">🏖️ Local Highlights</h4>
@@ -332,7 +432,6 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
             </div>
           )}
           
-          {/* Render weather info if available */}
           {suggestionData?.weather && (
             <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-3 mt-2">
               <h4 className="text-sm font-semibold text-orange-800 mb-1">🌤️ Current Weather</h4>
@@ -343,207 +442,106 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
       );
     }
 
-    // Handle other rich content types (existing logic)
-    if (richContent) {
-      switch (richContent.type) {
-        case 'hotel':
-          return <HotelCard {...richContent.data} />;
-        case 'restaurant':
-          // Handle single restaurant from webhook
-          if (richContent.data && richContent.data.recommendations) {
-            const recommendations = richContent.data.recommendations;
-            if (Array.isArray(recommendations) && recommendations.length > 1) {
-              const mappedRestaurants = recommendations.map((item: any, index: number) => ({
-                id: item.name || `restaurant-${index}`,
-                name: item.name || 'Unknown Restaurant',
-                cuisine: item.cuisine || 'International',
-                rating: parseRating(item.rating || '0'),
-                priceLevel: getPriceLevelFromRange(item.price_range || ''),
-                location: item.location || 'Diani Beach',
-                image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-                hours: item.hours || 'N/A',
-                phone: item.contact || undefined,
-                specialties: Array.isArray(item.highlights) ? item.highlights : []
-              }));
+    // Handle single listing
+    if (richContent?.type === 'listing' && originalData.length === 1) {
+      return (
+        <div className="space-y-4">
+          <ReactMarkdown 
+            className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900"
+            components={markdownComponents}
+          >
+            {textContent}
+          </ReactMarkdown>
+          {renderListingCard(originalData[0], 0)}
+        </div>
+      );
+    }
 
-              return (
-                <div className="space-y-4">
-                  <p className="text-diani-sand-800 mb-4">{textContent}</p>
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {mappedRestaurants.map((restaurant: any) => (
-                      <RestaurantCard key={restaurant.id} {...restaurant} />
-                    ))}
-                  </div>
-                </div>
-              );
-            } else if (recommendations.length === 1) {
-              const item = recommendations[0];
-              const mappedRestaurant = {
-                id: item.name || 'restaurant-1',
-                name: item.name || 'Unknown Restaurant',
-                cuisine: item.cuisine || 'International',
-                rating: parseRating(item.rating || '0'),
-                priceLevel: getPriceLevelFromRange(item.price_range || ''),
-                location: item.location || 'Diani Beach',
-                image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-                hours: item.hours || 'N/A',
-                phone: item.contact || undefined,
-                specialties: Array.isArray(item.highlights) ? item.highlights : []
-              };
-              return <RestaurantCard {...mappedRestaurant} />;
-            }
-          }
-          return <RestaurantCard {...richContent.data} />;
-        case 'activity':
-          return <ActivityCard {...richContent.data} />;
-        case 'hotels':
-        case 'restaurants':
-        case 'activities':
-          const contentType = richContent.type.replace('s', '') as 'hotel' | 'restaurant' | 'activity';
+    // Handle multiple listings
+    if ((richContent?.type === 'listings' || richContent?.type === 'mixed_results') && originalData.length > 0) {
+      const dataToRender = filteredData.length > 0 ? filteredData : originalData;
+      const shouldShowFilters = originalData.length > 2;
+      
+      return (
+        <div className="space-y-4">
+          <ReactMarkdown 
+            className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900"
+            components={markdownComponents}
+          >
+            {textContent}
+          </ReactMarkdown>
           
-          let rawData: any[] = [];
-          if (richContent.type === 'restaurants' && richContent.data && richContent.data.recommendations) {
-            rawData = richContent.data.recommendations.map((item: any, index: number) => ({
-              id: item.name || `restaurant-${index}`,
-              name: item.name || 'Unknown Restaurant',
-              cuisine: item.cuisine || 'International',
-              rating: parseRating(item.rating || '0'),
-              priceLevel: getPriceLevelFromRange(item.price_range || ''),
-              location: item.location || 'Diani Beach',
-              image: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2',
-              hours: item.hours || 'N/A',
-              phone: item.contact || undefined,
-              specialties: Array.isArray(item.highlights) ? item.highlights : []
-            }));
-          } else {
-            rawData = Array.isArray(richContent.data) ? richContent.data : [];
-          }
+          <SearchResultsHeader
+            metadata={richContent.metadata}
+            resultsCount={originalData.length}
+            filteredCount={filteredData.length}
+          />
           
-          const dataToRender = filteredData.length > 0 ? filteredData : rawData;
+          {shouldShowFilters && (
+            <ContentFilter
+              contentType="listings"
+              onFilterChange={handleFilterChange}
+              onSortChange={handleSortChange}
+              className="mb-4"
+            />
+          )}
           
-          return (
-            <div className="space-y-4">
-              <p className="text-diani-sand-800 mb-4">{textContent}</p>
-              
-              {rawData.length > 2 && (
-                <ContentFilter
-                  contentType={contentType === 'hotel' ? 'hotels' : contentType === 'restaurant' ? 'restaurants' : 'activities'}
-                  onFilterChange={handleFilterChange}
-                  onSortChange={handleSortChange}
-                  className="mb-4"
-                />
-              )}
-              
-              {filteredData.length !== originalData.length && originalData.length > 0 && (
-                <p className="text-sm text-diani-sand-600 mb-2">
-                  Showing {filteredData.length} of {originalData.length} results
-                </p>
-              )}
-              
-              {dataToRender.length > 0 ? (
-                <div className="grid gap-4 md:grid-cols-2">
-                  {dataToRender.map((item: any, index: number) => {
-                    switch (richContent.type) {
-                      case 'hotels':
-                        return <HotelCard key={index} {...item} />;
-                      case 'restaurants':
-                        return <RestaurantCard key={index} {...item} />;
-                      case 'activities':
-                        return <ActivityCard key={index} {...item} />;
-                      default:
-                        return null;
-                    }
-                  })}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-diani-sand-600">
-                  <p>No results found matching your criteria.</p>
-                </div>
-              )}
+          {dataToRender.length > 0 ? (
+            <div className="grid gap-4 md:grid-cols-2">
+              {dataToRender.map((listing, index) => renderListingCard(listing, index))}
             </div>
-          );
-        case 'map':
-          let locationsForMap: any[] = [];
-          
-          if (Array.isArray(richContent.data)) {
-            locationsForMap = richContent.data;
-          } else if (richContent.data && Array.isArray(richContent.data.highlights)) {
-            const baseLocation = richContent.data.location || "Diani Beach, Kenya";
-            const baseLat = -4.3167;
-            const baseLng = 39.5667;
-            
-            locationsForMap = richContent.data.highlights.map((highlight: string, index: number) => ({
-              name: highlight,
-              lat: baseLat + (index * 0.01),
-              lng: baseLng + (index * 0.01),
-              type: 'beach' as const
-            }));
-          }
-          
-          return (
-            <div className="space-y-4">
-              <p className="text-diani-sand-800 mb-4">{textContent}</p>
-              {locationsForMap.length > 0 ? (
-                <MapView locations={locationsForMap} />
-              ) : (
-                <div className="text-center py-8 text-diani-sand-600">
-                  <p>No map data available.</p>
-                </div>
-              )}
+          ) : (
+            <div className="text-center py-8 text-diani-sand-600">
+              <p>No results found matching your criteria.</p>
+              <button 
+                onClick={() => setFilteredData(originalData)}
+                className="mt-2 text-sm text-diani-teal-600 hover:text-diani-teal-700 underline"
+              >
+                Clear filters
+              </button>
             </div>
-          );
-        case 'transport':
-          return (
-            <div className="space-y-4">
-              <p className="text-diani-sand-800 mb-4">{textContent}</p>
-              <TransportCard 
-                transport={richContent.data} 
-                onCall={(transport) => window.open(`tel:${transport.driverPhone}`)}
-                onBook={(transport) => console.log('Booking transport:', transport)}
-              />
-            </div>
-          );
-        case 'transports':
-          const transports = Array.isArray(richContent.data) ? richContent.data as Transport[] : [];
-          const userLocation = (richContent as any).userLocation;
-          return (
-            <div className="space-y-4">
-              <p className="text-diani-sand-800 mb-4">{textContent}</p>
-              {transports.length > 0 ? (
-                <>
-                  <TransportMap 
-                    transports={transports}
-                    userLocation={userLocation}
-                    onTransportSelect={(transport) => console.log('Selected transport:', transport)}
-                  />
-                  <div className="grid gap-4 md:grid-cols-2">
-                    {transports.map((transport: Transport) => (
-                      <TransportCard 
-                        key={transport.id}
-                        transport={transport}
-                        onCall={(t) => window.open(`tel:${t.driverPhone}`)}
-                        onBook={(t) => console.log('Booking transport:', t)}
-                      />
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <div className="text-center py-8 text-diani-sand-600">
-                  <p>No transport options available at the moment.</p>
-                </div>
-              )}
-            </div>
-          );
-        default:
-          return (
-            <ReactMarkdown 
-              className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900"
-              components={markdownComponents}
-            >
-              {textContent}
-            </ReactMarkdown>
-          );
+          )}
+        </div>
+      );
+    }
+
+    // Handle map display
+    if (richContent?.type === 'map') {
+      let locationsForMap: any[] = [];
+      
+      if (Array.isArray(richContent.data)) {
+        locationsForMap = richContent.data.map(item => ({
+          name: item.name,
+          lat: item.location?.coordinates?.lat || item.lat,
+          lng: item.location?.coordinates?.lng || item.lng,
+          type: item.type || 'listing'
+        }));
+      } else if (originalData.length > 0) {
+        locationsForMap = originalData.map(item => ({
+          name: item.name,
+          lat: item.location.coordinates.lat,
+          lng: item.location.coordinates.lng,
+          type: item.type
+        }));
       }
+      
+      return (
+        <div className="space-y-4">
+          <ReactMarkdown 
+            className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900"
+            components={markdownComponents}
+          >
+            {textContent}
+          </ReactMarkdown>
+          {locationsForMap.length > 0 ? (
+            <MapView locations={locationsForMap} />
+          ) : (
+            <div className="text-center py-8 text-diani-sand-600">
+              <p>No map data available.</p>
+            </div>
+          )}
+        </div>
+      );
     }
 
     // Default: render as markdown
@@ -561,6 +559,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
   const webhookResponse = parseWebhookResponse(message);
   const isUserMessage = webhookResponse?.isUser ?? message.isUser;
   const timestamp = webhookResponse?.timestamp ? formatWebhookTime(webhookResponse.timestamp) : formatTime(message.timestamp);
+  const hasRichContent = !!(webhookResponse?.richContent || message.richContent);
 
   return (
     <div
@@ -576,7 +575,7 @@ export const ChatMessage: React.FC<ChatMessageProps> = ({ message, isLatest, use
         "px-5 py-4 rounded-2xl font-inter text-base leading-relaxed transition-all duration-200",
         isUserMessage
           ? "max-w-[75%] glass-dark text-diani-sand-900 rounded-br-md shadow-lg hover:scale-[1.02]"
-          : (webhookResponse?.richContent || message.richContent)
+          : hasRichContent
             ? "max-w-[90%]" 
             : "max-w-[75%] glass bg-gradient-to-br from-white/90 to-white/70 text-diani-sand-800 rounded-bl-md shadow-lg border border-white/50 hover:scale-[1.02]"
       )}>
