@@ -124,17 +124,24 @@ const ChatInterface: React.FC = () => {
       const aiMessage: ChatMessageType = {
         id: `ai-${Date.now()}`,
         text: response.text,
-        isUser: false,
-        timestamp: new Date(),
+        isUser: response.isUser !== undefined ? response.isUser : false, // Use isUser from response, default to false
+        timestamp: response.timestamp ? new Date(response.timestamp) : new Date(), // Use timestamp from response, convert to Date
+        richContent: response.richContent // Directly assign richContent if it exists
       };
       
-      // If the response includes rich content, add it to the message
-      if (response.richContent) {
-        aiMessage.richContent = response.richContent;
-        
-        // If it's transport data, include user location
-        if (response.richContent.type === 'transports' && userLocation) {
-          (aiMessage.richContent as any).userLocation = userLocation;
+      // Specific handling for transport data if needed (already part of richContent assignment)
+      if (aiMessage.richContent && aiMessage.richContent.type === 'transports' && userLocation) {
+        // If userLocation needs to be added specifically to the richContent.data for transports
+        // This assumes richContent.data is an object where userLocation can be set.
+        // Ensure this doesn't conflict with ListingRichContentData or other rich content types.
+        // A safer way might be to ensure richContent.data is structured to accept this.
+        // For now, let's assume this specific logic for 'transports' is separate from the new 'listing' type.
+        if (typeof aiMessage.richContent.data === 'object' && aiMessage.richContent.data !== null) {
+           (aiMessage.richContent.data as any).userLocation = userLocation;
+        } else {
+          // If data is not an object or is null, and we need to attach userLocation,
+          // we might need to initialize data. This part is specific to 'transports' type.
+          // For 'listing', this specific logic block isn't relevant.
         }
       }
       

@@ -46,17 +46,33 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
-    // Get the response as text first to see what we're receiving
-    const responseText = await response.text();
-    console.log('Raw response text:', responseText);
+    // Clone the response to allow reading the body multiple times if needed
+    const clonedResponse = response.clone();
 
-    // Since webhook now returns markdown text directly, return it as-is
-    return {
-      text: responseText
-    };
+    try {
+      const responseData = await response.json();
+      console.log('Parsed response data:', responseData);
+      return responseData as ChatApiResponse;
+    } catch (e) {
+      // If JSON parsing fails, read as text from the cloned response and log the error.
+      console.error('Failed to parse API response as JSON. Attempting to read as text.', e);
+      try {
+        const responseText = await clonedResponse.text();
+        console.error('Raw response text after JSON parse failure:', responseText);
+        return {
+          text: `Error: Received non-JSON response from server. Content: ${responseText.substring(0, 200)}...`,
+          // Ensure this object matches ChatApiResponse structure, e.g., by adding other required fields if any.
+        };
+      } catch (textError) {
+        console.error('Failed to read response as text after JSON parse failure:', textError);
+        return {
+          text: "Error: Received non-JSON response and also failed to read it as text.",
+        };
+      }
+    }
 
   } catch (error) {
-    console.error('Chat API error:', error);
+    console.error('Chat API error (outer catch):', error);
     
     // Return a graceful fallback response
     return {

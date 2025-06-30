@@ -13,12 +13,7 @@ import { ListingCard } from './cards/ListingCard';
 // TYPES & INTERFACES
 // ============================================================================
 
-interface WebhookResponse {
-  readonly text: string;
-  readonly isUser: boolean;
-  readonly timestamp: string;
-  readonly richContent?: RichContent;
-}
+// WebhookResponse interface is removed as parsing happens upstream.
 
 interface SuggestionData {
   readonly suggestions?: readonly string[];
@@ -109,22 +104,41 @@ const normalizeLegacyData = (item: unknown, type: string): ListingBase | null =>
   if (!item || typeof item !== 'object') return null;
   
   try {
-    const obj = item as Record<string, any>;
+    const obj = item as Record<string, any>; // obj is potentially ListingRichContentData
+
+    let address = 'Diani Beach, Kenya';
+    let coordinates = { lat: -4.3167, lng: 39.5667 };
+
+    if (type === 'listing' && obj.location && typeof obj.location === 'object') {
+      // Handle ListingRichContentData structure for location
+      address = obj.location.address || address;
+      if (obj.location.coordinates) {
+        coordinates.lat = obj.location.coordinates.lat ?? coordinates.lat;
+        coordinates.lng = obj.location.coordinates.lng ?? coordinates.lng;
+      }
+    } else {
+      // Fallback for other types or if location is a string (legacy)
+      address = obj.location || obj.address || address;
+      if (obj.coordinates) {
+        coordinates.lat = obj.coordinates.lat ?? coordinates.lat;
+        coordinates.lng = obj.coordinates.lng ?? coordinates.lng;
+      } else if (obj.lat && obj.lng) {
+        coordinates.lat = obj.lat ?? coordinates.lat;
+        coordinates.lng = obj.lng ?? coordinates.lng;
+      }
+    }
     
     const normalized: ListingBase = {
       id: obj.id || createSafeId(obj.name || 'unknown', type),
       name: obj.name || 'Unknown Name',
-      type: isValidListingType(type) ? type : 'service',
+      type: isValidListingType(type) ? type : 'service', // type here will be 'listing'
       description: obj.description || obj.summary || (Array.isArray(obj.highlights) ? obj.highlights.join('. ') : ''),
       categories: Array.isArray(obj.categories) ? obj.categories : 
                  Array.isArray(obj.cuisine_types) ? obj.cuisine_types :
                  Array.isArray(obj.product_types) ? obj.product_types : [],
-      location: {
-        address: obj.location || obj.address || 'Diani Beach, Kenya',
-        coordinates: {
-          lat: obj.coordinates?.lat || obj.lat || -4.3167,
-          lng: obj.coordinates?.lng || obj.lng || 39.5667
-        }
+      location: { // This is for ListingBase.location which expects address and coordinates
+        address: address,
+        coordinates: coordinates
       },
       images: Array.isArray(obj.images) ? obj.images : 
               obj.image ? [obj.image] : [],
@@ -132,10 +146,10 @@ const normalizeLegacyData = (item: unknown, type: string): ListingBase | null =>
       whatsapp: obj.whatsapp,
       website: obj.website,
       email: obj.email,
-      price_level: normalizePriceLevel(obj.priceLevel || obj.price_level || obj.priceRange),
-      languages_spoken: Array.isArray(obj.languages_spoken) ? obj.languages_spoken : ['English'],
-      available: obj.available !== false,
-      featured: Boolean(obj.featured),
+      price_level: normalizePriceLevel(obj.price_level || obj.priceLevel || obj.priceRange), // obj.price_level for ListingRichContentData
+      languages_spoken: Array.isArray(obj.languages_spoken) ? obj.languages_spoken : (obj.languages_spoken ? [obj.languages_spoken] : ['English']), // obj.languages_spoken for ListingRichContentData
+      available: obj.available !== undefined ? Boolean(obj.available) : true, // obj.available for ListingRichContentData
+      featured: Boolean(obj.featured), // obj.featured for ListingRichContentData
       last_updated: new Date().toISOString()
     };
 
@@ -146,19 +160,7 @@ const normalizeLegacyData = (item: unknown, type: string): ListingBase | null =>
   }
 };
 
-const parseWebhookResponse = (message: ChatMessageType): WebhookResponse | null => {
-  try {
-    if (typeof message.text === 'string' && message.text.trim().startsWith('{')) {
-      const parsed = JSON.parse(message.text);
-      if (parsed.text && parsed.hasOwnProperty('isUser') && parsed.timestamp) {
-        return parsed as WebhookResponse;
-      }
-    }
-    return null;
-  } catch {
-    return null;
-  }
-};
+// parseWebhookResponse function is removed.
 
 // ============================================================================
 // CUSTOM HOOKS
@@ -166,8 +168,7 @@ const parseWebhookResponse = (message: ChatMessageType): WebhookResponse | null 
 
 const useListingData = (message: ChatMessageType) => {
   return useMemo(() => {
-    const webhookResponse = parseWebhookResponse(message);
-    const richContent = webhookResponse?.richContent || message.richContent;
+    const richContent = message.richContent; // Directly use richContent from message
     
     if (!richContent?.data) return [];
     
@@ -481,14 +482,10 @@ export const ChatMessage = memo<ChatMessageProps>(({
     clearFilters 
   } = useFilteredData(originalData);
 
-  // Parse webhook or regular message
-  const webhookResponse = useMemo(() => parseWebhookResponse(message), [message]);
-  const richContent = webhookResponse?.richContent || message.richContent;
-  const textContent = webhookResponse?.text || message.text;
-  const isUserMessage = webhookResponse?.isUser ?? message.isUser;
-  const timestamp = webhookResponse?.timestamp || message.timestamp;
+  // Directly use properties from the message object
+  const { richContent, text: textContent, isUser: isUserMessage, timestamp } = message;
   
-  const formattedTime = useFormattedTime(timestamp);
+  const formattedTime = useFormattedTime(timestamp); // timestamp is already a Date object from ChatMessageType
   const hasRichContent = Boolean(richContent);
 
   // Render specialized card for each listing type
