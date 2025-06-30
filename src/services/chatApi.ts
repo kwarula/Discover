@@ -1,8 +1,17 @@
 import { ChatApiRequest, ChatApiResponse } from '@/types';
+import { offlineService } from '@/services/offlineService';
 
 const API_ENDPOINT = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-proxy`;
 
 export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiResponse> => {
+  // Check if offline
+  if (!offlineService.getOnlineStatus()) {
+    return {
+      text: "I'm currently offline, but I can still help with general information about Diani Beach! The area is famous for its pristine white sand beaches, crystal-clear waters, and vibrant coral reefs. Popular activities include dolphin watching, snorkeling, kite surfing, and exploring local restaurants. When you're back online, I'll have access to real-time recommendations and can help you book specific services.",
+      offline: true
+    };
+  }
+
   try {
     console.log('Sending enhanced chat request:', {
       ...request,

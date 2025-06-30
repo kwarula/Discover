@@ -1,0 +1,51 @@
+{
+  "name": "Discover Diani - Your Personal Beach Concierge",
+  "short_name": "Discover Diani",
+  "description": "Find hidden gems, local insights, and unforgettable experiences in Diani Beach with your AI-powered concierge.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A7A7B",
+  "theme_color": "#0A7A7B",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en",
+  "categories": ["travel", "tourism", "lifestyle"],
+  "icons": [
+    {
+      "src": "/Discover Diani.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Discover Diani.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/discover-diani-screenshot.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Discover Diani Chat Interface"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Chat",
+      "short_name": "Chat",
+      "description": "Start chatting with Diani AI",
+      "url": "/chat",
+      "icons": [
+        {
+          "src": "/Discover Diani.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false
+}

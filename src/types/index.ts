@@ -18,6 +18,7 @@ export interface UserProfile {
 
 export interface ChatApiResponse {
   text: string;
+  offline?: boolean;
   richContent?: {
     type: 'hotel' | 'restaurant' | 'activity' | 'hotels' | 'restaurants' | 'activities' | 'map' | 'transport' | 'transports';
     data: any;

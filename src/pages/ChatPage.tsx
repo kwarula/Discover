@@ -9,11 +9,13 @@ import { ProfileModal } from '@/components/ProfileModal';
 import { FloatingActionButton } from '@/components/FloatingActionButton';
 import { ProactiveSuggestions } from '@/components/ProactiveSuggestions';
 import { SummerTidesEventCard } from '@/components/SummerTidesEventCard';
+import { OfflineIndicator, InstallPrompt } from '@/components/OfflineIndicator';
 import { sendChatMessage } from '@/services/chatApi';
 import { ChatMessage as ChatMessageType } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { generateProactiveSuggestions } from '@/services/suggestionService';
 import { getWeatherData, WeatherData } from '@/services/weatherApi';
+import { useOffline } from '@/hooks/useOffline';
 
 const ChatInterface: React.FC = () => {
   const {
@@ -30,6 +32,7 @@ const ChatInterface: React.FC = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { isOffline } = useOffline();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -178,6 +181,7 @@ const ChatInterface: React.FC = () => {
   return (
     <div className={`flex flex-col h-screen time-based-background ${timeBasedBackground}`}>
       <Header />
+      <OfflineIndicator />
       
       {/* Chat Messages Area */}
       <main className="flex-1 overflow-hidden relative">
@@ -210,9 +214,14 @@ const ChatInterface: React.FC = () => {
               <SummerTidesEventCard />
             </div>
             
+            {/* Install Prompt */}
+            <div className="mb-4">
+              <InstallPrompt />
+            </div>
+            
             <ChatInput
               onSendMessage={handleSendMessage}
-              disabled={isLoading || isTyping}
+              disabled={isLoading || isTyping || isOffline}
             />
           </div>
         </div>

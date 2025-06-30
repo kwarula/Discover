@@ -35,4 +35,20 @@
   .animate-shimmer {
     animation: shimmer 2s infinite;
   }
+
+  /* PWA specific animations */
+  @keyframes slide-in-top {
+    0% {
+      transform: translate(-50%, -100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-in-top {
+    animation: slide-in-top 0.3s ease-out;
+  }
 }

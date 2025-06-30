@@ -1,10 +1,28 @@
 import { MessageFeedback, FeedbackResponse } from '@/types';
+import { offlineService } from '@/services/offlineService';
 
 // Use Supabase edge function for feedback
 const FEEDBACK_ENDPOINT = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/feedback`;
 
 export const feedbackService = {
   async submitFeedback(feedback: MessageFeedback): Promise<FeedbackResponse> {
+    // If offline, store for later sync
+    if (!offlineService.getOnlineStatus()) {
+      await offlineService.storeForSync('feedback', {
+        messageId: feedback.messageId,
+        userId: feedback.userId,
+        feedbackType: feedback.feedbackType,
+        rating: feedback.rating,
+        comment: feedback.comment,
+        timestamp: feedback.timestamp.toISOString()
+      });
+      
+      return {
+        success: true,
+        message: 'Feedback saved offline and will be synced when you\'re back online'
+      };
+    }
+
     try {
       console.log('Submitting feedback to Supabase:', feedback);
       
