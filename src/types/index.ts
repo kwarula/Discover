@@ -2,10 +2,10 @@ export interface ChatMessage {
   id: string;
   text: string;
   isUser: boolean;
-  timestamp: Date;
+  timestamp: Date; // Keep as Date, conversion from string happens in UI layer
   richContent?: {
-    type: 'hotel' | 'restaurant' | 'activity' | 'hotels' | 'restaurants' | 'activities' | 'map' | 'transport' | 'transports';
-    data: any;
+    type: 'hotel' | 'restaurant' | 'activity' | 'hotels' | 'restaurants' | 'activities' | 'map' | 'transport' | 'transports' | 'listing' | 'suggestion'; // Added 'listing' and ensured 'suggestion' is there
+    data: any | ListingRichContentData; // Accommodate ListingRichContentData
   };
 }
 
@@ -16,12 +16,31 @@ export interface UserProfile {
   preferredLanguage: string;
 }
 
+export interface ListingRichContentData {
+  name: string;
+  description: string;
+  location: {
+    address: string;
+    coordinates: {
+      lat: number;
+      lng: number;
+    };
+  };
+  phone?: string;
+  price_level?: string;
+  languages_spoken?: string[];
+  available?: boolean;
+  featured?: boolean;
+}
+
 export interface ChatApiResponse {
   text: string;
+  isUser?: boolean; // Added
+  timestamp?: string; // Added - assuming string from JSON, will be Date in ChatMessage
   offline?: boolean;
   richContent?: {
-    type: 'hotel' | 'restaurant' | 'activity' | 'hotels' | 'restaurants' | 'activities' | 'map' | 'transport' | 'transports';
-    data: any;
+    type: 'hotel' | 'restaurant' | 'activity' | 'hotels' | 'restaurants' | 'activities' | 'map' | 'transport' | 'transports' | 'listing'; // Added 'listing'
+    data: any | ListingRichContentData; // Updated to include ListingRichContentData
   };
 }
 

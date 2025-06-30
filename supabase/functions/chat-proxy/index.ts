@@ -37,7 +37,13 @@ Deno.serve(async (req) => {
     });
 
     // Get response body
-    const responseBody = await response.text();
+    let responseBody;
+    const contentType = response.headers.get('Content-Type');
+    if (contentType && contentType.includes('application/json')) {
+      responseBody = await response.json();
+    } else {
+      responseBody = await response.text();
+    }
     console.log('Webhook response body:', responseBody);
 
     // Check if the webhook response is successful
@@ -45,20 +51,20 @@ Deno.serve(async (req) => {
       // Propagate the exact status code and body from the webhook
       console.error(`Webhook returned error: ${response.status} ${response.statusText}`);
       
-      return new Response(responseBody, {
+      return new Response(typeof responseBody === 'string' ? responseBody : JSON.stringify(responseBody), {
         status: response.status,
         headers: {
           ...corsHeaders,
-          'Content-Type': response.headers.get('Content-Type') || 'application/json',
+          'Content-Type': contentType || 'application/json',
         },
       });
     }
 
     // Return successful response with webhook data
-    return new Response(responseBody, {
+    return new Response(typeof responseBody === 'string' ? responseBody : JSON.stringify(responseBody), {
       headers: {
         ...corsHeaders,
-        'Content-Type': response.headers.get('Content-Type') || 'application/json',
+        'Content-Type': contentType || 'application/json',
       },
     });
   } catch (error) {
