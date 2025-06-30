@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useCallback, useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import type { Components } from 'react-markdown';
-import { ChatMessage as ChatMessageType } from '@/types';
+import { ChatMessage as ChatMessageType, Location, ListingBase } from '@/types';
 import { cn } from '@/lib/utils';
 import { MessageFeedback } from './MessageFeedback';
 import { ContentFilter } from './ContentFilter';
@@ -13,52 +13,7 @@ import { ListingCard } from './cards/ListingCard';
 // TYPES & INTERFACES
 // ============================================================================
 
-interface ChatMessageProps {
-  message: ChatMessageType;
-  isLatest?: boolean;
-  userId?: string;
-  onSuggestionSelect?: (suggestion: string) => void;
-  onQuickAction?: (action: string) => void;
-}
-
-interface Location {
-  address: string;
-  coordinates: {
-    lat: number;
-    lng: number;
-  };
-}
-
-interface ListingBase {
-  readonly id: string;
-  readonly name: string;
-  readonly type: 'hotel' | 'restaurant' | 'activity' | 'transport' | 'service' | 'shop' | 'real_estate' | 'tour';
-  readonly description: string;
-  readonly categories: readonly string[];
-  readonly location: Location;
-  readonly images: readonly string[];
-  readonly phone: string;
-  readonly whatsapp?: string;
-  readonly website?: string;
-  readonly email?: string;
-  readonly price_level: 'low' | 'medium' | 'high' | 'premium' | 'variable' | 'free';
-  readonly languages_spoken: readonly string[];
-  readonly available: boolean;
-  readonly featured: boolean;
-  readonly last_updated: string;
-}
-
-interface RichContentMetadata {
-  readonly total_count?: number;
-  readonly filters_applied?: readonly string[];
-  readonly search_query?: string;
-  readonly location_context?: string;
-}
-
-interface RichContent {
-  readonly type: 'suggestion' | 'listing' | 'listings' | 'map' | 'mixed_results';
-  readonly data: unknown;
-  readonly metadata?: RichContentMetadata;
+import { ListingCard } from './cards/ListingCard';
 }
 
 interface WebhookResponse {

@@ -86,3 +86,47 @@ export interface SortOptions {
   field: 'rating' | 'price' | 'distance' | 'popularity';
   direction: 'asc' | 'desc';
 }
+
+// Location interface for map and listing data
+export interface Location {
+  name: string;
+  lat: number;
+  lng: number;
+  type: 'hotel' | 'restaurant' | 'beach' | 'activity';
+}
+
+// Base interface for all listing types
+export interface ListingBase {
+  id: string;
+  name: string;
+  type: 'hotel' | 'restaurant' | 'activity' | 'transport';
+  location: string;
+  image?: string;
+  rating?: number;
+  price?: string;
+  priceValue?: number;
+  currency?: string;
+  
+  // Hotel specific
+  amenities?: string[];
+  description?: string;
+  pricePerNight?: number;
+  
+  // Restaurant specific
+  cuisine?: string;
+  priceLevel?: 1 | 2 | 3 | 4;
+  hours?: string;
+  phone?: string;
+  specialties?: string[];
+  
+  // Activity specific
+  category?: string;
+  duration?: string;
+  groupSize?: string;
+  difficulty?: 'Easy' | 'Moderate' | 'Challenging';
+  highlights?: string[];
+  availability?: string;
+  
+  // Transport specific (for Transport type from transport.ts)
+  transport?: any; // Will use the Transport interface when needed
+}
