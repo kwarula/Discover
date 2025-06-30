@@ -13,9 +13,6 @@ import { ListingCard } from './cards/ListingCard';
 // TYPES & INTERFACES
 // ============================================================================
 
-import { ListingCard } from './cards/ListingCard';
-}
-
 interface WebhookResponse {
   readonly text: string;
   readonly isUser: boolean;
