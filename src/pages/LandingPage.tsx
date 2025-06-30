@@ -303,7 +303,7 @@ const LandingPage: React.FC = () => {
             
             <div className="text-center md:text-right">
               <p className="text-sm text-diani-sand-400">
-                Powered by <span className="text-coral-sunset-300 font-semibold">ZaidiLab</span>
+                Powered by <a href="https://zaidilabstudio.com/" target="_blank" rel="noopener noreferrer" className="text-coral-sunset-300 font-semibold hover:text-coral-sunset-200 transition-colors">ZaidiLab</a>
               </p>
             </div>
           </div>
