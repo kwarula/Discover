@@ -32,7 +32,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
 
   const handleMapClick = () => {
     setShowMap(true);
-    // In production, this would integrate with Google Maps or similar
+    // In production, this would integrate with Mapbox or similar
     // For now, we'll just use the address input
   };
 

@@ -1,5 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { MapPin, Navigation } from 'lucide-react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface Location {
   name: string;
@@ -14,30 +16,117 @@ interface MapViewProps {
   zoom?: number;
 }
 
+// Set Mapbox access token
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || '';
+
 export const MapView: React.FC<MapViewProps> = ({ 
   locations, 
   center = { lat: -4.3167, lng: 39.5667 }, // Diani Beach coordinates
   zoom = 13 
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
+  const markersRef = useRef<mapboxgl.Marker[]>([]);
 
   useEffect(() => {
-    // In production, this would initialize a real map (Google Maps, Mapbox, etc.)
-    // For now, we'll create a placeholder with location markers
-    if (mapRef.current && !mapInstanceRef.current) {
-      // Simulate map initialization
-      mapInstanceRef.current = true;
+    if (!mapRef.current || !mapboxgl.accessToken) {
+      console.warn('Mapbox access token not found or map container not ready');
+      return;
     }
-  }, []);
+
+    // Initialize map
+    mapInstanceRef.current = new mapboxgl.Map({
+      container: mapRef.current,
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [center.lng, center.lat],
+      zoom: zoom,
+    });
+
+    // Add navigation controls
+    mapInstanceRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+    return () => {
+      // Cleanup markers
+      markersRef.current.forEach(marker => marker.remove());
+      markersRef.current = [];
+      
+      // Cleanup map
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
+      }
+    };
+  }, [center.lat, center.lng, zoom]);
+
+  useEffect(() => {
+    if (!mapInstanceRef.current) return;
+
+    // Clear existing markers
+    markersRef.current.forEach(marker => marker.remove());
+    markersRef.current = [];
+
+    // Add location markers
+    locations.forEach((location, index) => {
+      const markerColor = getMarkerColor(location.type);
+      const markerIcon = getMarkerIcon(location.type);
+
+      // Create custom marker element
+      const markerElement = document.createElement('div');
+      markerElement.className = 'custom-marker';
+      markerElement.style.cssText = `
+        width: 40px;
+        height: 40px;
+        background-color: ${markerColor};
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        color: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        cursor: pointer;
+        transition: transform 0.2s;
+      `;
+      markerElement.innerHTML = markerIcon;
+      markerElement.title = location.name;
+
+      // Add hover effect
+      markerElement.addEventListener('mouseenter', () => {
+        markerElement.style.transform = 'scale(1.1)';
+      });
+      markerElement.addEventListener('mouseleave', () => {
+        markerElement.style.transform = 'scale(1)';
+      });
+
+      // Create marker
+      const marker = new mapboxgl.Marker(markerElement)
+        .setLngLat([location.lng, location.lat])
+        .setPopup(
+          new mapboxgl.Popup({ offset: 25 })
+            .setHTML(`<div style="font-weight: 500; color: #374151;">${location.name}</div>`)
+        )
+        .addTo(mapInstanceRef.current!);
+
+      markersRef.current.push(marker);
+    });
+
+    // Fit bounds to show all markers if there are multiple locations
+    if (locations.length > 1) {
+      const bounds = new mapboxgl.LngLatBounds();
+      locations.forEach(location => {
+        bounds.extend([location.lng, location.lat]);
+      });
+      mapInstanceRef.current.fitBounds(bounds, { padding: 50 });
+    }
+  }, [locations]);
 
   const getMarkerColor = (type: string) => {
     switch (type) {
-      case 'hotel': return 'bg-purple-500';
-      case 'restaurant': return 'bg-orange-500';
-      case 'beach': return 'bg-blue-500';
-      case 'activity': return 'bg-green-500';
-      default: return 'bg-gray-500';
+      case 'hotel': return '#8B5CF6';
+      case 'restaurant': return '#F97316';
+      case 'beach': return '#3B82F6';
+      case 'activity': return '#10B981';
+      default: return '#6B7280';
     }
   };
 
@@ -51,65 +140,29 @@ export const MapView: React.FC<MapViewProps> = ({
     }
   };
 
+  if (!mapboxgl.accessToken) {
+    return (
+      <div className="glass rounded-2xl overflow-hidden shadow-lg">
+        <div className="h-64 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+          <div className="text-center p-4">
+            <MapPin className="h-12 w-12 text-blue-500 mx-auto mb-2" />
+            <p className="text-sm text-blue-700">
+              Mapbox access token required to display map
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="glass rounded-2xl overflow-hidden shadow-lg">
       {/* Map Container */}
       <div 
         ref={mapRef}
-        className="relative h-64 bg-gradient-to-br from-blue-100 to-blue-200"
-      >
-        {/* Placeholder map background */}
-        <div className="absolute inset-0 opacity-50">
-          <svg className="w-full h-full" viewBox="0 0 400 300">
-            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(0,0,0,0.1)" strokeWidth="1"/>
-            </pattern>
-            <rect width="100%" height="100%" fill="url(#grid)" />
-          </svg>
-        </div>
-
-        {/* Location markers */}
-        {locations.map((location, index) => (
-          <div
-            key={index}
-            className="absolute transform -translate-x-1/2 -translate-y-1/2 animate-scale-in"
-            style={{
-              left: `${20 + (index * 25) % 60}%`,
-              top: `${30 + (index * 20) % 40}%`,
-              animationDelay: `${index * 100}ms`
-            }}
-          >
-            <div className="relative group">
-              <div className={`w-10 h-10 ${getMarkerColor(location.type)} rounded-full flex items-center justify-center text-white shadow-lg hover:scale-110 transition-transform cursor-pointer`}>
-                <span className="text-lg">{getMarkerIcon(location.type)}</span>
-              </div>
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <div className="glass px-2 py-1 rounded text-xs text-diani-sand-800 whitespace-nowrap">
-                  {location.name}
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-
-        {/* Map controls */}
-        <div className="absolute top-4 right-4 space-y-2">
-          <button className="glass w-10 h-10 rounded-lg flex items-center justify-center hover:bg-white/80 transition-colors">
-            <span className="text-lg">+</span>
-          </button>
-          <button className="glass w-10 h-10 rounded-lg flex items-center justify-center hover:bg-white/80 transition-colors">
-            <span className="text-lg">−</span>
-          </button>
-        </div>
-
-        {/* Current location indicator */}
-        <div className="absolute bottom-4 left-4">
-          <button className="glass px-3 py-2 rounded-lg flex items-center gap-2 text-sm hover:bg-white/80 transition-colors">
-            <Navigation size={16} className="text-diani-teal-600" />
-            <span className="text-diani-sand-700">My Location</span>
-          </button>
-        </div>
-      </div>
+        className="h-64 w-full"
+        style={{ minHeight: '300px' }}
+      />
 
       {/* Location list */}
       <div className="p-4 space-y-2">
@@ -121,13 +174,25 @@ export const MapView: React.FC<MapViewProps> = ({
             <div
               key={index}
               className="flex items-center gap-2 p-2 rounded-lg hover:bg-diani-sand-50 transition-colors cursor-pointer"
+              onClick={() => {
+                if (mapInstanceRef.current) {
+                  mapInstanceRef.current.flyTo({
+                    center: [location.lng, location.lat],
+                    zoom: 15,
+                    duration: 1000
+                  });
+                }
+              }}
             >
-              <div className={`w-6 h-6 ${getMarkerColor(location.type)} rounded-full flex items-center justify-center text-white text-xs`}>
+              <div 
+                className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs"
+                style={{ backgroundColor: getMarkerColor(location.type) }}
+              >
                 {index + 1}
               </div>
               <span className="text-sm text-diani-sand-700 flex-1">{location.name}</span>
               <button className="text-xs text-diani-teal-600 hover:text-diani-teal-700">
-                Directions
+                View
               </button>
             </div>
           ))}
