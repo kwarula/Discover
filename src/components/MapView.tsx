@@ -88,7 +88,14 @@ export const MapView: React.FC<MapViewProps> = ({
         transition: transform 0.2s;
       `;
       markerElement.innerHTML = markerIcon;
-      markerElement.title = location.name;
+      // Accessibility improvements
+      markerElement.setAttribute('role', 'button');
+      markerElement.setAttribute('tabindex', '0');
+      markerElement.setAttribute('aria-label', `View details for ${location.name}, a ${location.type}`);
+      markerElement.title = location.name; // Keep title for tooltip on hover
+
+      const popup = new mapboxgl.Popup({ offset: 25 })
+        .setHTML(`<div style="font-weight: 500; color: #374151;">${location.name}</div>`);
 
       // Add hover effect
       markerElement.addEventListener('mouseenter', () => {
@@ -98,13 +105,33 @@ export const MapView: React.FC<MapViewProps> = ({
         markerElement.style.transform = 'scale(1)';
       });
 
+      // Keyboard interaction
+      markerElement.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          // Toggle popup manually as direct click simulation on marker for popup is tricky
+          if (marker.getPopup()?.isOpen()) {
+            marker.getPopup()?.remove();
+          } else {
+            marker.getPopup()?.addTo(mapInstanceRef.current!);
+          }
+          // Optionally, also flyTo like the list item
+          mapInstanceRef.current?.flyTo({
+            center: [location.lng, location.lat],
+            zoom: 15,
+            duration: 1000
+          });
+        }
+      });
+
+      // Click interaction (already opens popup by default via .setPopup)
+      // markerElement.addEventListener('click', () => { ... });
+
+
       // Create marker
       const marker = new mapboxgl.Marker(markerElement)
         .setLngLat([location.lng, location.lat])
-        .setPopup(
-          new mapboxgl.Popup({ offset: 25 })
-            .setHTML(`<div style="font-weight: 500; color: #374151;">${location.name}</div>`)
-        )
+        .setPopup(popup)
         .addTo(mapInstanceRef.current!);
 
       markersRef.current.push(marker);
