@@ -114,12 +114,28 @@ export const TransportMap: React.FC<TransportMapProps> = ({
         ${isSelected ? 'transform: scale(1.2); z-index: 1000;' : ''}
       `;
       markerElement.innerHTML = markerIcon;
-      markerElement.title = `${transport.driverName} - ${transport.vehicleNumber}`;
 
-      // Add click handler
-      markerElement.addEventListener('click', () => {
+      // Accessibility improvements
+      markerElement.setAttribute('role', 'button');
+      markerElement.setAttribute('tabindex', '0');
+      const ariaLabel = `Select transport: ${transport.type} driven by ${transport.driverName}, vehicle ${transport.vehicleNumber}. Estimated arrival: ${transport.estimatedArrival}, Fare: ${transport.fare.estimate || `${transport.fare.currency} ${transport.fare.amount}`}.`;
+      markerElement.setAttribute('aria-label', ariaLabel);
+      markerElement.title = `${transport.driverName} - ${transport.vehicleNumber}`; // Tooltip for hover
+
+      const handleSelect = () => {
         if (onTransportSelect) {
           onTransportSelect(transport);
+        }
+      };
+
+      // Add click handler
+      markerElement.addEventListener('click', handleSelect);
+
+      // Keyboard interaction
+      markerElement.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleSelect();
         }
       });
 
