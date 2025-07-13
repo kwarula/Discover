@@ -1,8 +1,8 @@
 import { ChatApiRequest, ChatApiResponse } from '@/types';
 import { offlineService } from '@/services/offlineService';
 
-// Direct webhook URL - bypassing Supabase Edge Function
-const WEBHOOK_URL = 'https://zaidiflow.app.n8n.cloud/webhook-test/discover-diani-live';
+// Use Supabase Edge Function to proxy requests and handle CORS
+const CHAT_API_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-proxy`;
 
 export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiResponse> => {
   // Check if offline
@@ -14,33 +14,26 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
   }
 
   try {
-    console.log('Sending chat request directly to webhook:', {
-      url: WEBHOOK_URL,
+    console.log('Sending chat request via Supabase Edge Function:', {
+      url: CHAT_API_URL,
       userProfile: request.userProfile ? 'included' : 'not included',
       userLocation: request.userLocation ? 'included' : 'not included',
       context: request.context ? 'included' : 'not included',
-      request: request // Log the entire request object
     });
     
-    const response = await fetch(WEBHOOK_URL, {
+    const response = await fetch(CHAT_API_URL, {
       method: 'POST',
       headers: {
+        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        // Add any additional headers your webhook might need
-        'User-Agent': 'DiscoverDiani/1.0',
       },
       body: JSON.stringify(request),
-      cache: 'no-cache', // Prevent caching
-      mode: 'cors', // Enable CORS
     });
 
-    console.log('Webhook response status:', response.status);
-    console.log('Webhook response headers:', Object.fromEntries(response.headers.entries()));
-    console.log('Webhook response:', response); // Log the entire response object
+    console.log('Edge Function response status:', response.status);
 
     if (!response.ok) {
-      console.error(`Webhook error! status: ${response.status} ${response.statusText}`);
+      console.error(`Edge Function error! status: ${response.status} ${response.statusText}`);
       
       // Try to get error details from response
       let errorDetails = '';
@@ -51,7 +44,7 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
         console.error('Could not read error response:', e);
       }
       
-      throw new Error(`Webhook returned ${response.status}: ${response.statusText}${errorDetails}`);
+      throw new Error(`Edge Function returned ${response.status}: ${response.statusText}${errorDetails}`);
     }
 
     // Parse the response
@@ -68,11 +61,11 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
       };
     }
 
-    console.log('Parsed webhook response:', responseData);
+    console.log('Parsed Edge Function response:', responseData);
     return responseData;
 
   } catch (error) {
-    console.error('Chat API error (direct webhook):', error);
+    console.error('Chat API error (via Edge Function):', error);
     
     // Store for offline sync if possible
     try {
