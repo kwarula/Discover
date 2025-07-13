@@ -1,6 +1,6 @@
 import { corsHeaders } from '../_shared/cors.ts';
 
-const WEBHOOK_URL = 'https://zaidiflow.app.n8n.cloud/webhook-test/77de7005-99a8-4f7d-b4e4-6c74962b828b';
+const WEBHOOK_URL = 'https://zaidiflow.app.n8n.cloud/webhook/discover-diani-live';
 
 Deno.serve(async (req) => {
   // Handle CORS
