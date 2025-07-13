@@ -2,7 +2,7 @@ import { ChatApiRequest, ChatApiResponse } from '@/types';
 import { offlineService } from '@/services/offlineService';
 
 // Direct webhook URL - bypassing Supabase Edge Function
-const WEBHOOK_URL = 'https://zaidiflow.app.n8n.cloud/webhook/discover-diani-live';
+const WEBHOOK_URL = 'https://zaidiflow.app.n8n.cloud/webhook-test/discover-diani-live';
 
 export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiResponse> => {
   // Check if offline
