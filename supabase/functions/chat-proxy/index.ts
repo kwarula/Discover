@@ -1,8 +1,23 @@
 import { corsHeaders } from '../_shared/cors.ts';
+import { RateLimiter } from "https://deno.land/x/limiter@v1.0.1/mod.ts";
 
 const WEBHOOK_URL = 'https://zaidiflow.app.n8n.cloud/webhook/discover-diani-live';
 
+// Rate limiter: 20 requests per minute
+const limiter = new RateLimiter({
+  tokens: 20,
+  interval: 60000,
+});
+
 Deno.serve(async (req) => {
+  // Rate limiting
+  if (!limiter.tryRemoveTokens(1)) {
+    return new Response(JSON.stringify({ error: 'Too many requests' }), {
+      status: 429,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+
   // Handle CORS
   if (req.method === 'OPTIONS') {
     return new Response(null, {
