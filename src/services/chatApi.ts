@@ -1,7 +1,8 @@
 import { ChatApiRequest, ChatApiResponse } from '@/types';
 import { offlineService } from '@/services/offlineService';
 
-const API_ENDPOINT = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-proxy`;
+// Direct webhook URL - bypassing Supabase Edge Function
+const WEBHOOK_URL = 'https://zaidiflow.app.n8n.cloud/webhook/discover-diani-live';
 
 export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiResponse> => {
   // Check if offline
@@ -13,70 +14,76 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
   }
 
   try {
-    console.log('Sending enhanced chat request:', {
-      ...request,
-      // Log request structure without sensitive data
+    console.log('Sending chat request directly to webhook:', {
+      url: WEBHOOK_URL,
       userProfile: request.userProfile ? 'included' : 'not included',
       userLocation: request.userLocation ? 'included' : 'not included',
       context: request.context ? 'included' : 'not included'
     });
     
-    const response = await fetch(API_ENDPOINT, {
+    const response = await fetch(WEBHOOK_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        // Add any additional headers your webhook might need
+        'User-Agent': 'DiscoverDiani/1.0',
       },
       body: JSON.stringify(request),
     });
 
-    console.log('API Response status:', response.status);
-    console.log('API Response headers:', response.headers);
+    console.log('Webhook response status:', response.status);
+    console.log('Webhook response headers:', Object.fromEntries(response.headers.entries()));
 
-    if (response.status === 401) {
-      console.error('Authentication failed - 401 Unauthorized');
-      return {
-        text: "I'm having trouble connecting to my knowledge base right now. This might be a temporary authentication issue. Meanwhile, I'd be happy to share some general information about Diani Beach! It's renowned for its pristine white sand beaches, crystal-clear waters, and amazing coral reefs perfect for snorkeling and diving."
+    if (!response.ok) {
+      console.error(`Webhook error! status: ${response.status} ${response.statusText}`);
+      
+      // Try to get error details from response
+      let errorDetails = '';
+      try {
+        const errorText = await response.text();
+        errorDetails = errorText ? ` - ${errorText}` : '';
+      } catch (e) {
+        console.error('Could not read error response:', e);
+      }
+      
+      throw new Error(`Webhook returned ${response.status}: ${response.statusText}${errorDetails}`);
+    }
+
+    // Parse the response
+    let responseData: ChatApiResponse;
+    const contentType = response.headers.get('Content-Type') || '';
+    
+    if (contentType.includes('application/json')) {
+      responseData = await response.json();
+    } else {
+      // If not JSON, treat as plain text response
+      const textResponse = await response.text();
+      responseData = {
+        text: textResponse || "I received your message but got an unexpected response format. Please try again.",
       };
     }
 
-    if (!response.ok) {
-      console.error(`HTTP error! status: ${response.status}`);
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    // Clone the response to allow reading the body multiple times if needed
-    const clonedResponse = response.clone();
-
-    try {
-      const responseData = await response.json();
-      console.log('Parsed response data:', responseData);
-      return responseData as ChatApiResponse;
-    } catch (e) {
-      // If JSON parsing fails, read as text from the cloned response and log the error.
-      console.error('Failed to parse API response as JSON. Attempting to read as text.', e);
-      try {
-        const responseText = await clonedResponse.text();
-        console.error('Raw response text after JSON parse failure:', responseText);
-        return {
-          text: `Error: Received non-JSON response from server. Content: ${responseText.substring(0, 200)}...`,
-          // Ensure this object matches ChatApiResponse structure, e.g., by adding other required fields if any.
-        };
-      } catch (textError) {
-        console.error('Failed to read response as text after JSON parse failure:', textError);
-        return {
-          text: "Error: Received non-JSON response and also failed to read it as text.",
-        };
-      }
-    }
+    console.log('Parsed webhook response:', responseData);
+    return responseData;
 
   } catch (error) {
-    console.error('Chat API error (outer catch):', error);
+    console.error('Chat API error (direct webhook):', error);
+    
+    // Store for offline sync if possible
+    try {
+      await offlineService.storeForSync('chat-messages', {
+        request,
+        timestamp: new Date().toISOString(),
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    } catch (syncError) {
+      console.error('Failed to store message for offline sync:', syncError);
+    }
     
     // Return a graceful fallback response
     return {
-      text: "I apologize, but I'm having trouble connecting right now. Please try again in a moment. In the meantime, I'd love to help you explore Diani Beach - it's known for its pristine white sand beaches, excellent diving spots, and vibrant local culture!"
+      text: "I'm having trouble connecting to my knowledge base right now. This might be a temporary network issue. Meanwhile, I'd be happy to share some general information about Diani Beach! It's renowned for its pristine white sand beaches, crystal-clear waters, and amazing coral reefs perfect for snorkeling and diving. Please try your question again in a moment.",
     };
   }
 };
