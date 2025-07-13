@@ -1,14 +1,139 @@
-import { ChatApiRequest, ChatApiResponse } from '@/types';
-import { offlineService } from '@/services/offlineService';
+// Updated types for your chat API
+export interface ChatApiRequest {
+  message: string;
+  userId: string;
+  userProfile?: {
+    username?: string;
+    travelStyle?: 'adventure' | 'relaxation' | 'cultural' | 'family' | 'budget' | 'luxury';
+    interests?: string[];
+    preferredLanguage?: string;
+  };
+  userLocation?: {
+    latitude: number;
+    longitude: number;
+    address?: string;
+  };
+  context?: {
+    previousMessages?: ChatMessage[];
+    currentTime?: string;
+    sessionId?: string;
+  };
+}
 
-// Use Supabase Edge Function to proxy requests and handle CORS
-const CHAT_API_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-proxy`;
+export interface ChatMessage {
+  id: string;
+  text: string;
+  isUser: boolean;
+  timestamp: string;
+  richContent?: RichContent;
+}
 
+export interface RichContent {
+  type: 'suggestion' | 'listing' | 'listings' | 'info' | 'map';
+  data: SuggestionData | ListingData | ListingsData | InfoData | MapData;
+}
+
+export interface SuggestionData {
+  suggestions: string[];
+  highlights?: string[];
+}
+
+export interface ListingData {
+  category: 'transport' | 'accommodation' | 'dining' | 'activities';
+  title: string;
+  items: ListingItem[];
+}
+
+export interface ListingsData {
+  category: 'transport' | 'accommodation' | 'dining' | 'activities';
+  title: string;
+  items: ListingItem[];
+}
+
+export interface InfoData {
+  category: 'weather' | 'general' | 'location';
+  title: string;
+  details: Record<string, string>;
+}
+
+export interface MapData {
+  center: {
+    lat: number;
+    lng: number;
+  };
+  markers: MapMarker[];
+}
+
+export interface ListingItem {
+  id: string;
+  name: string;
+  type: 'restaurant' | 'hotel' | 'transport' | 'activity' | 'accommodation';
+  description: string;
+  location: {
+    address: string;
+    coordinates: {
+      lat: number;
+      lng: number;
+    };
+  };
+  contact?: string;
+  priceRange?: string;
+  cuisine?: string;
+  features?: string[];
+  rating?: number;
+  images?: string[];
+}
+
+export interface MapMarker {
+  id: string;
+  position: {
+    lat: number;
+    lng: number;
+  };
+  title: string;
+  description: string;
+  type: 'restaurant' | 'hotel' | 'transport' | 'activity' | 'accommodation';
+}
+
+export interface ChatApiResponse {
+  text: string;
+  richContent?: RichContent;
+  isUser: false;
+  timestamp: string;
+  metadata?: {
+    userId?: string;
+    sessionId?: string;
+    originalQuery?: string;
+  };
+  offline?: boolean;
+  error?: boolean;
+}
+
+// Updated service function
 export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiResponse> => {
   // Check if offline
   if (!offlineService.getOnlineStatus()) {
     return {
       text: "I'm currently offline, but I can still help with general information about Diani Beach! The area is famous for its pristine white sand beaches, crystal-clear waters, and vibrant coral reefs. Popular activities include dolphin watching, snorkeling, kite surfing, and exploring local restaurants. When you're back online, I'll have access to real-time recommendations and can help you book specific services.",
+      richContent: {
+        type: "suggestion",
+        data: {
+          suggestions: [
+            "Tell me about Diani Beach",
+            "What activities are available?",
+            "Best time to visit",
+            "General information"
+          ],
+          highlights: [
+            "25km of pristine beaches",
+            "World-class kitesurfing",
+            "Rich Swahili culture",
+            "Tropical climate year-round"
+          ]
+        }
+      },
+      isUser: false,
+      timestamp: new Date().toISOString(),
       offline: true
     };
   }
@@ -31,11 +156,10 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
     });
 
     console.log('Edge Function response status:', response.status);
-
+    
     if (!response.ok) {
       console.error(`Edge Function error! status: ${response.status} ${response.statusText}`);
       
-      // Try to get error details from response
       let errorDetails = '';
       try {
         const errorText = await response.text();
@@ -56,8 +180,53 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
     } else {
       // If not JSON, treat as plain text response
       const textResponse = await response.text();
-      responseData = {
-        text: textResponse || "I received your message but got an unexpected response format. Please try again.",
+      
+      // Try to parse as JSON if possible
+      try {
+        responseData = JSON.parse(textResponse);
+      } catch {
+        // Create fallback response with rich content
+        responseData = {
+          text: textResponse || "I received your message but got an unexpected response format. Please try again.",
+          richContent: {
+            type: "suggestion",
+            data: {
+              suggestions: [
+                "Show me the best restaurants",
+                "Find beach activities",
+                "Recommend hotels",
+                "Transport options"
+              ],
+              highlights: [
+                "25km of pristine beaches",
+                "World-class kitesurfing",
+                "Rich Swahili culture"
+              ]
+            }
+          },
+          isUser: false,
+          timestamp: new Date().toISOString()
+        };
+      }
+    }
+
+    // Ensure all responses have rich content
+    if (!responseData.richContent) {
+      responseData.richContent = {
+        type: "suggestion",
+        data: {
+          suggestions: [
+            "Show me the best restaurants",
+            "Find beach activities", 
+            "Recommend hotels",
+            "Transport options"
+          ],
+          highlights: [
+            "25km of pristine beaches",
+            "World-class kitesurfing",
+            "Rich Swahili culture"
+          ]
+        }
       };
     }
 
@@ -78,9 +247,29 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
       console.error('Failed to store message for offline sync:', syncError);
     }
     
-    // Return a graceful fallback response
+    // Return a graceful fallback response with rich content
     return {
       text: "I'm having trouble connecting to my knowledge base right now. This might be a temporary network issue. Meanwhile, I'd be happy to share some general information about Diani Beach! It's renowned for its pristine white sand beaches, crystal-clear waters, and amazing coral reefs perfect for snorkeling and diving. Please try your question again in a moment.",
+      richContent: {
+        type: "suggestion",
+        data: {
+          suggestions: [
+            "Try again",
+            "Tell me about Diani Beach",
+            "What can I do here?",
+            "Best restaurants nearby"
+          ],
+          highlights: [
+            "25km of pristine beaches",
+            "Crystal-clear waters",
+            "Amazing coral reefs",
+            "Perfect for water sports"
+          ]
+        }
+      },
+      isUser: false,
+      timestamp: new Date().toISOString(),
+      error: true
     };
   }
 };
