@@ -409,6 +409,18 @@ export const SignupModal: React.FC = () => {
                 <Chrome className="h-4 w-4 mr-2" />
                 Sign in with Google
               </Button>
+
+              <div className="text-center">
+                <button
+                  type="button"
+                  onClick={() => setAuthMode(authMode === 'login' ? 'signup' : 'login')}
+                  className="text-sm text-diani-sand-600 hover:text-diani-teal-700 transition-colors"
+                >
+                  {authMode === 'login'
+                    ? "Don't have an account? Create one"
+                    : 'Already have an account? Sign in'}
+                </button>
+              </div>
             </form>
           )}
 
