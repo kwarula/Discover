@@ -18,7 +18,8 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
       url: WEBHOOK_URL,
       userProfile: request.userProfile ? 'included' : 'not included',
       userLocation: request.userLocation ? 'included' : 'not included',
-      context: request.context ? 'included' : 'not included'
+      context: request.context ? 'included' : 'not included',
+      request: request // Log the entire request object
     });
     
     const response = await fetch(WEBHOOK_URL, {
@@ -30,10 +31,13 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
         'User-Agent': 'DiscoverDiani/1.0',
       },
       body: JSON.stringify(request),
+      cache: 'no-cache', // Prevent caching
+      mode: 'cors', // Enable CORS
     });
 
     console.log('Webhook response status:', response.status);
     console.log('Webhook response headers:', Object.fromEntries(response.headers.entries()));
+    console.log('Webhook response:', response); // Log the entire response object
 
     if (!response.ok) {
       console.error(`Webhook error! status: ${response.status} ${response.statusText}`);
