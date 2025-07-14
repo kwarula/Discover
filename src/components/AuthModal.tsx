@@ -15,7 +15,7 @@ import { Eye, EyeOff, Mail, Lock, User, ArrowLeft, Chrome } from 'lucide-react';
 type SignupStep = 'auth' | 'profile' | 'verification';
 type AuthMode = 'login' | 'signup';
 
-export const SignupModal: React.FC = () => {
+export const AuthModal: React.FC = () => {
   const { 
     isLoginModalOpen, 
     setIsLoginModalOpen, 
