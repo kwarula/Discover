@@ -4,7 +4,7 @@ import { Header } from '@/components/Header';
 import { ChatMessage } from '@/components/ChatMessage';
 import { ChatInput } from '@/components/ChatInput';
 import { TypingIndicator } from '@/components/TypingIndicator';
-import { SignupModal } from '@/components/SignupModal';
+import { AuthModal } from '@/components/AuthModal';
 import { ProfileModal } from '@/components/ProfileModal';
 import { FloatingActionButton } from '@/components/FloatingActionButton';
 import { ProactiveSuggestions } from '@/components/ProactiveSuggestions';
@@ -238,7 +238,7 @@ const ChatInterface: React.FC = () => {
       <FloatingActionButton onActionClick={handleQuickAction} />
 
       {/* Modals */}
-      <SignupModal />
+      <AuthModal />
       <ProfileModal />
     </div>
   );

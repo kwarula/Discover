@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useAppContext } from '@/contexts/AppContext';
-import { SignupModal } from './SignupModal';
+import { AuthModal } from './AuthModal';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -24,7 +24,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
             <p className="text-diani-sand-700">Please sign up to continue...</p>
           </div>
         </div>
-        <SignupModal />
+        <AuthModal />
       </>
     );
   }
