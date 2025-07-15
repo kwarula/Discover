@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { WeatherWidget } from '@/components/WeatherWidget';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { useIsMobile } from '@/hooks/use-mobile';
+import InstallPWAButton from './InstallPWAButton';
 
 export const Header: React.FC = () => {
   const { isLoggedIn, userProfile, setIsLoginModalOpen, setIsProfileModalOpen } = useAppContext();
@@ -32,6 +33,7 @@ export const Header: React.FC = () => {
           <div className="hidden xs:block">
             <WeatherWidget />
           </div>
+          <InstallPWAButton />
           <LanguageSelector />
           {isLoggedIn ? (
             <Button
