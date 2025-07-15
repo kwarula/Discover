@@ -1,9 +1,14 @@
 import { offlineService } from './offlineService';
 
-// Define the chat API URL using Supabase Edge Function
-const CHAT_API_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-proxy`;
+// ✅ Define required environment variable
+const CHAT_API_URL = import.meta.env.VITE_CHAT_API_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-// Updated types for your chat API
+if (!CHAT_API_URL) {
+  throw new Error('VITE_CHAT_API_URL is not defined in environment variables.');
+}
+
+// TYPES
 export interface ChatApiRequest {
   message: string;
   userId: string;
@@ -34,8 +39,8 @@ export interface ChatMessage {
 }
 
 export interface RichContent {
-  type: 'suggestion' | 'listing' | 'listings' | 'info' | 'map';
-  data: SuggestionData | ListingData | ListingsData | InfoData | MapData;
+  type: 'suggestion' | 'listing' | 'info' | 'map';
+  data: SuggestionData | ListingData | InfoData | MapData;
 }
 
 export interface SuggestionData {
@@ -44,12 +49,6 @@ export interface SuggestionData {
 }
 
 export interface ListingData {
-  category: 'transport' | 'accommodation' | 'dining' | 'activities';
-  title: string;
-  items: ListingItem[];
-}
-
-export interface ListingsData {
   category: 'transport' | 'accommodation' | 'dining' | 'activities';
   title: string;
   items: ListingItem[];
@@ -114,12 +113,17 @@ export interface ChatApiResponse {
   error?: boolean;
 }
 
-// Updated service function
+// TYPE GUARD
+function isValidChatApiResponse(data: any): data is ChatApiResponse {
+  return data && typeof data.text === 'string' && typeof data.timestamp === 'string' && typeof data.isUser === 'boolean';
+}
+
+// MAIN FUNCTION
 export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiResponse> => {
-  // Check if offline
+  // Offline fallback
   if (!offlineService.getOnlineStatus()) {
     return {
-      text: "I'm currently offline, but I can still help with general information about Diani Beach! The area is famous for its pristine white sand beaches, crystal-clear waters, and vibrant coral reefs. Popular activities include dolphin watching, snorkeling, kite surfing, and exploring local restaurants. When you're back online, I'll have access to real-time recommendations and can help you book specific services.",
+      text: "I'm currently offline, but I can still help with general information about Diani Beach.",
       richContent: {
         type: "suggestion",
         data: {
@@ -144,85 +148,44 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
   }
 
   try {
-    console.log('Sending chat request via Supabase Edge Function:', {
-      url: CHAT_API_URL,
-      userProfile: request.userProfile ? 'included' : 'not included',
-      userLocation: request.userLocation ? 'included' : 'not included',
-      context: request.context ? 'included' : 'not included',
-    });
-    
     const response = await fetch(CHAT_API_URL, {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(request),
     });
 
-    console.log('Edge Function response status:', response.status);
-    
-    if (!response.ok) {
-      console.error(`Edge Function error! status: ${response.status} ${response.statusText}`);
-      
-      let errorDetails = '';
-      try {
-        const errorText = await response.text();
-        errorDetails = errorText ? ` - ${errorText}` : '';
-      } catch (e) {
-        console.error('Could not read error response:', e);
-      }
-      
-      throw new Error(`Edge Function returned ${response.status}: ${response.statusText}${errorDetails}`);
-    }
-
-    // Parse the response
-    let responseData: ChatApiResponse;
     const contentType = response.headers.get('Content-Type') || '';
-    
+
+    let responseData: any;
     if (contentType.includes('application/json')) {
       responseData = await response.json();
     } else {
-      // If not JSON, treat as plain text response
-      const textResponse = await response.text();
-      
-      // Try to parse as JSON if possible
+      const raw = await response.text();
       try {
-        responseData = JSON.parse(textResponse);
+        responseData = JSON.parse(raw);
       } catch {
-        // Create fallback response with rich content
         responseData = {
-          text: textResponse || "I received your message but got an unexpected response format. Please try again.",
-          richContent: {
-            type: "suggestion",
-            data: {
-              suggestions: [
-                "Show me the best restaurants",
-                "Find beach activities",
-                "Recommend hotels",
-                "Transport options"
-              ],
-              highlights: [
-                "25km of pristine beaches",
-                "World-class kitesurfing",
-                "Rich Swahili culture"
-              ]
-            }
-          },
-          isUser: false,
-          timestamp: new Date().toISOString()
+          text: raw,
+          timestamp: new Date().toISOString(),
+          isUser: false
         };
       }
     }
 
-    // Ensure all responses have rich content
+    if (!isValidChatApiResponse(responseData)) {
+      throw new Error('Invalid response format from chat API.');
+    }
+
     if (!responseData.richContent) {
       responseData.richContent = {
-        type: "suggestion",
+        type: 'suggestion',
         data: {
           suggestions: [
             "Show me the best restaurants",
-            "Find beach activities", 
+            "Find beach activities",
             "Recommend hotels",
             "Transport options"
           ],
@@ -235,26 +198,22 @@ export const sendChatMessage = async (request: ChatApiRequest): Promise<ChatApiR
       };
     }
 
-    console.log('Parsed Edge Function response:', responseData);
     return responseData;
-
   } catch (error) {
-    console.error('Chat API error (via Edge Function):', error);
-    
-    // Store for offline sync if possible
+    console.error('Chat API error:', error);
+
     try {
       await offlineService.storeForSync('chat-messages', {
         request,
         timestamp: new Date().toISOString(),
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: error instanceof Error ? error.message : String(error),
       });
     } catch (syncError) {
-      console.error('Failed to store message for offline sync:', syncError);
+      console.error('Offline sync failed:', syncError);
     }
-    
-    // Return a graceful fallback response with rich content
+
     return {
-      text: "I'm having trouble connecting to my knowledge base right now. This might be a temporary network issue. Meanwhile, I'd be happy to share some general information about Diani Beach! It's renowned for its pristine white sand beaches, crystal-clear waters, and amazing coral reefs perfect for snorkeling and diving. Please try your question again in a moment.",
+      text: "I'm having trouble connecting to my knowledge base right now. Please try again shortly.",
       richContent: {
         type: "suggestion",
         data: {
