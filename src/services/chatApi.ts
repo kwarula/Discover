@@ -1,3 +1,5 @@
+import { offlineService } from './offlineService';
+
 // Updated types for your chat API
 export interface ChatApiRequest {
   message: string;
