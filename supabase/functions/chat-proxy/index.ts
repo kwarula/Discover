@@ -27,8 +27,19 @@ Deno.serve(async (req) => {
   }
 
   try {
-    // Forward the request body to the webhook
-    const requestData = await req.json();
+    // Safely parse the request body
+    let requestData = {};
+    const contentType = req.headers.get('Content-Type');
+    const contentLength = req.headers.get('Content-Length');
+    
+    if (contentType && contentType.includes('application/json') && contentLength !== '0') {
+      try {
+        requestData = await req.json();
+      } catch (jsonError) {
+        console.error('Failed to parse JSON body:', jsonError);
+        requestData = {};
+      }
+    }
     
     console.log('Forwarding request to webhook:', {
       url: WEBHOOK_URL,
