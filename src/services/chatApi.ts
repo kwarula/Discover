@@ -1,5 +1,8 @@
 import { offlineService } from './offlineService';
 
+// Define the chat API URL using Supabase Edge Function
+const CHAT_API_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/chat-proxy`;
+
 // Updated types for your chat API
 export interface ChatApiRequest {
   message: string;
