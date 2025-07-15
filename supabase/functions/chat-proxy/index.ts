@@ -1,112 +1,133 @@
 import { corsHeaders } from '../_shared/cors.ts';
-import { RateLimiter } from "https://deno.land/x/limiter@v1.0.1/mod.ts";
-
 const WEBHOOK_URL = 'https://zaidiflow.app.n8n.cloud/webhook/discover-diani-live';
-
-// Rate limiter: 20 requests per minute
-const limiter = new RateLimiter({
-  tokens: 20,
-  interval: 60000,
-});
-
-Deno.serve(async (req) => {
-  // Rate limiting
-  if (!limiter.tryRemoveTokens(1)) {
-    return new Response(JSON.stringify({ error: 'Too many requests' }), {
-      status: 429,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  }
-
-  // Handle CORS
+// Default fallback suggestions for Diani Beach
+const getDefaultSuggestions = ()=>({
+    type: 'suggestion',
+    data: {
+      suggestions: [
+        "Show me the best restaurants",
+        "Find beach activities",
+        "Recommend hotels",
+        "Transport options"
+      ],
+      highlights: [
+        "25km of pristine beaches",
+        "World-class kitesurfing",
+        "Rich Swahili culture",
+        "Tropical climate year-round"
+      ]
+    }
+  });
+Deno.serve(async (req)=>{
+  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
-      headers: corsHeaders,
+      headers: corsHeaders
     });
   }
-
   try {
-    // Safely parse the request body
-    let requestData = {};
-    const contentType = req.headers.get('Content-Type');
-    const contentLength = req.headers.get('Content-Length');
-    
-    if (contentType && contentType.includes('application/json') && contentLength !== '0') {
-      try {
-        requestData = await req.json();
-      } catch (jsonError) {
-        console.error('Failed to parse JSON body:', jsonError);
-        requestData = {};
-      }
-    }
-    
-    console.log('Forwarding request to webhook:', {
-      url: WEBHOOK_URL,
-      method: 'POST',
-      hasData: !!requestData
-    });
-    
-    const response = await fetch(WEBHOOK_URL, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(requestData),
-    });
-
-    console.log('Webhook response received:', {
-      status: response.status,
-      statusText: response.statusText,
-      ok: response.ok,
-      headers: Object.fromEntries(response.headers.entries())
-    });
-
-    // Get response body
-    let responseBody;
-    const contentType = response.headers.get('Content-Type');
-    if (contentType && contentType.includes('application/json')) {
-      responseBody = await response.json();
-    } else {
-      responseBody = await response.text();
-    }
-    console.log('Webhook response body:', responseBody);
-
-    // Check if the webhook response is successful
-    if (!response.ok) {
-      // Propagate the exact status code and body from the webhook
-      console.error(`Webhook returned error: ${response.status} ${response.statusText}`);
-      
-      return new Response(typeof responseBody === 'string' ? responseBody : JSON.stringify(responseBody), {
-        status: response.status,
+    const requestText = await req.text();
+    let requestData;
+    try {
+      requestData = JSON.parse(requestText);
+    } catch (parseErr) {
+      const errorResponse = {
+        text: "I couldn't understand your request. Please try again.",
+        richContent: getDefaultSuggestions(),
+        isUser: false,
+        timestamp: new Date().toISOString(),
+        error: true
+      };
+      return new Response(JSON.stringify(errorResponse), {
+        status: 400,
         headers: {
           ...corsHeaders,
-          'Content-Type': contentType || 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       });
     }
-
-    // Return successful response with webhook data
-    return new Response(typeof responseBody === 'string' ? responseBody : JSON.stringify(responseBody), {
+    // Validate required fields
+    if (!requestData.message || !requestData.userId) {
+      const errorResponse = {
+        text: "Please provide both a message and user ID.",
+        richContent: getDefaultSuggestions(),
+        isUser: false,
+        timestamp: new Date().toISOString(),
+        error: true
+      };
+      return new Response(JSON.stringify(errorResponse), {
+        status: 400,
+        headers: {
+          ...corsHeaders,
+          'Content-Type': 'application/json'
+        }
+      });
+    }
+    // Forward to n8n webhook
+    const webhookResponse = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(requestData)
+    });
+    const contentType = webhookResponse.headers.get('Content-Type') || '';
+    let webhookData;
+    if (contentType.includes('application/json')) {
+      try {
+        webhookData = await webhookResponse.json();
+      } catch  {
+        webhookData = {
+          text: "I'm having trouble processing your request right now.",
+          error: true
+        };
+      }
+    } else {
+      const rawText = await webhookResponse.text();
+      webhookData = {
+        text: rawText || "I received your message but couldn't generate a proper response."
+      };
+    }
+    // Transform webhook response to match ChatApiResponse format
+    const chatResponse = {
+      text: webhookData.text || webhookData.message || "I'm here to help you discover Diani Beach!",
+      richContent: webhookData.richContent || getDefaultSuggestions(),
+      isUser: false,
+      timestamp: new Date().toISOString(),
+      metadata: {
+        userId: requestData.userId,
+        sessionId: requestData.context?.sessionId,
+        originalQuery: requestData.message
+      },
+      error: !webhookResponse.ok
+    };
+    // Return success response with proper status
+    return new Response(JSON.stringify(chatResponse), {
+      status: webhookResponse.ok ? 200 : 500,
       headers: {
         ...corsHeaders,
-        'Content-Type': contentType || 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
-  } catch (error) {
-    console.error('Chat-proxy function error:', error);
-    
-    // Return a 500 error for internal function errors
-    return new Response(JSON.stringify({ 
-      error: 'Internal Server Error',
-      message: 'Failed to process request in chat-proxy function',
-      details: error.message 
-    }), {
+  } catch (err) {
+    console.error('Edge Function error:', err);
+    const errorResponse = {
+      text: "I'm experiencing technical difficulties. Please try again in a moment.",
+      richContent: getDefaultSuggestions(),
+      isUser: false,
+      timestamp: new Date().toISOString(),
+      error: true,
+      metadata: {
+        userId: 'unknown'
+      }
+    };
+    return new Response(JSON.stringify(errorResponse), {
       status: 500,
       headers: {
         ...corsHeaders,
-        'Content-Type': 'application/json',
-      },
+        'Content-Type': 'application/json'
+      }
     });
   }
 });
