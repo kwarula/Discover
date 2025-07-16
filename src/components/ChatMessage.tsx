@@ -168,29 +168,38 @@ const normalizeLegacyData = (item: unknown, type: string): ListingBase | null =>
 
 const useListingData = (message: ChatMessageType) => {
   return useMemo(() => {
-    const richContent = message.richContent; // Directly use richContent from message
-    
+    const richContent = message.richContent;
+
     if (!richContent?.data) return [];
-    
+
     let processedData: ListingBase[] = [];
-    
-    if (Array.isArray(richContent.data)) {
-      processedData = richContent.data
-        .map(item => validateListing(item) ? item : normalizeLegacyData(item, richContent.type || 'listing'))
+    const items = (richContent.data as any).items || richContent.data;
+
+    if (Array.isArray(items)) {
+      processedData = items
+        .map(item => {
+          // The type of each item in the listing is used for normalization
+          const itemType = item.type || richContent.type || 'listing';
+          return validateListing(item) ? item : normalizeLegacyData(item, itemType);
+        })
         .filter((item): item is ListingBase => item !== null);
-    } else if (typeof richContent.data === 'object' && richContent.data !== null) {
-      const data = richContent.data as Record<string, any>;
-      
+    } else if (typeof items === 'object' && items !== null) {
+      const data = items as Record<string, any>;
+
       if (Array.isArray(data.recommendations)) {
         processedData = data.recommendations
-          .map((item: any) => validateListing(item) ? item : normalizeLegacyData(item, richContent.type || 'listing'))
+          .map((item: any) => {
+            const itemType = item.type || richContent.type || 'listing';
+            return validateListing(item) ? item : normalizeLegacyData(item, itemType);
+          })
           .filter((item: ListingBase | null): item is ListingBase => item !== null);
       } else {
-        const normalized = validateListing(data) ? data : normalizeLegacyData(data, richContent.type || 'listing');
+        const itemType = data.type || richContent.type || 'listing';
+        const normalized = validateListing(data) ? data : normalizeLegacyData(data, itemType);
         if (normalized) processedData = [normalized];
       }
     }
-    
+
     return processedData;
   }, [message]);
 };
@@ -537,23 +546,22 @@ export const ChatMessage = memo<ChatMessageProps>(({
       );
     }
 
-    // Handle single listing
-    if (richContent?.type === 'listing' && originalData.length === 1) {
-      return (
-        <div className="space-y-4">
-          <ReactMarkdown 
-            className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900"
-            components={MARKDOWN_COMPONENTS}
-          >
-            {textContent}
-          </ReactMarkdown>
-          {renderListingCard(originalData[0], 0)}
-        </div>
-      );
-    }
+    // Handle single or multiple listings
+    if ((richContent?.type === 'listing' || richContent?.type === 'listings' || richContent?.type === 'mixed_results') && originalData.length > 0) {
+      if (originalData.length === 1) {
+        return (
+          <div className="space-y-4">
+            <ReactMarkdown
+              className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900"
+              components={MARKDOWN_COMPONENTS}
+            >
+              {textContent}
+            </ReactMarkdown>
+            {renderListingCard(originalData[0], 0)}
+          </div>
+        );
+      }
 
-    // Handle multiple listings
-    if ((richContent?.type === 'listings' || richContent?.type === 'mixed_results') && originalData.length > 0) {
       const dataToRender = filteredData.length > 0 ? filteredData : originalData;
       const shouldShowFilters = originalData.length > 2;
       
