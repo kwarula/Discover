@@ -8,14 +8,27 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "0.0.0.0",
     port: 12000,
-    historyApiFallback: true,
-    cors: true,
+    strictPort: true,
+    hmr: {
+      host: "localhost",
+      port: 12000,
+      protocol: "ws",
+    },
+    watch: {
+      usePolling: true,
+    },
+    cors: {
+      origin: "*",
+      methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+      preflightContinue: false,
+      optionsSuccessStatus: 204,
+    },
     headers: {
       "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+      "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization",
       "X-Frame-Options": "ALLOWALL",
-      "Content-Type": "application/javascript; charset=utf-8",
     },
-    middlewareMode: false,
   },
   plugins: [
     react(),
@@ -26,6 +39,7 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    extensions: ['.mjs', '.js', '.jsx', '.ts', '.tsx', '.json'],
   },
   build: {
     rollupOptions: {
@@ -33,6 +47,7 @@ export default defineConfig(({ mode }) => ({
         manualChunks: undefined,
       },
     },
+    sourcemap: true,
   },
   optimizeDeps: {
     esbuildOptions: {
