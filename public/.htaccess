@@ -1,0 +1,11 @@
+Options -MultiViews
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.html [QR,L]
+
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header set Referrer-Policy "no-referrer-when-downgrade"
+</IfModule>

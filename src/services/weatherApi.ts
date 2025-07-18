@@ -7,13 +7,57 @@ interface WeatherData {
   icon: string;
 }
 
-// Mock weather data for Diani Beach
-// In production, this would connect to a real weather API
+export type { WeatherData };
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Get current weather data from Supabase Edge Function
 export const getWeatherData = async (): Promise<WeatherData> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-  
-  // Generate realistic weather for Diani Beach
+  try {
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/weather/current`, {
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Weather API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching weather data:', error);
+    return getMockWeatherData();
+  }
+};
+
+// Get 5-day forecast from Supabase Edge Function
+export const getForecast = async (): Promise<Array<{ day: string; high: number; low: number; icon: string }>> => {
+  try {
+    const response = await fetch(`${SUPABASE_URL}/functions/v1/weather/forecast`, {
+      headers: {
+        'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Forecast API error: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching forecast data:', error);
+    return getMockForecast();
+  }
+};
+
+// Fallback mock data for when API is unavailable
+const getMockWeatherData = (): WeatherData => {
   const conditions = [
     { condition: 'Sunny', icon: '☀️', temp: [26, 32] },
     { condition: 'Partly Cloudy', icon: '⛅', temp: [25, 30] },
@@ -27,16 +71,14 @@ export const getWeatherData = async (): Promise<WeatherData> => {
   return {
     temperature,
     condition: randomCondition.condition,
-    humidity: Math.floor(Math.random() * 20) + 60, // 60-80%
-    windSpeed: Math.floor(Math.random() * 15) + 5, // 5-20 km/h
-    uvIndex: Math.floor(Math.random() * 4) + 7, // 7-11 (high)
+    humidity: Math.floor(Math.random() * 20) + 60,
+    windSpeed: Math.floor(Math.random() * 15) + 5,
+    uvIndex: Math.floor(Math.random() * 4) + 7,
     icon: randomCondition.icon,
   };
 };
 
-export const getForecast = async (): Promise<Array<{ day: string; high: number; low: number; icon: string }>> => {
-  await new Promise(resolve => setTimeout(resolve, 300));
-  
+const getMockForecast = (): Array<{ day: string; high: number; low: number; icon: string }> => {
   const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
   const icons = ['☀️', '⛅', '☁️', '🌦️'];
   

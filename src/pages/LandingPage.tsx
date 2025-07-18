@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { LanguageSelector } from '@/components/LanguageSelector';
 import { MessageCircle, Search, MapPin, Phone, Calendar, Apple, PlayCircle, Building2 } from 'lucide-react';
 import { StoreModal } from '@/components/StoreModal';
 import { BusinessListingModal } from '@/components/BusinessListingModal';
+import { InfiniteSlider } from '@/components/ui/infinite-slider';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -94,13 +95,25 @@ const LandingPage: React.FC = () => {
               </Button>
 
               {/* Screenshot */}
-              <div className="relative mx-auto max-w-sm lg:max-w-md">
+              <div className="relative mx-auto max-w-sm md:max-w-lg lg:max-w-2xl xl:max-w-3xl">
                 <div className="absolute inset-0 bg-gradient-to-r from-diani-teal-500 to-coral-sunset-500 rounded-3xl blur-2xl opacity-20 animate-pulse"></div>
-                <img
-                  src="/discover-diani-screenshot.png"
-                  alt="Discover Diani Chat Interface"
-                  className="relative z-10 w-full h-auto rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500"
-                />
+                <video
+                  src="https://res.cloudinary.com/doprdld4l/video/upload/v1751125990/xwgvs6glimc6uxdbuioc.mov"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="relative z-10 w-full h-auto rounded-3xl shadow-2xl hover:scale-105 transition-transform duration-500 max-w-full"
+                  poster="/Screenshot 2025-06-28 at 18.30.09.png"
+                >
+                  <source src="https://res.cloudinary.com/doprdld4l/video/upload/v1751125990/xwgvs6glimc6uxdbuioc.mov" type="video/mp4" />
+                  {/* Fallback for browsers that don't support video */}
+                  <img
+                    src="/Screenshot 2025-06-28 at 18.30.09.png"
+                    alt="Discover Diani Chat Interface"
+                    className="w-full h-auto rounded-3xl shadow-2xl"
+                  />
+                </video>
               </div>
             </div>
           </div>
@@ -191,13 +204,40 @@ const LandingPage: React.FC = () => {
             Trusted by 2,000+ Diani travelers
           </h3>
           
-          {/* Partner logos placeholder */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 items-center opacity-80">
-            {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white/20 rounded-lg p-6 h-16 flex items-center justify-center">
-                <div className="text-white/60 font-semibold">Partner {i}</div>
-              </div>
-            ))}
+          {/* Partner logos infinite slider */}
+          <div className="opacity-80">
+            <InfiniteSlider gap={48} duration={20} reverse className="w-full">
+              <img
+                src="https://res.cloudinary.com/doprdld4l/image/upload/v1751030563/logo_ws5qgw.png"
+                alt="Partner logo"
+                className="h-[80px] w-auto filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://res.cloudinary.com/doprdld4l/image/upload/v1751030562/logo_1_ydzo6h.png"
+                alt="Partner logo"
+                className="h-[80px] w-auto filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://res.cloudinary.com/doprdld4l/image/upload/v1751030562/bp_logo_y3ayle.png"
+                alt="Partner logo"
+                className="h-[80px] w-auto filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://res.cloudinary.com/doprdld4l/image/upload/v1751030596/leonardos514082_kxl07z.png"
+                alt="Partner logo"
+                className="h-[80px] w-auto filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://res.cloudinary.com/doprdld4l/image/upload/v1751030595/diani-bikes-logo_qq4vqk.png"
+                alt="Partner logo"
+                className="h-[80px] w-auto filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity"
+              />
+              <img
+                src="https://res.cloudinary.com/doprdld4l/image/upload/v1751030597/saltys-logo_asoah4.png"
+                alt="Partner logo"
+                className="h-[80px] w-auto filter brightness-0 invert opacity-70 hover:opacity-100 transition-opacity"
+              />
+            </InfiniteSlider>
           </div>
 
           <div className="mt-12">
@@ -251,6 +291,8 @@ const LandingPage: React.FC = () => {
             
             <div className="text-center">
               <div className="flex flex-wrap justify-center gap-6 text-sm">
+                <Link to="/info" className="hover:text-diani-teal-300 transition-colors">Essential Info</Link>
+                <span className="text-diani-sand-500">•</span>
                 <a href="#" className="hover:text-diani-teal-300 transition-colors">Terms</a>
                 <span className="text-diani-sand-500">•</span>
                 <a href="#" className="hover:text-diani-teal-300 transition-colors">Privacy</a>
@@ -261,7 +303,7 @@ const LandingPage: React.FC = () => {
             
             <div className="text-center md:text-right">
               <p className="text-sm text-diani-sand-400">
-                Powered by <span className="text-coral-sunset-300 font-semibold">ZaidiLab</span>
+                Powered by <a href="https://zaidilabstudio.com/" target="_blank" rel="noopener noreferrer" className="text-coral-sunset-300 font-semibold hover:text-coral-sunset-200 transition-colors">ZaidiLab</a>
               </p>
             </div>
           </div>

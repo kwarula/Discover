@@ -26,6 +26,9 @@ export const RestaurantCard = memo<RestaurantCardProps>(({
   // Validate rating and price level
   const validRating = Math.min(Math.max(rating, 0), 5);
   const validPriceLevel = Math.min(Math.max(priceLevel, 1), 4) as 1 | 2 | 3 | 4;
+  
+  // Ensure specialties is always an array
+  const safeSpecialties = Array.isArray(specialties) ? specialties : [];
 
   const handleCardClick = (e: React.MouseEvent) => {
     // Prevent card click when clicking buttons
@@ -130,11 +133,11 @@ export const RestaurantCard = memo<RestaurantCardProps>(({
         </div>
 
         {/* Specialties */}
-        {specialties.length > 0 && (
+        {safeSpecialties.length > 0 && (
           <div className="space-y-1 flex-1">
             <p className="text-xs font-medium text-diani-sand-600">{cardTexts.popularDishes}</p>
             <div className="flex flex-wrap gap-1.5" role="list" aria-label="Popular dishes">
-              {specialties.slice(0, 3).map((specialty, index) => (
+              {safeSpecialties.slice(0, 3).map((specialty, index) => (
                 <span
                   key={`${id}-specialty-${index}`}
                   className="px-2 py-1 bg-coral-sunset-50 text-coral-sunset-700 rounded-full text-xs"
@@ -143,9 +146,9 @@ export const RestaurantCard = memo<RestaurantCardProps>(({
                   {specialty}
                 </span>
               ))}
-              {specialties.length > 3 && (
+              {safeSpecialties.length > 3 && (
                 <span className="px-2 py-1 bg-coral-sunset-50 text-coral-sunset-700 rounded-full text-xs">
-                  {cardTexts.more.replace('{count}', String(specialties.length - 3))}
+                  {cardTexts.more.replace('{count}', String(safeSpecialties.length - 3))}
                 </span>
               )}
             </div>

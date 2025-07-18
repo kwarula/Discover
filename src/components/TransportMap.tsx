@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import { Transport } from '@/types/transport';
 import { MapPin, Navigation } from 'lucide-react';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface TransportMapProps {
   initialTransports: Transport[]; // Renaming to 'transports' as it's now directly used
@@ -9,6 +11,9 @@ interface TransportMapProps {
   selectedTransport?: Transport | null;
 }
 
+// Set Mapbox access token
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || '';
+
 export const TransportMap: React.FC<TransportMapProps> = ({
   initialTransports: transports, // Use initialTransports and alias as transports
   userLocation,
@@ -16,66 +21,63 @@ export const TransportMap: React.FC<TransportMapProps> = ({
   selectedTransport
 }) => {
   const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.Marker[]>([]);
-  const userMarkerRef = useRef<google.maps.Marker | null>(null);
+  const mapInstanceRef = useRef<mapboxgl.Map | null>(null);
+  const markersRef = useRef<mapboxgl.Marker[]>([]);
+  const userMarkerRef = useRef<mapboxgl.Marker | null>(null);
 
   useEffect(() => {
-    if (!mapRef.current || !window.google) return;
+    if (!mapRef.current || !mapboxgl.accessToken) {
+      console.warn('Mapbox access token not found or map container not ready');
+      return;
+    }
 
-    // Initialize map centered on Diani Beach
+    // Initialize map centered on Diani Beach or user location
     const defaultCenter = userLocation || { lat: -4.3167, lng: 39.5667 };
     
-    mapInstanceRef.current = new google.maps.Map(mapRef.current, {
-      center: defaultCenter,
+    mapInstanceRef.current = new mapboxgl.Map({
+      container: mapRef.current,
+      style: 'mapbox://styles/mapbox/streets-v12',
+      center: [defaultCenter.lng, defaultCenter.lat],
       zoom: 14,
-      styles: [
-        {
-          featureType: "poi",
-          elementType: "labels",
-          stylers: [{ visibility: "off" }]
-        }
-      ],
-      mapTypeControl: false,
-      fullscreenControl: false,
-      streetViewControl: false
     });
+
+    // Add navigation controls
+    mapInstanceRef.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
     // Add user location marker if available
     if (userLocation) {
-      userMarkerRef.current = new google.maps.Marker({
-        position: userLocation,
-        map: mapInstanceRef.current,
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 8,
-          fillColor: '#3B82F6',
-          fillOpacity: 1,
-          strokeColor: '#FFFFFF',
-          strokeWeight: 2
-        },
-        title: 'Your Location'
-      });
+      // Create user marker element
+      const userMarkerElement = document.createElement('div');
+      userMarkerElement.style.cssText = `
+        width: 20px;
+        height: 20px;
+        background-color: #3B82F6;
+        border: 3px solid white;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      `;
 
-      // Add pulsing circle around user location
-      new google.maps.Circle({
-        map: mapInstanceRef.current,
-        center: userLocation,
-        radius: 100,
-        fillColor: '#3B82F6',
-        fillOpacity: 0.1,
-        strokeColor: '#3B82F6',
-        strokeOpacity: 0.3,
-        strokeWeight: 1
-      });
+      userMarkerRef.current = new mapboxgl.Marker(userMarkerElement)
+        .setLngLat([userLocation.lng, userLocation.lat])
+        .setPopup(
+          new mapboxgl.Popup({ offset: 15 })
+            .setHTML('<div style="font-weight: 500; color: #374151;">Your Location</div>')
+        )
+        .addTo(mapInstanceRef.current);
     }
 
     return () => {
       // Cleanup markers
-      markersRef.current.forEach(marker => marker.setMap(null));
+      markersRef.current.forEach(marker => marker.remove());
       markersRef.current = [];
       if (userMarkerRef.current) {
-        userMarkerRef.current.setMap(null);
+        userMarkerRef.current.remove();
+      }
+      
+      // Cleanup map
+      if (mapInstanceRef.current) {
+        mapInstanceRef.current.remove();
+        mapInstanceRef.current = null;
       }
     };
   }, [userLocation]);
@@ -86,64 +88,106 @@ export const TransportMap: React.FC<TransportMapProps> = ({
     if (!mapInstanceRef.current || !transports) return; // Ensure transports is available
 
     // Clear existing transport markers
-    markersRef.current.forEach(marker => marker.setMap(null));
+    markersRef.current.forEach(marker => marker.remove());
     markersRef.current = [];
 
     // Add transport markers
     transports.forEach(transport => {
-      const icon = transport.type === 'bodaboda' 
-        ? {
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-              <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="20" cy="20" r="18" fill="#FB923C" stroke="#FFFFFF" stroke-width="2"/>
-                <text x="20" y="26" font-size="20" text-anchor="middle" fill="white">🏍️</text>
-              </svg>
-            `),
-            scaledSize: new google.maps.Size(40, 40),
-            anchor: new google.maps.Point(20, 20)
-          }
-        : {
-            url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(`
-              <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="20" cy="20" r="18" fill="#EAB308" stroke="#FFFFFF" stroke-width="2"/>
-                <text x="20" y="26" font-size="20" text-anchor="middle" fill="white">🛺</text>
-              </svg>
-            `),
-            scaledSize: new google.maps.Size(40, 40),
-            anchor: new google.maps.Point(20, 20)
-          };
+      const isSelected = selectedTransport?.id === transport.id;
+      const markerColor = transport.type === 'bodaboda' ? '#FB923C' : '#EAB308';
+      const markerIcon = transport.type === 'bodaboda' ? '🏍️' : '🛺';
 
-      const marker = new google.maps.Marker({
-        position: transport.location,
-        map: mapInstanceRef.current,
-        icon,
-        title: `${transport.driverName} - ${transport.vehicleNumber}`,
-        animation: selectedTransport?.id === transport.id 
-          ? google.maps.Animation.BOUNCE 
-          : undefined
-      });
+      // Create custom marker element
+      const markerElement = document.createElement('div');
+      markerElement.style.cssText = `
+        width: 40px;
+        height: 40px;
+        background-color: ${markerColor};
+        border: 2px solid white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: white;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        cursor: pointer;
+        transition: transform 0.2s;
+        ${isSelected ? 'transform: scale(1.2); z-index: 1000;' : ''}
+      `;
+      markerElement.innerHTML = markerIcon;
 
-      marker.addListener('click', () => {
+      // Accessibility improvements
+      markerElement.setAttribute('role', 'button');
+      markerElement.setAttribute('tabindex', '0');
+      const ariaLabel = `Select transport: ${transport.type} driven by ${transport.driverName}, vehicle ${transport.vehicleNumber}. Estimated arrival: ${transport.estimatedArrival}, Fare: ${transport.fare.estimate || `${transport.fare.currency} ${transport.fare.amount}`}.`;
+      markerElement.setAttribute('aria-label', ariaLabel);
+      markerElement.title = `${transport.driverName} - ${transport.vehicleNumber}`; // Tooltip for hover
+
+      const handleSelect = () => {
         if (onTransportSelect) {
           onTransportSelect(transport);
         }
+      };
+
+      // Add click handler
+      markerElement.addEventListener('click', handleSelect);
+
+      // Keyboard interaction
+      markerElement.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleSelect();
+        }
       });
+
+      // Add hover effect
+      markerElement.addEventListener('mouseenter', () => {
+        if (!isSelected) {
+          markerElement.style.transform = 'scale(1.1)';
+        }
+      });
+      markerElement.addEventListener('mouseleave', () => {
+        if (!isSelected) {
+          markerElement.style.transform = 'scale(1)';
+        }
+      });
+
+      // Create marker
+      const marker = new mapboxgl.Marker(markerElement)
+        .setLngLat([transport.location.lng, transport.location.lat])
+        .addTo(mapInstanceRef.current!);
 
       markersRef.current.push(marker);
     });
 
     // Fit bounds to show all markers
     if (transports.length > 0) {
-      const bounds = new google.maps.LatLngBounds();
+      const bounds = new mapboxgl.LngLatBounds();
       if (userLocation) {
-        bounds.extend(userLocation);
+        bounds.extend([userLocation.lng, userLocation.lat]);
       }
       transports.forEach(transport => {
-        bounds.extend(transport.location);
+        bounds.extend([transport.location.lng, transport.location.lat]);
       });
-      mapInstanceRef.current.fitBounds(bounds);
+      mapInstanceRef.current.fitBounds(bounds, { padding: 50 });
     }
   }, [transports, selectedTransport, onTransportSelect]);
+
+  if (!mapboxgl.accessToken) {
+    return (
+      <div className="relative w-full h-[400px] rounded-2xl overflow-hidden shadow-lg">
+        <div className="h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+          <div className="text-center p-4">
+            <MapPin className="h-12 w-12 text-blue-500 mx-auto mb-2" />
+            <p className="text-sm text-blue-700">
+              Mapbox access token required to display transport map
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full h-[400px] rounded-2xl overflow-hidden shadow-lg">

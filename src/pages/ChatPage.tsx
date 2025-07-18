@@ -4,15 +4,18 @@ import { Header } from '@/components/Header';
 import { ChatMessage } from '@/components/ChatMessage';
 import { ChatInput } from '@/components/ChatInput';
 import { TypingIndicator } from '@/components/TypingIndicator';
-import { SignupModal } from '@/components/SignupModal';
+import { AuthModal } from '@/components/AuthModal';
 import { ProfileModal } from '@/components/ProfileModal';
 import { FloatingActionButton } from '@/components/FloatingActionButton';
 import { ProactiveSuggestions } from '@/components/ProactiveSuggestions';
+import { SummerTidesEventCard } from '@/components/SummerTidesEventCard';
+import { OfflineIndicator, InstallPrompt } from '@/components/OfflineIndicator';
 import { sendChatMessage } from '@/services/chatApi';
 import { ChatMessage as ChatMessageType } from '@/types';
 import { useToast } from '@/hooks/use-toast';
 import { generateProactiveSuggestions } from '@/services/suggestionService';
 import { getWeatherData, WeatherData } from '@/services/weatherApi';
+import { useOffline } from '@/hooks/useOffline';
 
 const ChatInterface: React.FC = () => {
   const {
@@ -29,6 +32,7 @@ const ChatInterface: React.FC = () => {
   const [weatherData, setWeatherData] = useState<WeatherData | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { isOffline } = useOffline();
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -98,11 +102,17 @@ const ChatInterface: React.FC = () => {
 
     try {
       // Send to API with user location if available
+      // Enhanced request with more context
       const requestData = {
         message: messageText,
         userId,
         userProfile: userProfile || undefined,
-        ...(userLocation && { userLocation })
+        ...(userLocation && { userLocation }),
+        context: {
+          previousMessages: messages.slice(-5), // Last 5 messages for context
+          currentTime: new Date().toISOString(),
+          sessionId: `session-${userId}-${Date.now()}` // Simple session tracking
+        }
       };
 
       const response = await sendChatMessage(requestData);
@@ -114,17 +124,24 @@ const ChatInterface: React.FC = () => {
       const aiMessage: ChatMessageType = {
         id: `ai-${Date.now()}`,
         text: response.text,
-        isUser: false,
-        timestamp: new Date(),
+        isUser: response.isUser !== undefined ? response.isUser : false, // Use isUser from response, default to false
+        timestamp: response.timestamp ? new Date(response.timestamp) : new Date(), // Use timestamp from response, convert to Date
+        richContent: response.richContent // Directly assign richContent if it exists
       };
       
-      // If the response includes rich content, add it to the message
-      if (response.richContent) {
-        aiMessage.richContent = response.richContent;
-        
-        // If it's transport data, include user location
-        if (response.richContent.type === 'transports' && userLocation) {
-          (aiMessage.richContent as any).userLocation = userLocation;
+      // Specific handling for transport data if needed (already part of richContent assignment)
+      if (aiMessage.richContent && aiMessage.richContent.type === 'transports' && userLocation) {
+        // If userLocation needs to be added specifically to the richContent.data for transports
+        // This assumes richContent.data is an object where userLocation can be set.
+        // Ensure this doesn't conflict with ListingRichContentData or other rich content types.
+        // A safer way might be to ensure richContent.data is structured to accept this.
+        // For now, let's assume this specific logic for 'transports' is separate from the new 'listing' type.
+        if (typeof aiMessage.richContent.data === 'object' && aiMessage.richContent.data !== null) {
+           (aiMessage.richContent.data as any).userLocation = userLocation;
+        } else {
+          // If data is not an object or is null, and we need to attach userLocation,
+          // we might need to initialize data. This part is specific to 'transports' type.
+          // For 'listing', this specific logic block isn't relevant.
         }
       }
       
@@ -171,6 +188,7 @@ const ChatInterface: React.FC = () => {
   return (
     <div className={`flex flex-col h-screen time-based-background ${timeBasedBackground}`}>
       <Header />
+      <OfflineIndicator />
       
       {/* Chat Messages Area */}
       <main className="flex-1 overflow-hidden relative">
@@ -188,6 +206,7 @@ const ChatInterface: React.FC = () => {
                   key={message.id}
                   message={message}
                   isLatest={index === messages.length - 1}
+                  userId={userId}
                 />
               ))}
               {isTyping && <TypingIndicator />}
@@ -197,9 +216,19 @@ const ChatInterface: React.FC = () => {
           
           {/* Chat Input */}
           <div className="mt-6">
+            {/* Summer Tides Event Card */}
+            <div className="mb-4">
+              <SummerTidesEventCard />
+            </div>
+            
+            {/* Install Prompt */}
+            <div className="mb-4">
+              <InstallPrompt />
+            </div>
+            
             <ChatInput
               onSendMessage={handleSendMessage}
-              disabled={isLoading || isTyping}
+              disabled={isLoading || isTyping || isOffline}
             />
           </div>
         </div>
@@ -209,7 +238,7 @@ const ChatInterface: React.FC = () => {
       <FloatingActionButton onActionClick={handleQuickAction} />
 
       {/* Modals */}
-      <SignupModal />
+      <AuthModal />
       <ProfileModal />
     </div>
   );

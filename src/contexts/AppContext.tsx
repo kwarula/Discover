@@ -85,6 +85,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     // Listen to auth state changes
     const { data: { subscription } } = authService.onAuthStateChange(async (user) => {
       if (user) {
+        // Check if user has a profile, if not, they might be a new Google user
         const currentUser = await authService.getCurrentUser();
         if (currentUser) {
           setUserProfileState({
@@ -93,6 +94,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             interests: currentUser.interests,
             preferredLanguage: currentUser.preferredLanguage
           });
+        } else {
+          // New Google user - they need to complete their profile
+          // For now, create a basic profile from Google data
+          const googleUser = user;
+          if (googleUser.user_metadata?.full_name || googleUser.user_metadata?.name) {
+            const username = googleUser.user_metadata.full_name || googleUser.user_metadata.name;
+            setUserProfileState({
+              username: username,
+              travelStyle: 'relaxed', // Default travel style
+              interests: [], // Empty interests to be filled later
+              preferredLanguage: 'English'
+            });
+          }
         }
       } else {
         setUserProfileState(null);

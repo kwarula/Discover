@@ -21,4 +21,34 @@
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: rgba(0, 0, 0, 0.2);
   }
+
+  /* Shimmer animation for typing indicator */
+  @keyframes shimmer {
+    0% {
+      transform: translateX(-100%);
+    }
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s infinite;
+  }
+
+  /* PWA specific animations */
+  @keyframes slide-in-top {
+    0% {
+      transform: translate(-50%, -100%);
+      opacity: 0;
+    }
+    100% {
+      transform: translate(-50%, 0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-in-top {
+    animation: slide-in-top 0.3s ease-out;
+  }
 }

@@ -1,6 +1,357 @@
 import { CategoryFields } from '@/types/business';
 
 export const categoryFields: CategoryFields = {
+  "Accommodation": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Apartment Rentals": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Airport Transfers": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Auto Services": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Bakery": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Barbershop": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Bars & Lounges": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Beauty Spa": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Beach Equipment Rentals": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Boat Tours": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Butchery": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Car Hire": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Car Wash": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Chiropractor": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Clothing Shop": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Coffee Shop": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Computer Repairs": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Construction Services": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Courier Services": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Dentist": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "DJ Services": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Electrician": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Event Organizer": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Fast Food": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Fitness Trainer": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Flower Shop": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Furniture Store": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
   "Gas Supplier": {
     fields: [
       {
@@ -133,7 +484,6 @@ export const categoryFields: CategoryFields = {
       }
     ]
   },
-
   "Gift Shop": {
     fields: [
       {
@@ -251,7 +601,6 @@ export const categoryFields: CategoryFields = {
       }
     ]
   },
-
   "Grocery Store": {
     fields: [
       {
@@ -389,7 +738,6 @@ export const categoryFields: CategoryFields = {
       }
     ]
   },
-
   "Guest House": {
     fields: [
       {
@@ -532,7 +880,6 @@ export const categoryFields: CategoryFields = {
       }
     ]
   },
-
   "Hair Salon": {
     fields: [
       {
@@ -665,7 +1012,6 @@ export const categoryFields: CategoryFields = {
       }
     ]
   },
-
   "Hardware Shop": {
     fields: [
       {
@@ -796,6 +1142,604 @@ export const categoryFields: CategoryFields = {
         maxSize: 5,
         description: "Upload business insurance certificate"
       }
+    ]
+  },
+  "Hotel": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "IT Services": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Jewelry Shop": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Juice Bar": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Kiosk": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Laundry Services": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Lawyer": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Local Tours": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Massage Therapist": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Mechanic": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Medical Clinic": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Mobile Repair": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Motorcycle Rentals": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Moving Services": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Music Studio": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "NGO Office": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Nightclub": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Nanny Services": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Optician": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Painter": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Pest Control": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Pet Grooming": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Pharmacy": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Photographer": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Physiotherapist": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Plumber": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Private Chef": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Property Agency": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Real Estate": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Restaurant": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Rooftop Lounge": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Safari Operator": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "School Transport": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Scuba Diving": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Security Services": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Shoemaker": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Supermarket": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Surf Instructor": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Swimming Lessons": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Tailor": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Tattoo Artist": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Tech Shop": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Tour Company": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Tuktuk Rides": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Videographer": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
+    ]
+  },
+  "Yoga Instructor": {
+    fields: [
+      { name: "businessName", label: "Business Name", type: "text", required: true, placeholder: "Enter your business name" },
+      { name: "location", label: "Business Location", type: "location", required: true },
+      { name: "phoneNumber", label: "Phone Number", type: "tel", required: true, placeholder: "+254 XXX XXX XXX" },
+      { name: "whatsappNumber", label: "WhatsApp Number (Optional)", type: "tel", required: false, placeholder: "+254 XXX XXX XXX" },
+      { name: "operatingHours", label: "Operating Hours", type: "text", required: true, placeholder: "e.g., Mon-Sat: 9AM-5PM" }
+    ],
+    documents: [
+      { name: "businessLicense", label: "Business License", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload a valid business license" },
+      { name: "taxCompliance", label: "Tax Compliance Certificate", required: true, accept: ".pdf,.jpg,.jpeg,.png", maxSize: 5, description: "Upload current tax compliance certificate" }
     ]
   }
 };
