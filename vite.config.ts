@@ -13,7 +13,9 @@ export default defineConfig(({ mode }) => ({
     headers: {
       "Access-Control-Allow-Origin": "*",
       "X-Frame-Options": "ALLOWALL",
+      "Content-Type": "application/javascript; charset=utf-8",
     },
+    middlewareMode: false,
   },
   plugins: [
     react(),
@@ -29,6 +31,13 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: undefined,
+      },
+    },
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      loader: {
+        '.js': 'jsx',
       },
     },
   },
