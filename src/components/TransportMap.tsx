@@ -5,7 +5,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 interface TransportMapProps {
-  transports: Transport[];
+  initialTransports: Transport[]; // Renaming to 'transports' as it's now directly used
   userLocation?: { lat: number; lng: number };
   onTransportSelect?: (transport: Transport) => void;
   selectedTransport?: Transport | null;
@@ -15,7 +15,7 @@ interface TransportMapProps {
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN || '';
 
 export const TransportMap: React.FC<TransportMapProps> = ({
-  transports,
+  initialTransports: transports, // Use initialTransports and alias as transports
   userLocation,
   onTransportSelect,
   selectedTransport
@@ -82,8 +82,10 @@ export const TransportMap: React.FC<TransportMapProps> = ({
     };
   }, [userLocation]);
 
+  // Removed the useEffect for WebSocket connection as it's now handled by ChatMessage.tsx
+
   useEffect(() => {
-    if (!mapInstanceRef.current) return;
+    if (!mapInstanceRef.current || !transports) return; // Ensure transports is available
 
     // Clear existing transport markers
     markersRef.current.forEach(marker => marker.remove());

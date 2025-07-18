@@ -6,6 +6,13 @@ import { cn } from '@/lib/utils';
 import { MessageFeedback } from './MessageFeedback';
 import { ContentFilter } from './ContentFilter';
 import { FilterOptions, SortOptions } from '@/types';
+import { supabase } from '@/lib/supabase';
+import { RealtimeChannel } from '@supabase/supabase-js';
+import { HotelCard } from './cards/HotelCard';
+import { RestaurantCard } from './cards/RestaurantCard';
+import { ActivityCard } from './cards/ActivityCard';
+import { TransportCard } from './cards/TransportCard';
+import { Transport } from '@/types/transport';
 import { MapView } from './MapView';
 import { ListingCard } from './cards/ListingCard';
 
@@ -279,6 +286,7 @@ const useFilteredData = (originalData: ListingBase[]) => {
     handleFilterChange,
     handleSortChange,
     clearFilters
+>>>>>>> main
   };
 };
 
@@ -491,11 +499,59 @@ export const ChatMessage = memo<ChatMessageProps>(({
     clearFilters 
   } = useFilteredData(originalData);
 
+  // Transport-related state for WebSocket updates
+  const [currentTransports, setCurrentTransports] = useState<Transport[]>([]);
+  const channelRef = useRef<RealtimeChannel | null>(null);
+  const [selectedTransport, setSelectedTransport] = useState<Transport | null>(null);
+
   // Directly use properties from the message object
   const { richContent, text: textContent, isUser: isUserMessage, timestamp } = message;
   
   const formattedTime = useFormattedTime(timestamp); // timestamp is already a Date object from ChatMessageType
   const hasRichContent = Boolean(richContent);
+  
+  // Set up WebSocket subscription for transport updates
+  useEffect(() => {
+    if (richContent && richContent.type === 'transports') {
+      const initialTransports = richContent.data as Transport[];
+      setCurrentTransports(initialTransports);
+
+      // Ensure a unique channel per message if needed, or a general one.
+      // For simplicity, using a general channel name. Consider message ID for specific channels.
+      const channelId = `transports-message-${message.id}`;
+      channelRef.current = supabase.channel(channelId);
+
+      channelRef.current
+        .on('broadcast', { event: 'transport-update' }, (payload) => {
+          console.log(`Transport update received for message ${message.id}:`, payload);
+          if (payload.payload && Array.isArray(payload.payload.transports)) {
+            // Here, you might want to merge or replace transports based on your app's logic
+            // For now, replacing the entire list.
+            setCurrentTransports(payload.payload.transports);
+          }
+        })
+        .subscribe((status) => {
+          if (status === 'SUBSCRIBED') {
+            console.log(`Subscribed to ${channelId}`);
+          }
+        });
+    }
+
+    return () => {
+      if (channelRef.current) {
+        supabase.removeChannel(channelRef.current);
+        console.log(`Unsubscribed from ${channelRef.current.topic}`);
+        channelRef.current = null;
+      }
+    };
+  }, [message.id, richContent]);
+  
+  // Handle transport selection
+  const handleTransportSelect = useCallback((transport: Transport) => {
+    setSelectedTransport(transport);
+    // Potentially send a message or perform an action
+    console.log('Transport selected in ChatMessage:', transport);
+  }, []);
 
   // Render specialized card for each listing type
   const renderListingCard = useCallback((listing: ListingBase, index: number) => {
@@ -639,6 +695,60 @@ export const ChatMessage = memo<ChatMessageProps>(({
         </div>
       );
     }
+    
+    // Handle single transport card
+    if (richContent?.type === 'transport') {
+      return (
+        <div className="space-y-4">
+          <ReactMarkdown 
+            className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900"
+            components={MARKDOWN_COMPONENTS}
+          >
+            {textContent}
+          </ReactMarkdown>
+          <TransportCard
+            transport={richContent.data as Transport}
+            onCall={(transport) => window.open(`tel:${transport.driverPhone}`)}
+            onBook={(transport) => console.log('Booking transport:', transport)}
+          />
+        </div>
+      );
+    }
+    
+    // Handle multiple transports with map and cards
+    if (richContent?.type === 'transports') {
+      const userLocation = (richContent as any).userLocation;
+      
+      return (
+        <div className="space-y-4">
+          <ReactMarkdown 
+            className="prose prose-sm max-w-none prose-headings:text-diani-sand-900 prose-p:text-diani-sand-800 prose-strong:text-diani-sand-900"
+            components={MARKDOWN_COMPONENTS}
+          >
+            {textContent}
+          </ReactMarkdown>
+          <TransportMap
+            // Pass currentTransports which updates from WebSocket
+            initialTransports={currentTransports}
+            userLocation={userLocation}
+            onTransportSelect={handleTransportSelect}
+            selectedTransport={selectedTransport}
+          />
+          <div className="grid gap-4 md:grid-cols-2">
+            {currentTransports.map((transport: Transport) => (
+              <TransportCard
+                key={transport.id}
+                transport={transport}
+                isSelected={selectedTransport?.id === transport.id}
+                onCall={(t) => window.open(`tel:${t.driverPhone}`)}
+                onBook={(t) => console.log('Booking transport:', t)}
+                onClick={() => handleTransportSelect(transport)}
+              />
+            ))}
+          </div>
+        </div>
+      );
+    }
 
     // Default: render as markdown
     return (
@@ -649,7 +759,7 @@ export const ChatMessage = memo<ChatMessageProps>(({
         {textContent}
       </ReactMarkdown>
     );
-  }, [richContent, textContent, originalData, filteredData, onSuggestionSelect, onQuickAction, renderListingCard, handleFilterChange, handleSortChange, clearFilters]);
+  }, [richContent, textContent, originalData, filteredData, onSuggestionSelect, onQuickAction, renderListingCard, handleFilterChange, handleSortChange, clearFilters, currentTransports, selectedTransport, handleTransportSelect]);
 
   return (
     <div
